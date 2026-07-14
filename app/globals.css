@@ -1,0 +1,18 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --color-primary-orange: #FF7A1A;
+  --color-primary-orange-dark: #F26B00;
+  --color-primary-navy: #0B1739;
+  --color-primary-navy-light: #111C44;
+  --color-secondary-blue: #2563EB;
+  --color-success: #16A34A;
+  --color-danger: #DC2626;
+  --color-warning: #FACC15;
+  --color-neutral-bg: #F8FAFC;
+  --color-neutral-text-muted: #64748B;
+  --color-neutral-text-dark: #0F172A;
+}
+
