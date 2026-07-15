@@ -127,7 +127,7 @@ export default function HeroSection() {
             {/* Blue Car Image */}
             <div className="absolute left-0 bottom-4 w-4/5 z-20 hover:scale-102 transition-transform duration-300">
               <Image
-                src="/images/hero-car.png"
+                src="/images/homeheroimage.png"
                 alt="Carblink Hero Car"
                 width={600}
                 height={400}
