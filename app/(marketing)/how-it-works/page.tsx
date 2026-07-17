@@ -25,7 +25,7 @@ const steps = [
     description:
       "Tell us your car's make, model, and the service you need. It takes less than 30 seconds — no signup, no hassle.",
     image:
-      "#",
+      "images/about4.png",
     alt: "Person filling a service request on a phone",
   },
   {
@@ -35,7 +35,7 @@ const steps = [
     description:
       "Verified workshops near you receive your request instantly and send back competitive, transparent quotes within minutes.",
     image:
-      "#",
+      "images/about3.png",
     alt: "Mechanic reviewing a quote on a tablet in a workshop",
   },
   {
@@ -45,7 +45,7 @@ const steps = [
     description:
       "See every quote side-by-side — price, ratings, services offered, and workshop reviews — and pick what works best for you.",
     image:
-      "#",
+      "images/about2.png",
     alt: "Comparing pricing on a laptop screen",
   },
   {
@@ -55,7 +55,7 @@ const steps = [
     description:
       "Confirm your booking and pay securely through CarBlink. Track your service live and drive away having saved real money.",
     image:
-      "#",
+      "images/about1.png",
     alt: "Car being serviced in a workshop bay",
   },
 ];
