@@ -20,6 +20,7 @@ import {
   type LucideIcon,
 } from "lucide-react";
 import Container from "@/components/ui/Container";
+import Card from "@/components/ui/Card";
 
 type Category = "All" | "Maintenance" | "Repair" | "Cosmetic" | "Insurance & Claims";
 
@@ -43,77 +44,77 @@ const services: ServiceItem[] = [
   {
     name: "Periodic Service",
     description: "Complete health checkup, oil change & multi-point inspection.",
-    priceFrom: "₹1,499",
+    priceFrom: "AED 149",
     category: "Maintenance",
     icon: Wrench,
   },
   {
     name: "Engine Repair",
     description: "Diagnostics and repair for engine noise, leaks & performance.",
-    priceFrom: "₹2,999",
+    priceFrom: "AED 299",
     category: "Repair",
     icon: Cog,
   },
   {
     name: "Dent & Paint",
     description: "Dent removal and panel repainting with colour-match guarantee.",
-    priceFrom: "₹3,499",
+    priceFrom: "AED 349",
     category: "Cosmetic",
     icon: PaintBucket,
   },
   {
     name: "Car Wash",
     description: "Exterior foam wash, interior vacuuming & tyre shine.",
-    priceFrom: "₹299",
+    priceFrom: "AED 29",
     category: "Maintenance",
     icon: Droplets,
   },
   {
     name: "Detailing",
     description: "Deep interior & exterior detailing to restore that new-car feel.",
-    priceFrom: "₹1,999",
+    priceFrom: "AED 199",
     category: "Cosmetic",
     icon: Sparkles,
   },
   {
     name: "PPF (Paint Protection Film)",
     description: "Long-lasting film that shields your paint from scratches.",
-    priceFrom: "₹15,999",
+    priceFrom: "AED 1,599",
     category: "Cosmetic",
     icon: ShieldCheck,
   },
   {
     name: "Ceramic Coating",
     description: "Glass-like shine with lasting protection from the elements.",
-    priceFrom: "₹8,999",
+    priceFrom: "AED 899",
     category: "Cosmetic",
     icon: CircleDot,
   },
   {
     name: "Tyres",
     description: "Genuine tyre brands with free fitting & wheel balancing.",
-    priceFrom: "₹3,499 / tyre",
+    priceFrom: "AED 349 / tyre",
     category: "Maintenance",
     icon: Disc3,
   },
   {
     name: "Battery",
     description: "Doorstep battery replacement with warranty, top brands.",
-    priceFrom: "₹4,499",
+    priceFrom: "AED 449",
     category: "Maintenance",
     icon: BatteryCharging,
   },
   {
     name: "AC Repair",
     description: "Gas top-up, compressor & cooling system diagnostics.",
-    priceFrom: "₹999",
+    priceFrom: "AED 99",
     category: "Repair",
     icon: Wind,
   },
   {
     name: "Suspension",
     description: "Shock absorbers, struts & suspension noise fixes.",
-    priceFrom: "₹2,499",
+    priceFrom: "AED 249",
     category: "Repair",
     icon: SlidersHorizontal,
   },
@@ -127,14 +128,14 @@ const services: ServiceItem[] = [
   {
     name: "Clutch Repair",
     description: "Clutch plate, pressure plate & release bearing service.",
-    priceFrom: "₹3,999",
+    priceFrom: "AED 399",
     category: "Repair",
     icon: Settings2,
   },
   {
     name: "Brake Service",
     description: "Brake pad replacement, disc skimming & fluid change.",
-    priceFrom: "₹899",
+    priceFrom: "AED 89",
     category: "Maintenance",
     icon: Disc,
   },
@@ -153,10 +154,10 @@ export default function ServicesCatalog() {
       <Container>
         <div className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-4 mb-8">
           <div>
-            <h2 className="text-2xl md:text-3xl font-bold text-neutral-900">
+            <h2 className="font-heading font-black text-2xl md:text-3xl text-neutral-text-dark tracking-tight">
               Browse Our Services
             </h2>
-            <p className="text-neutral-500 mt-1 text-sm md:text-base">
+            <p className="font-body text-neutral-text-muted mt-1 text-sm md:text-base">
               Pick a service and get quotes from verified workshops near you.
             </p>
           </div>
@@ -168,10 +169,10 @@ export default function ServicesCatalog() {
             <button
               key={category}
               onClick={() => setActiveCategory(category)}
-              className={`whitespace-nowrap px-4 py-2 rounded-full text-sm font-medium border transition-colors shrink-0 ${
+              className={`whitespace-nowrap px-4 py-2 rounded-full font-heading text-sm font-semibold border transition-colors shrink-0 ${
                 activeCategory === category
-                  ? "bg-primary-dark text-white border-primary-dark"
-                  : "bg-white text-neutral-600 border-neutral-200 hover:border-primary-dark"
+                  ? "bg-primary-blue text-white border-primary-blue"
+                  : "bg-white text-neutral-text-muted border-neutral-text-muted/25 hover:border-primary-blue hover:text-primary-blue"
               }`}
             >
               {category}
@@ -184,34 +185,35 @@ export default function ServicesCatalog() {
           {filteredServices.map((service) => {
             const Icon = service.icon;
             return (
-              <div
+              <Card
                 key={service.name}
-                className="group bg-white rounded-xl border border-neutral-200 p-5 flex flex-col hover:shadow-lg hover:-translate-y-0.5 transition-all"
+                hoverable
+                className="group flex flex-col bg-white border border-neutral-text-muted/15 rounded-2xl p-5"
               >
-                <div className="w-11 h-11 rounded-lg bg-blue-50 flex items-center justify-center mb-4 group-hover:bg-orange-50 transition-colors">
-                  <Icon className="w-5 h-5 text-primary-dark group-hover:text-orange-500 transition-colors" />
+                <div className="w-11 h-11 rounded-lg bg-primary-blue/10 flex items-center justify-center mb-4 group-hover:bg-accent-orange/10 transition-colors">
+                  <Icon className="w-5 h-5 text-primary-blue group-hover:text-accent-orange transition-colors" />
                 </div>
-                <h3 className="font-semibold text-neutral-900 mb-1.5">
+                <h3 className="font-heading font-bold text-neutral-text-dark mb-1.5">
                   {service.name}
                 </h3>
-                <p className="text-sm text-neutral-500 mb-4 flex-1">
+                <p className="font-body text-sm text-neutral-text-muted mb-4 flex-1">
                   {service.description}
                 </p>
-                <div className="flex items-center justify-between pt-3 border-t border-neutral-100">
+                <div className="flex items-center justify-between pt-3 border-t border-neutral-text-muted/10">
                   <div>
-                    <span className="text-xs text-neutral-400 block">
+                    <span className="font-body text-xs text-neutral-text-muted block">
                       Starting at
                     </span>
-                    <span className="font-semibold text-neutral-900">
+                    <span className="font-heading font-bold text-neutral-text-dark">
                       {service.priceFrom}
                     </span>
                   </div>
-                  <button className="flex items-center gap-1 text-sm font-medium text-orange-500 hover:text-orange-600">
+                  <button className="flex items-center gap-1 font-heading text-sm font-bold text-primary-blue hover:text-primary-blue-dark transition-colors">
                     Get Quote
                     <ArrowRight className="w-4 h-4" />
                   </button>
                 </div>
-              </div>
+              </Card>
             );
           })}
         </div>

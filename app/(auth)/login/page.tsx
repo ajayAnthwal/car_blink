@@ -2,21 +2,13 @@
 
 import { useState } from "react";
 import Link from "next/link";
-import { Mail, Lock, LogIn, ArrowRight } from "lucide-react";
-
-const inputClasses =
-  "w-full rounded-lg border border-slate-300 bg-white px-4 py-2.5 text-sm text-slate-900 placeholder:text-slate-400 outline-none transition focus:border-orange-500 focus:ring-2 focus:ring-orange-500/20";
-
-function Field({ label, children }: { label: string; children: React.ReactNode }) {
-  return (
-    <label className="block">
-      <span className="mb-1.5 block text-sm font-medium text-slate-700">
-        {label}
-      </span>
-      {children}
-    </label>
-  );
-}
+import { Mail, Lock, LogOut, ArrowRight, ShieldCheck } from "lucide-react";
+import Button from "@/components/ui/Button";
+import Badge from "@/components/ui/Badge";
+import Card from "@/components/ui/Card";
+import Container from "@/components/ui/Container";
+import Input from "@/components/ui/Input";
+import { Logo } from "@/components/layout/Navbar";
 
 export default function LoginPage() {
   const [form, setForm] = useState({ email: "", password: "" });
@@ -33,101 +25,117 @@ export default function LoginPage() {
   }
 
   return (
-    <div className="min-h-screen bg-slate-50 font-sans text-slate-900 antialiased">
-      <section className="relative overflow-hidden bg-[#0B1220]">
-        <div className="pointer-events-none absolute -right-32 -top-32 h-96 w-96 rounded-full bg-orange-500/20 blur-3xl" />
-        <div className="pointer-events-none absolute -left-24 bottom-0 h-72 w-72 rounded-full bg-orange-500/10 blur-3xl" />
+    <div className="min-h-screen bg-neutral-bg font-body text-neutral-text-dark antialiased">
+      {/* ---------------- HERO ---------------- */}
+      <section className="relative overflow-hidden bg-neutral-hero-bg pt-14 pb-28 md:pt-16 md:pb-36">
+        <div className="pointer-events-none absolute -right-32 -top-32 h-96 w-96 rounded-full bg-primary-blue/10 blur-3xl" />
+        <div className="pointer-events-none absolute -left-24 bottom-0 h-72 w-72 rounded-full bg-accent-orange/10 blur-3xl" />
 
-        <div className="relative mx-auto w-full max-w-6xl px-5 py-16 text-center sm:px-6 lg:px-8 sm:py-20">
-          <Link
-            href="/"
-            className="inline-flex items-center gap-2 text-sm font-semibold text-orange-400 hover:text-orange-300"
-          >
-            <span className="text-white font-bold tracking-tight">
-              Car<span className="text-orange-500">Blink</span>
-            </span>
-          </Link>
-          <h1 className="mx-auto mt-6 max-w-xl text-3xl font-extrabold leading-tight text-white sm:text-4xl">
-            Welcome <span className="text-orange-500">back</span>
+        <Container className="relative z-10 text-center">
+          <div className="flex justify-center">
+            <Logo />
+          </div>
+          <Badge variant="info" className="bg-white border border-primary-blue/20 text-primary-blue shadow-sm mx-auto mt-6">
+            <ShieldCheck className="w-3.5 h-3.5" />
+            Secure Login
+          </Badge>
+          <h1 className="font-heading font-black text-3xl sm:text-4xl leading-tight tracking-tight mt-5 max-w-md mx-auto">
+            Welcome <span className="text-primary-blue">back</span>
           </h1>
-          <p className="mx-auto mt-3 max-w-md text-sm leading-relaxed text-slate-300 sm:text-base">
-            Log in to manage your bookings, quotes, and workshop partnerships.
+          <p className="font-body text-sm sm:text-base text-neutral-text-muted leading-relaxed mt-3 max-w-sm mx-auto">
+            Log in to manage your bookings, quotes, and workshop
+            partnerships.
           </p>
-        </div>
+        </Container>
       </section>
 
-      <section className="-mt-10 pb-20">
-        <div className="mx-auto w-full max-w-md px-5 sm:px-6 lg:px-8">
-          <div className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm sm:p-8">
+      {/* ---------------- FORM CARD ---------------- */}
+      <section className="-mt-16 pb-24 relative z-20">
+        <Container className="max-w-md">
+          <Card className="p-6 sm:p-8">
             {submitted ? (
-              <div className="flex flex-col items-center rounded-xl border border-orange-200 bg-orange-50 px-6 py-10 text-center">
-                <LogIn className="h-10 w-10 text-orange-500" />
-                <h3 className="mt-4 text-base font-semibold text-slate-900">
-                  You're logged in!
+              <div className="flex flex-col items-center rounded-2xl border border-primary-blue/15 bg-primary-blue/5 px-6 py-10 text-center">
+                <div className="flex h-14 w-14 items-center justify-center rounded-full bg-primary-blue/10">
+                  <ShieldCheck className="h-7 w-7 text-primary-blue" />
+                </div>
+                <h3 className="font-heading font-bold mt-4 text-base text-neutral-text-dark">
+                  You&apos;re logged in!
                 </h3>
-                <p className="mt-1 max-w-sm text-sm text-slate-600">
+                <p className="font-body mt-1 max-w-sm text-sm text-neutral-text-muted">
                   Welcome back, {form.email || "driver"}.
                 </p>
-                <button
+                <Button
+                  variant="link"
+                  leftIcon={<LogOut className="h-3.5 w-3.5" />}
+                  className="mt-6"
                   onClick={() => setSubmitted(false)}
-                  className="mt-6 text-sm font-semibold text-orange-600 hover:text-orange-700"
                 >
                   Log out
-                </button>
+                </Button>
               </div>
             ) : (
               <form onSubmit={handleSubmit} className="space-y-5">
-                <Field label="Email Address">
-                  <div className="relative">
-                    <Mail className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400" />
-                    <input
-                      type="email"
-                      name="email"
-                      required
-                      value={form.email}
-                      onChange={handleChange}
-                      placeholder="you@example.com"
-                      className={`${inputClasses} pl-10`}
-                    />
-                  </div>
-                </Field>
+                <Input
+                  label="Email Address"
+                  type="email"
+                  name="email"
+                  required
+                  value={form.email}
+                  onChange={handleChange}
+                  placeholder="you@example.com"
+                  icon={<Mail className="h-4 w-4" />}
+                />
 
-                <Field label="Password">
-                  <div className="relative">
-                    <Lock className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400" />
-                    <input
-                      type="password"
-                      name="password"
-                      required
-                      value={form.password}
-                      onChange={handleChange}
-                      placeholder="••••••••"
-                      className={`${inputClasses} pl-10`}
-                    />
-                  </div>
-                </Field>
+                <Input
+                  label="Password"
+                  type="password"
+                  name="password"
+                  required
+                  value={form.password}
+                  onChange={handleChange}
+                  placeholder="••••••••"
+                  icon={<Lock className="h-4 w-4" />}
+                />
 
-                <button
+                <div className="flex items-center justify-between text-xs">
+                  <label className="flex items-center gap-2 font-body text-neutral-text-muted">
+                    <input
+                      type="checkbox"
+                      className="h-3.5 w-3.5 rounded border-neutral-text-muted/40 text-primary-blue focus:ring-primary-blue"
+                    />
+                    Remember me
+                  </label>
+                  <Link
+                    href="/contact"
+                    className="font-heading font-semibold text-primary-blue hover:text-primary-blue-dark"
+                  >
+                    Forgot password?
+                  </Link>
+                </div>
+
+                <Button
                   type="submit"
-                  className="group inline-flex w-full items-center justify-center gap-2 rounded-lg bg-orange-500 px-6 py-3.5 text-sm font-semibold text-white shadow-lg shadow-orange-500/25 transition hover:bg-orange-600"
+                  variant="primary"
+                  size="lg"
+                  fullWidth
+                  rightIcon={<ArrowRight className="h-4 w-4" />}
                 >
                   Log In
-                  <ArrowRight className="h-4 w-4 transition group-hover:translate-x-0.5" />
-                </button>
+                </Button>
               </form>
             )}
 
-            <p className="mt-6 text-center text-sm text-slate-600">
+            <p className="font-body mt-6 text-center text-sm text-neutral-text-muted">
               Want to partner your workshop?{" "}
               <Link
                 href="/partner-signup"
-                className="font-semibold text-orange-600 hover:text-orange-700"
+                className="font-heading font-semibold text-primary-blue hover:text-primary-blue-dark"
               >
                 Sign up here
               </Link>
             </p>
-          </div>
-        </div>
+          </Card>
+        </Container>
       </section>
     </div>
   );

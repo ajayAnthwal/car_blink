@@ -9,27 +9,14 @@ import {
   Building2,
   CheckCircle2,
   ArrowRight,
+  Wrench,
 } from "lucide-react";
-
-const inputClasses =
-  "w-full rounded-lg border border-slate-300 bg-white px-4 py-2.5 text-sm text-slate-900 placeholder:text-slate-400 outline-none transition focus:border-orange-500 focus:ring-2 focus:ring-orange-500/20";
-
-function Field({
-  label,
-  children,
-}: {
-  label: string;
-  children: React.ReactNode;
-}) {
-  return (
-    <label className="block">
-      <span className="mb-1.5 block text-sm font-medium text-slate-700">
-        {label}
-      </span>
-      {children}
-    </label>
-  );
-}
+import Button from "@/components/ui/Button";
+import Badge from "@/components/ui/Badge";
+import Card from "@/components/ui/Card";
+import Container from "@/components/ui/Container";
+import Input from "@/components/ui/Input";
+import { Logo } from "@/components/layout/Navbar";
 
 export default function PartnerSignupPage() {
   const [form, setForm] = useState({
@@ -52,44 +39,49 @@ export default function PartnerSignupPage() {
   }
 
   return (
-    <div className="min-h-screen bg-slate-50 font-sans text-slate-900 antialiased">
-      <section className="relative overflow-hidden bg-[#0B1220]">
-        <div className="pointer-events-none absolute -right-32 -top-32 h-96 w-96 rounded-full bg-orange-500/20 blur-3xl" />
-        <div className="pointer-events-none absolute -left-24 bottom-0 h-72 w-72 rounded-full bg-orange-500/10 blur-3xl" />
+    <div className="min-h-screen bg-neutral-bg font-body text-neutral-text-dark antialiased">
+      {/* ---------------- HERO ---------------- */}
+      <section className="relative overflow-hidden bg-neutral-hero-bg pt-14 pb-28 md:pt-16 md:pb-36">
+        <div className="pointer-events-none absolute -right-32 -top-32 h-96 w-96 rounded-full bg-primary-blue/10 blur-3xl" />
+        <div className="pointer-events-none absolute -left-24 bottom-0 h-72 w-72 rounded-full bg-accent-orange/10 blur-3xl" />
 
-        <div className="relative mx-auto w-full max-w-6xl px-5 py-16 text-center sm:px-6 lg:px-8 sm:py-20">
-          <Link
-            href="/"
-            className="inline-flex items-center text-sm font-semibold text-orange-400 hover:text-orange-300"
-          >
-            <span className="text-white font-bold tracking-tight">
-              Car<span className="text-orange-500">Blink</span>
-            </span>
-          </Link>
-          <h1 className="mx-auto mt-6 max-w-2xl text-3xl font-extrabold leading-tight text-white sm:text-4xl">
-            Become a <span className="text-orange-500">workshop partner</span>
+        <Container className="relative z-10 text-center">
+          <div className="flex justify-center">
+            <Logo />
+          </div>
+          <Badge variant="info" className="bg-white border border-primary-blue/20 text-primary-blue shadow-sm mx-auto mt-6">
+            <Wrench className="w-3.5 h-3.5" />
+            Workshop Partners
+          </Badge>
+          <h1 className="font-heading font-black text-3xl sm:text-4xl leading-tight tracking-tight mt-5 max-w-lg mx-auto">
+            Become a <span className="text-primary-blue">workshop partner</span>
           </h1>
-          <p className="mx-auto mt-3 max-w-md text-sm leading-relaxed text-slate-300 sm:text-base">
-            Join 300+ verified workshops and grow your business with steady,
-            qualified bookings.
+          <p className="font-body text-sm sm:text-base text-neutral-text-muted leading-relaxed mt-3 max-w-sm mx-auto">
+            Join 300+ verified workshops and grow your business with
+            steady, qualified bookings.
           </p>
-        </div>
+        </Container>
       </section>
 
-      <section className="-mt-10 pb-20">
-        <div className="mx-auto w-full max-w-lg px-5 sm:px-6 lg:px-8">
-          <div className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm sm:p-8">
+      {/* ---------------- FORM CARD ---------------- */}
+      <section className="-mt-16 pb-24 relative z-20">
+        <Container className="max-w-lg">
+          <Card className="p-6 sm:p-8">
             {submitted ? (
-              <div className="flex flex-col items-center rounded-xl border border-orange-200 bg-orange-50 px-6 py-10 text-center">
-                <CheckCircle2 className="h-10 w-10 text-orange-500" />
-                <h3 className="mt-4 text-base font-semibold text-slate-900">
+              <div className="flex flex-col items-center rounded-2xl border border-primary-blue/15 bg-primary-blue/5 px-6 py-10 text-center">
+                <div className="flex h-14 w-14 items-center justify-center rounded-full bg-primary-blue/10">
+                  <CheckCircle2 className="h-7 w-7 text-primary-blue" />
+                </div>
+                <h3 className="font-heading font-bold mt-4 text-base text-neutral-text-dark">
                   Application received!
                 </h3>
-                <p className="mt-1 max-w-sm text-sm text-slate-600">
-                  Thanks for applying, {form.name || "partner"}. Our team will
-                  reach out to {form.email || "you"} shortly.
+                <p className="font-body mt-1 max-w-sm text-sm text-neutral-text-muted">
+                  Thanks for applying, {form.name || "partner"}. Our team
+                  will reach out to {form.email || "you"} shortly.
                 </p>
-                <button
+                <Button
+                  variant="link"
+                  className="mt-6"
                   onClick={() => {
                     setSubmitted(false);
                     setForm({
@@ -100,106 +92,89 @@ export default function PartnerSignupPage() {
                       city: "",
                     });
                   }}
-                  className="mt-6 text-sm font-semibold text-orange-600 hover:text-orange-700"
                 >
                   Submit another
-                </button>
+                </Button>
               </div>
             ) : (
               <form onSubmit={handleSubmit} className="space-y-5">
-                <Field label="Contact Name">
-                  <input
-                    type="text"
-                    name="name"
-                    required
-                    value={form.name}
-                    onChange={handleChange}
-                    placeholder="Rahul Verma"
-                    className={inputClasses}
-                  />
-                </Field>
+                <Input
+                  label="Contact Name"
+                  type="text"
+                  name="name"
+                  required
+                  value={form.name}
+                  onChange={handleChange}
+                  placeholder="Rahul Verma"
+                />
 
-                <Field label="Workshop / Business Name">
-                  <div className="relative">
-                    <Building2 className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400" />
-                    <input
-                      type="text"
-                      name="business"
-                      required
-                      value={form.business}
-                      onChange={handleChange}
-                      placeholder="SpeedFix Garage"
-                      className={`${inputClasses} pl-10`}
-                    />
-                  </div>
-                </Field>
+                <Input
+                  label="Workshop / Business Name"
+                  type="text"
+                  name="business"
+                  required
+                  value={form.business}
+                  onChange={handleChange}
+                  placeholder="SpeedFix Garage"
+                  icon={<Building2 className="h-4 w-4" />}
+                />
 
-                <Field label="Email Address">
-                  <div className="relative">
-                    <Mail className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400" />
-                    <input
-                      type="email"
-                      name="email"
-                      required
-                      value={form.email}
-                      onChange={handleChange}
-                      placeholder="you@example.com"
-                      className={`${inputClasses} pl-10`}
-                    />
-                  </div>
-                </Field>
+                <Input
+                  label="Email Address"
+                  type="email"
+                  name="email"
+                  required
+                  value={form.email}
+                  onChange={handleChange}
+                  placeholder="you@example.com"
+                  icon={<Mail className="h-4 w-4" />}
+                />
 
-                <Field label="Phone Number">
-                  <div className="relative">
-                    <Phone className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400" />
-                    <input
-                      type="tel"
-                      name="phone"
-                      required
-                      value={form.phone}
-                      onChange={handleChange}
-                      placeholder="+91 98765 43210"
-                      className={`${inputClasses} pl-10`}
-                    />
-                  </div>
-                </Field>
+                <Input
+                  label="Phone Number"
+                  type="tel"
+                  name="phone"
+                  required
+                  value={form.phone}
+                  onChange={handleChange}
+                  placeholder="+91 98765 43210"
+                  icon={<Phone className="h-4 w-4" />}
+                />
 
-                <Field label="City">
-                  <div className="relative">
-                    <MapPin className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400" />
-                    <input
-                      type="text"
-                      name="city"
-                      required
-                      value={form.city}
-                      onChange={handleChange}
-                      placeholder="Gurugram"
-                      className={`${inputClasses} pl-10`}
-                    />
-                  </div>
-                </Field>
+                <Input
+                  label="City"
+                  type="text"
+                  name="city"
+                  required
+                  value={form.city}
+                  onChange={handleChange}
+                  placeholder="Gurugram"
+                  icon={<MapPin className="h-4 w-4" />}
+                />
 
-                <button
+                <Button
                   type="submit"
-                  className="group inline-flex w-full items-center justify-center gap-2 rounded-lg bg-orange-500 px-6 py-3.5 text-sm font-semibold text-white shadow-lg shadow-orange-500/25 transition hover:bg-orange-600"
+                  variant="primary"
+                  size="lg"
+                  fullWidth
+                  rightIcon={<ArrowRight className="h-4 w-4" />}
                 >
                   Apply to Partner
-                  <ArrowRight className="h-4 w-4 transition group-hover:translate-x-0.5" />
-                </button>
+                </Button>
               </form>
             )}
 
-            <p className="mt-6 text-center text-sm text-slate-600">
+            <p className="font-body mt-6 text-center text-sm text-neutral-text-muted">
               Already have an account?{" "}
               <Link
                 href="/login"
-                className="font-semibold text-orange-600 hover:text-orange-700"
+                className="font-heading font-semibold text-primary-blue hover:text-primary-blue-dark"
               >
                 Log in
               </Link>
             </p>
-          </div>
-        </div>
+          </Card>
+        </Container>
       </section>
     </div>
   );
