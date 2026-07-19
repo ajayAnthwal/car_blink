@@ -98,7 +98,7 @@ const FAQS = [
 /*  Small building blocks                                             */
 /* ------------------------------------------------------------------ */
 
-function Container({ children, className = "" }) {
+function Container({ children, className = "" }: { children: React.ReactNode; className?: string }) {
   return (
     <div className={`mx-auto w-full max-w-6xl px-5 sm:px-6 lg:px-8 ${className}`}>
       {children}
@@ -106,7 +106,7 @@ function Container({ children, className = "" }) {
   );
 }
 
-function Eyebrow({ children }) {
+function Eyebrow({ children }: { children: React.ReactNode }) {
   return (
     <span className="inline-flex items-center rounded-full bg-orange-50 px-3 py-1 text-xs font-semibold tracking-wide text-orange-600 ring-1 ring-orange-200">
       {children}
@@ -119,8 +119,8 @@ function Eyebrow({ children }) {
 /* ------------------------------------------------------------------ */
 
 export default function PricingPage() {
-  const [audience, setAudience] = useState("owners"); // "owners" | "workshops"
-  const [billing, setBilling] = useState("monthly"); // "monthly" | "yearly"
+  const [audience, setAudience] = useState<"owners" | "workshops">("owners"); // "owners" | "workshops"
+  const [billing, setBilling] = useState<"monthly" | "yearly">("monthly"); // "monthly" | "yearly"
   const [openFaq, setOpenFaq] = useState(0);
 
   return (
