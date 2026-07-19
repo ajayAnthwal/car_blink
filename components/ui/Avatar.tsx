@@ -29,7 +29,7 @@ export default function Avatar({
 
   return (
     <div
-      className={`relative shrink-0 rounded-full overflow-hidden bg-secondary-blue/10 border border-neutral-text-muted/10 flex items-center justify-center font-heading font-bold text-secondary-blue ${sizeClasses[size]} ${className}`}
+      className={`relative shrink-0 rounded-full overflow-hidden bg-primary-blue/10 border border-neutral-text-muted/10 flex items-center justify-center font-heading font-bold text-primary-blue ${sizeClasses[size]} ${className}`}
       {...props}
     >
       {src ? (

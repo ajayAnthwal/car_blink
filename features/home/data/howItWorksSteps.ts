@@ -4,32 +4,26 @@ export interface StepData {
   number: number;
   title: string;
   description: string;
-  iconName: "Clipboard" | "Mail" | "Scale" | "CalendarCheck";
+  iconName: "Car" | "FileSearch" | "Calendar";
 }
 
 export const HOW_IT_WORKS_STEPS: StepData[] = [
   {
     number: 1,
-    title: "Submit Request",
-    description: "Tell us about your car and required service in under 30 seconds.",
-    iconName: "Clipboard",
+    title: "Enter Your Car Details",
+    description: "Select your car make, model and service type",
+    iconName: "Car",
   },
   {
     number: 2,
-    title: "Get Multiple Quotes",
-    description: "We send your request to verified workshops and get the best quotes.",
-    iconName: "Mail",
+    title: "Compare Prices",
+    description: "See real-time prices from verified workshops near you",
+    iconName: "FileSearch",
   },
   {
     number: 3,
-    title: "Compare Prices",
-    description: "Compare prices, ratings, services and choose the best deal.",
-    iconName: "Scale",
-  },
-  {
-    number: 4,
-    title: "Book Best Deal",
-    description: "Book your service and pay securely. It's that simple!",
-    iconName: "CalendarCheck",
+    title: "Choose & Book",
+    description: "Pick the best deal and book your service",
+    iconName: "Calendar",
   },
 ];

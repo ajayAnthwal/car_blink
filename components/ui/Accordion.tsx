@@ -29,12 +29,12 @@ export function AccordionItem({
       <button
         type="button"
         onClick={toggle}
-        className="flex items-center justify-between w-full py-4 text-left font-body font-medium text-sm sm:text-base text-neutral-text-dark hover:text-secondary-blue transition-colors focus:outline-none"
+        className="flex items-center justify-between w-full py-4 text-left font-body font-medium text-sm sm:text-base text-neutral-text-dark hover:text-primary-blue-dark transition-colors focus:outline-none"
       >
         <span>{trigger}</span>
         {showPlusMinus ? (
           active ? (
-            <Minus className="w-4.5 h-4.5 text-primary-navy shrink-0" strokeWidth={2.5} />
+            <Minus className="w-4.5 h-4.5 text-primary-blue shrink-0" strokeWidth={2.5} />
           ) : (
             <Plus className="w-4.5 h-4.5 text-neutral-text-muted shrink-0" strokeWidth={2.5} />
           )

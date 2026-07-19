@@ -10,13 +10,13 @@ import { MAIN_NAV_LINKS } from "@/lib/constants";
 export function Logo({ light = false }: { light?: boolean }) {
   return (
     <Link href="/" className="flex items-center gap-2.5 group">
-      <div className="flex items-center justify-center w-9 h-9 rounded-lg bg-secondary-blue shadow-md shadow-secondary-blue/10 group-hover:scale-105 transition-transform duration-200">
+      <div className="flex items-center justify-center w-9 h-9 rounded-lg bg-primary-blue shadow-md shadow-primary-blue/10 group-hover:scale-105 transition-transform duration-200">
         <span className="text-white font-heading font-black text-sm tracking-tighter">CB</span>
       </div>
       <span className={`font-heading font-bold text-lg sm:text-xl tracking-tight transition-colors duration-150 ${
-        light ? "text-white" : "text-primary-navy"
+        light ? "text-white" : "text-neutral-text-dark"
       }`}>
-        Car<span>Blink</span>
+        Car<span className={light ? "text-white opacity-90" : "text-primary-blue"}>Blink</span>
       </span>
     </Link>
   );
@@ -38,7 +38,7 @@ export default function Navbar() {
               <Link
                 key={link.name}
                 href={link.href}
-                className="font-heading font-semibold text-sm text-neutral-text-muted hover:text-primary-navy transition-colors duration-150"
+                className="font-heading font-semibold text-sm text-neutral-text-dark hover:text-primary-blue-dark transition-colors duration-150"
               >
                 {link.name}
               </Link>
@@ -49,15 +49,15 @@ export default function Navbar() {
           <div className="hidden md:flex items-center gap-4">
             <Link
               href="/login"
-              className="px-6 py-2.5 font-heading font-bold text-sm text-primary-navy border border-primary-navy/20 rounded-full hover:bg-neutral-bg hover:border-primary-navy/80 transition-all duration-200 text-center"
+              className="px-5 py-2 font-heading font-semibold text-sm text-neutral-text-dark border border-neutral-text-muted/30 rounded-full hover:bg-neutral-bg hover:border-primary-blue hover:text-primary-blue transition-all duration-200 text-center"
             >
-              Login
+              Login / Sign Up
             </Link>
             <Link
               href="/pricing"
-              className="flex items-center gap-2 px-6 py-2.5 font-heading font-bold text-sm text-white bg-primary-orange rounded-full hover:bg-primary-orange-dark hover:shadow-lg hover:shadow-primary-orange/20 transition-all duration-200 text-center"
+              className="flex items-center gap-2 px-6 py-2.5 font-heading font-bold text-sm text-white bg-primary-blue rounded-full hover:bg-primary-blue-dark hover:shadow-lg hover:shadow-primary-blue/20 transition-all duration-200 text-center"
             >
-              Compare Prices
+              Get Free Quote
               <ArrowRight className="w-4 h-4" />
             </Link>
           </div>

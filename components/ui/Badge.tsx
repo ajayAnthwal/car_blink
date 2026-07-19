@@ -15,9 +15,9 @@ export default function Badge({
   const baseStyles = "inline-flex items-center gap-1.5 px-3 py-1 text-xs font-heading font-semibold rounded-full";
   
   const variants = {
-    default: "bg-primary-navy-light border border-neutral-text-muted/15 text-neutral-text-muted",
+    default: "bg-neutral-bg border border-neutral-text-muted/15 text-neutral-text-muted",
     success: "bg-success/10 text-success border border-success/20",
-    info: "bg-brand-gradient text-white shadow-sm",
+    info: "bg-primary-blue text-white shadow-sm",
   };
 
   return (

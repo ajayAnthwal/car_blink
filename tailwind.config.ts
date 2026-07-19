@@ -10,18 +10,20 @@ const config: Config = {
     extend: {
       colors: {
         primary: {
-          orange: "#FF7A1A",
-          "orange-dark": "#F26B00",
-          navy: "#0B1739",
-          "navy-light": "#111C44",
-        },
-        secondary: {
           blue: "#2563EB",
+          "blue-dark": "#1D4ED8",
+          navy: "#0B1220",
+          "navy-light": "#16213E",
+        },
+        accent: {
+          orange: "#F97316",
+          "orange-dark": "#EA580C",
         },
         success: "#16A34A",
         danger: "#DC2626",
         warning: "#FACC15",
         neutral: {
+          "hero-bg": "#EFF6FF",
           bg: "#F8FAFC",
           "text-muted": "#64748B",
           "text-dark": "#0F172A",
@@ -32,12 +34,18 @@ const config: Config = {
         heading: ["var(--font-poppins)", "sans-serif"],
         body: ["var(--font-inter)", "sans-serif"],
       },
-      backgroundImage: {
-        "brand-gradient": "linear-gradient(90deg, #FF7A1A 0%, #2563EB 100%)",
+      backgroundImage: {},
+      keyframes: {
+        marquee: {
+          "0%": { transform: "translateX(0)" },
+          "100%": { transform: "translateX(-50%)" },
+        },
+      },
+      animation: {
+        marquee: "marquee 32s linear infinite",
       },
     },
   },
   plugins: [],
 };
 export default config;
-

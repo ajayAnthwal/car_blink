@@ -25,11 +25,11 @@ export default function Select({
       )}
       <div className="relative">
         <select
-          className={`w-full px-4 py-3 bg-primary-navy border border-neutral-text-muted/30 rounded-xl font-body text-sm text-white focus:outline-none focus:border-secondary-blue focus:ring-1 focus:ring-secondary-blue transition-colors appearance-none cursor-pointer ${className}`}
+          className={`w-full px-4 py-3 bg-white border border-neutral-text-muted/30 rounded-xl font-body text-sm text-neutral-text-dark focus:outline-none focus:border-primary-blue focus:ring-1 focus:ring-primary-blue transition-colors appearance-none cursor-pointer ${className}`}
           {...props}
         >
           {options.map((opt) => (
-            <option key={opt.value} value={opt.value} className="bg-primary-navy text-white">
+            <option key={opt.value} value={opt.value} className="bg-white text-neutral-text-dark">
               {opt.label}
             </option>
           ))}

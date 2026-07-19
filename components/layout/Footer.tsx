@@ -27,16 +27,16 @@ export default function Footer() {
             </p>
             {/* Social Icons */}
             <div className="flex items-center gap-4">
-              <Link href="#" className="w-9 h-9 rounded-full bg-primary-navy-light border border-primary-navy-light flex items-center justify-center hover:bg-secondary-blue hover:border-secondary-blue transition-all duration-200" aria-label="Facebook">
+              <Link href="#" className="w-9 h-9 rounded-full bg-primary-navy-light border border-primary-navy-light flex items-center justify-center hover:bg-primary-blue hover:border-primary-blue transition-all duration-200" aria-label="Facebook">
                 <Facebook className="w-4 h-4 text-neutral-text-muted hover:text-white" />
               </Link>
-              <Link href="#" className="w-9 h-9 rounded-full bg-primary-navy-light border border-primary-navy-light flex items-center justify-center hover:bg-secondary-blue hover:border-secondary-blue transition-all duration-200" aria-label="Instagram">
+              <Link href="#" className="w-9 h-9 rounded-full bg-primary-navy-light border border-primary-navy-light flex items-center justify-center hover:bg-primary-blue hover:border-primary-blue transition-all duration-200" aria-label="Instagram">
                 <Instagram className="w-4 h-4 text-neutral-text-muted hover:text-white" />
               </Link>
-              <Link href="#" className="w-9 h-9 rounded-full bg-primary-navy-light border border-primary-navy-light flex items-center justify-center hover:bg-secondary-blue hover:border-secondary-blue transition-all duration-200" aria-label="YouTube">
+              <Link href="#" className="w-9 h-9 rounded-full bg-primary-navy-light border border-primary-navy-light flex items-center justify-center hover:bg-primary-blue hover:border-primary-blue transition-all duration-200" aria-label="YouTube">
                 <Youtube className="w-4 h-4 text-neutral-text-muted hover:text-white" />
               </Link>
-              <Link href="#" className="w-9 h-9 rounded-full bg-primary-navy-light border border-primary-navy-light flex items-center justify-center hover:bg-secondary-blue hover:border-secondary-blue transition-all duration-200" aria-label="LinkedIn">
+              <Link href="#" className="w-9 h-9 rounded-full bg-primary-navy-light border border-primary-navy-light flex items-center justify-center hover:bg-primary-blue hover:border-primary-blue transition-all duration-200" aria-label="LinkedIn">
                 <Linkedin className="w-4 h-4 text-neutral-text-muted hover:text-white" />
               </Link>
             </div>
@@ -113,12 +113,12 @@ export default function Footer() {
                 <input
                   type="email"
                   placeholder="Enter your email"
-                  className="w-full md:w-64 px-4 py-2.5 bg-primary-navy border border-primary-navy-light rounded-lg text-white placeholder-neutral-text-muted/40 focus:outline-none focus:border-secondary-blue transition-colors text-sm"
+                  className="w-full md:w-64 px-4 py-2.5 bg-primary-navy border border-primary-navy-light rounded-lg text-white placeholder-neutral-text-muted/40 focus:outline-none focus:border-primary-blue transition-colors text-sm"
                   required
                 />
                 <button
                   type="submit"
-                  className="w-full sm:w-auto px-6 py-2.5 bg-secondary-blue hover:bg-blue-600 transition-all font-heading font-bold text-sm text-white rounded-lg whitespace-nowrap shadow-md shadow-secondary-blue/10"
+                  className="w-full sm:w-auto px-6 py-2.5 bg-primary-blue hover:bg-blue-600 transition-all font-heading font-bold text-sm text-white rounded-lg whitespace-nowrap shadow-md shadow-primary-blue/10"
                 >
                   Subscribe
                 </button>

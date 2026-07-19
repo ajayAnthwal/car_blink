@@ -24,7 +24,7 @@ export default function BlogCard({ post }: BlogCardProps) {
       {/* Info */}
       <div className="flex flex-col gap-1.5 px-0.5">
         <Link href={`/blog/${post.slug}`} className="block">
-          <h4 className="font-heading font-black text-sm text-primary-navy hover:text-secondary-blue transition-colors line-clamp-2 leading-snug">
+          <h4 className="font-heading font-black text-sm text-primary-navy hover:text-primary-blue transition-colors line-clamp-2 leading-snug">
             {post.title}
           </h4>
         </Link>

@@ -17,7 +17,7 @@ export default function MobileMenu({ isOpen, onClose }: MobileMenuProps) {
     <div className="fixed inset-0 z-50 md:hidden">
       {/* Backdrop */}
       <div 
-        className="fixed inset-0 bg-primary-navy/40 backdrop-blur-sm transition-opacity" 
+        className="fixed inset-0 bg-neutral-text-dark/40 backdrop-blur-sm transition-opacity" 
         onClick={onClose}
       />
       
@@ -31,7 +31,7 @@ export default function MobileMenu({ isOpen, onClose }: MobileMenuProps) {
             </div>
             <button 
               onClick={onClose}
-              className="p-2 text-neutral-text-muted hover:text-primary-navy hover:bg-neutral-bg rounded-lg transition-colors"
+              className="p-2 text-neutral-text-muted hover:text-primary-blue hover:bg-neutral-bg rounded-lg transition-colors"
             >
               <X className="w-6 h-6" />
             </button>
@@ -43,7 +43,7 @@ export default function MobileMenu({ isOpen, onClose }: MobileMenuProps) {
                 key={link.name} 
                 href={link.href}
                 onClick={onClose}
-                className="font-heading font-medium text-lg text-neutral-text-dark hover:text-primary-orange transition-colors py-3 block w-full border-b border-neutral-text-muted/5 last:border-b-0"
+                className="font-heading font-medium text-lg text-neutral-text-dark hover:text-primary-blue-dark transition-colors py-3 block w-full border-b border-neutral-text-muted/5 last:border-b-0"
               >
                 {link.name}
               </Link>
@@ -55,16 +55,16 @@ export default function MobileMenu({ isOpen, onClose }: MobileMenuProps) {
           <Link 
             href="/login"
             onClick={onClose}
-            className="flex items-center justify-center px-6 py-3 font-heading font-semibold text-primary-navy border-2 border-primary-navy rounded-full hover:bg-neutral-bg transition-all text-center"
+            className="flex items-center justify-center px-6 py-3 font-heading font-semibold text-neutral-text-dark border-2 border-neutral-text-muted/30 rounded-full hover:bg-neutral-bg hover:border-primary-blue hover:text-primary-blue transition-all text-center"
           >
-            Login
+            Login / Sign Up
           </Link>
           <Link 
             href="/pricing"
             onClick={onClose}
-            className="flex items-center justify-center gap-2 px-6 py-3 font-heading font-semibold text-white bg-primary-orange rounded-full hover:bg-primary-orange-dark transition-all text-center shadow-lg shadow-primary-orange/20"
+            className="flex items-center justify-center gap-2 px-6 py-3 font-heading font-semibold text-white bg-primary-blue rounded-full hover:bg-primary-blue-dark transition-all text-center shadow-lg shadow-primary-blue/20"
           >
-            Compare Prices
+            Get Free Quote
             <ArrowRight className="w-4 h-4" />
           </Link>
         </div>

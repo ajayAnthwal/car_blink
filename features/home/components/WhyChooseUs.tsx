@@ -21,7 +21,7 @@ export default function WhyChooseUs() {
               sizes="(max-width: 768px) 100vw, 40vw"
             />
             {/* Floating Badge */}
-            <div className="absolute top-6 right-6 bg-secondary-blue text-white text-xs font-heading font-black px-4 py-2 rounded-full shadow-xl shadow-secondary-blue/30 animate-bounce">
+            <div className="absolute top-6 right-6 bg-primary-blue text-white text-xs font-heading font-black px-4 py-2 rounded-full shadow-xl shadow-primary-blue/30 animate-bounce">
               Save Time • Save Money
             </div>
           </div>
@@ -31,7 +31,7 @@ export default function WhyChooseUs() {
         <div className="lg:col-span-7 flex flex-col gap-8 text-left">
           <div className="flex flex-col gap-3">
             <h2 className="font-heading font-black text-3xl sm:text-4xl text-primary-navy tracking-tight">
-              Why Choose <span className="text-secondary-blue">CarBlink</span>?
+              Why Choose <span className="text-primary-blue">CarBlink</span>?
             </h2>
           </div>
 

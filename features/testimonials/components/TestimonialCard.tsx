@@ -37,7 +37,7 @@ export default function TestimonialCard({ testimonial }: TestimonialCardProps) {
             <span className="font-heading font-black text-xs text-primary-navy">Google</span>
           </div>
         ) : (
-          <div className="w-5 h-5 rounded-full bg-secondary-blue/10 shrink-0" />
+          <div className="w-5 h-5 rounded-full bg-primary-blue/10 shrink-0" />
         )}
         <Rating value={testimonial.rating} />
       </div>

@@ -1,7 +1,7 @@
 import React from "react";
 
 export interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
-  variant?: "primary" | "outline" | "white" | "ghost" | "link";
+  variant?: "primary" | "outline" | "white" | "ghost" | "link" | "accent";
   size?: "sm" | "md" | "lg";
   fullWidth?: boolean;
   leftIcon?: React.ReactNode;
@@ -21,11 +21,12 @@ export default function Button({
   const baseStyles = "inline-flex items-center justify-center font-heading font-bold rounded-full transition-all duration-200 focus:outline-none disabled:opacity-50 disabled:cursor-not-allowed";
   
   const variants = {
-    primary: "bg-primary-orange hover:bg-primary-orange-dark text-white shadow-md shadow-primary-orange/15 hover:shadow-lg hover:shadow-primary-orange/20",
-    outline: "border-2 border-primary-navy/20 hover:border-primary-navy text-primary-navy bg-transparent",
-    white: "bg-white hover:bg-neutral-bg text-primary-navy shadow-md shadow-black/5 hover:shadow-lg",
-    ghost: "bg-transparent hover:bg-neutral-bg text-primary-navy",
-    link: "bg-transparent text-secondary-blue hover:underline p-0 rounded-none",
+    primary: "bg-primary-blue hover:bg-primary-blue-dark text-white shadow-md shadow-primary-blue/15 hover:shadow-lg hover:shadow-primary-blue/20",
+    accent: "bg-accent-orange hover:bg-accent-orange/90 text-white shadow-md shadow-accent-orange/15 hover:shadow-lg hover:shadow-accent-orange/20",
+    outline: "border-2 border-primary-blue/20 hover:border-primary-blue text-primary-blue bg-transparent",
+    white: "bg-white hover:bg-neutral-bg text-primary-blue-dark shadow-md shadow-black/5 hover:shadow-lg",
+    ghost: "bg-transparent hover:bg-neutral-bg text-primary-blue",
+    link: "bg-transparent text-primary-blue hover:underline p-0 rounded-none",
   };
 
   const sizes = {

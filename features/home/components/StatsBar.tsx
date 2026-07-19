@@ -1,45 +1,45 @@
 "use client";
 
-import { Car, Wrench, MapPin, Coins, Star } from "lucide-react";
+import { Car, Wrench, MapPin, Star } from "lucide-react";
 import Card from "@/components/ui/Card";
 import Container from "@/components/ui/Container";
 import StatItem from "./StatItem";
 
 const STATS_DATA = [
   {
-    icon: Car,
-    number: "5,000+",
-    label: "Cars Compared",
-    iconBg: "bg-secondary-blue/5",
-    iconColor: "text-secondary-blue",
+    icon: Star,
+    number: "120K+",
+    label: "Happy Customers",
+    iconBg: "bg-primary-blue/10",
+    iconColor: "text-primary-blue",
   },
   {
     icon: Wrench,
-    number: "300+",
+    number: "2,500+",
     label: "Verified Workshops",
-    iconBg: "bg-secondary-blue/5",
-    iconColor: "text-secondary-blue",
+    iconBg: "bg-primary-blue/10",
+    iconColor: "text-primary-blue",
   },
   {
-    icon: MapPin,
-    number: "25+",
-    label: "Cities Covered",
-    iconBg: "bg-secondary-blue/5",
-    iconColor: "text-secondary-blue",
-  },
-  {
-    icon: Coins,
-    number: "₹2Cr+",
-    label: "Customer Savings",
-    iconBg: "bg-secondary-blue/5",
-    iconColor: "text-secondary-blue",
+    icon: Car,
+    number: "50+",
+    label: "Car Brands",
+    iconBg: "bg-primary-blue/10",
+    iconColor: "text-primary-blue",
   },
   {
     icon: Star,
-    number: "4.8/5",
-    label: "Customer Rating",
-    iconBg: "bg-secondary-blue/5",
-    iconColor: "text-secondary-blue",
+    number: "98%",
+    label: "Customer Satisfaction",
+    iconBg: "bg-primary-blue/10",
+    iconColor: "text-primary-blue",
+  },
+  {
+    icon: MapPin,
+    number: "UAE Wide",
+    label: "Coverage",
+    iconBg: "bg-primary-blue/10",
+    iconColor: "text-primary-blue",
   },
 ];
 

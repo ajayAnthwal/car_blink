@@ -29,7 +29,7 @@ export default function FAQSection({ className = "" }: FAQSectionProps) {
           </h3>
           <Link
             href="/faq"
-            className="flex items-center gap-1 font-heading font-bold text-xs text-secondary-blue hover:underline"
+            className="flex items-center gap-1 font-heading font-bold text-xs text-primary-blue hover:underline"
           >
             View All
             <ArrowRight className="w-3.5 h-3.5" />
