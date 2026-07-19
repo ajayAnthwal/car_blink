@@ -2,22 +2,27 @@
 
 import { useState } from "react";
 import Link from "next/link";
+import Image from "next/image";
 import { Menu, ArrowRight } from "lucide-react";
 import MobileMenu from "./MobileMenu";
 import { MAIN_NAV_LINKS } from "@/lib/constants";
 
 
 export function Logo({ light = false }: { light?: boolean }) {
+  // `light` = true is used on dark backgrounds (e.g. footer), so the
+  // full-color logo (white wordmark) reads correctly there.
+  // On light backgrounds (navbar / mobile menu) we use the dark-text
+  // variant so the wordmark stays legible against a white background.
   return (
-    <Link href="/" className="flex items-center gap-2.5 group">
-      <div className="flex items-center justify-center w-9 h-9 rounded-lg bg-primary-blue shadow-md shadow-primary-blue/10 group-hover:scale-105 transition-transform duration-200">
-        <span className="text-white font-heading font-black text-sm tracking-tighter">CB</span>
-      </div>
-      <span className={`font-heading font-bold text-lg sm:text-xl tracking-tight transition-colors duration-150 ${
-        light ? "text-white" : "text-neutral-text-dark"
-      }`}>
-        Car<span className={light ? "text-white opacity-90" : "text-primary-blue"}>Blink</span>
-      </span>
+    <Link href="/" className="flex items-center group">
+      <Image
+        src={light ? "/images/brand/logo-wordmark.png" : "/images/brand/logo-wordmark-dark.png"}
+        alt="CarBlink — One Platform For Every Car Service"
+        width={219}
+        height={67}
+        priority
+        className="h-9 sm:h-10 w-auto transition-transform duration-200 group-hover:scale-105"
+      />
     </Link>
   );
 }

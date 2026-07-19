@@ -35,7 +35,7 @@ export default function LoginPage() {
           <div className="flex justify-center">
             <Logo />
           </div>
-          <Badge variant="info" className="bg-white border border-primary-blue/20 text-primary-blue shadow-sm mx-auto mt-6">
+          <Badge variant="info" className="bg-white border border-primary-blue/20 !text-primary-blue shadow-sm mx-auto mt-6">
             <ShieldCheck className="w-3.5 h-3.5" />
             Secure Login
           </Badge>

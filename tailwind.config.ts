@@ -9,15 +9,16 @@ const config: Config = {
   theme: {
     extend: {
       colors: {
+        // Brand colors — matched exactly to the CarBlink logo
         primary: {
-          blue: "#2563EB",
-          "blue-dark": "#1D4ED8",
+          blue: "#0C79D8",
+          "blue-dark": "#0A63B0",
           navy: "#0B1220",
           "navy-light": "#16213E",
         },
         accent: {
-          orange: "#F97316",
-          "orange-dark": "#EA580C",
+          orange: "#FB6E01",
+          "orange-dark": "#DD6101",
         },
         success: "#16A34A",
         danger: "#DC2626",
@@ -27,7 +28,7 @@ const config: Config = {
           bg: "#F8FAFC",
           "text-muted": "#64748B",
           "text-dark": "#0F172A",
-          white: "#FFFFFF",
+          white: "#FEFEFE",
         },
       },
       fontFamily: {

@@ -53,7 +53,7 @@ export default function PricingContent() {
               <p className="mt-5 font-heading font-black text-5xl text-neutral-text-dark">
                 AED 0
               </p>
-              <p className="mt-1 font-body text-sm text-neutral-text-muted">
+              <p className="mt-1 font-body text-sm !text-black">
                 No subscription, no booking fee, no fine print.
               </p>
 
@@ -132,21 +132,21 @@ export default function PricingContent() {
 
                   <h3
                     className={`font-heading text-lg font-bold ${
-                      plan.highlighted ? "text-white" : "text-neutral-text-dark"
+                      plan.highlighted ? "text-black" : "!text-neutral-text-dark"
                     }`}
                   >
                     {plan.name}
                   </h3>
                   <p
                     className={`mt-1 font-body text-sm ${
-                      plan.highlighted ? "text-white/60" : "text-neutral-text-muted"
+                      plan.highlighted ? "text-black" : "text-neutral-text-muted"
                     }`}
                   >
                     {plan.tagline}
                   </p>
 
                   <div className="mt-5 flex items-baseline gap-1">
-                    <span className="font-heading font-black text-3xl">
+                    <span className="font-heading font-black text-3xl text-black">
                       {plan.price[billing]}
                     </span>
                     <span
@@ -174,7 +174,7 @@ export default function PricingContent() {
                           className={
                             f.included
                               ? plan.highlighted
-                                ? "text-white/85"
+                                ? "text-black"
                                 : "text-neutral-text-dark"
                               : "text-neutral-text-muted/60 line-through"
                           }

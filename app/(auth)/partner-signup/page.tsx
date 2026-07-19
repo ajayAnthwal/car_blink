@@ -49,7 +49,7 @@ export default function PartnerSignupPage() {
           <div className="flex justify-center">
             <Logo />
           </div>
-          <Badge variant="info" className="bg-white border border-primary-blue/20 text-primary-blue shadow-sm mx-auto mt-6">
+          <Badge variant="info" className="bg-white border border-primary-blue/20 !text-primary-blue shadow-sm mx-auto mt-6">
             <Wrench className="w-3.5 h-3.5" />
             Workshop Partners
           </Badge>
