@@ -154,7 +154,7 @@ export default function ServiceDetailsPage({ params }: { params: { id: string } 
               </div>
 
               <div className="flex flex-col gap-3">
-                <Button variant="primary" size="lg" fullWidth rightIcon={<ArrowRight className="w-5 h-5" />} href="/quotes">
+                <Button variant="primary" size="lg" fullWidth rightIcon={<ArrowRight className="w-5 h-5" />} href={`/quotes?service=${encodeURIComponent(service.name)}`}>
                   Request a Quote
                 </Button>
                 <Button variant="outline" size="lg" fullWidth href="https://wa.me/919876543210">

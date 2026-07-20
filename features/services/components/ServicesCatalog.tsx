@@ -165,15 +165,15 @@ export default function ServicesCatalog() {
         </div>
 
         {/* Category filter tabs */}
-        <div className="flex gap-2 overflow-x-auto pb-2 mb-8 -mx-4 px-4 sm:mx-0 sm:px-0 scrollbar-hide">
+        <div className="flex gap-3 overflow-x-auto pb-4 mb-10 -mx-4 px-4 sm:mx-0 sm:px-0 scrollbar-hide">
           {categories.map((category) => (
             <button
               key={category}
               onClick={() => setActiveCategory(category)}
-              className={`whitespace-nowrap px-4 py-2 rounded-full font-heading text-sm font-semibold border transition-colors shrink-0 ${
+              className={`whitespace-nowrap px-6 py-2.5 rounded-full font-heading text-sm font-bold border-2 transition-all duration-300 shrink-0 ${
                 activeCategory === category
-                  ? "bg-primary-blue text-white border-primary-blue"
-                  : "bg-white text-neutral-text-muted border-neutral-text-muted/25 hover:border-primary-blue hover:text-primary-blue"
+                  ? "bg-primary-blue text-white border-primary-blue shadow-md shadow-primary-blue/20"
+                  : "bg-white text-neutral-text-muted border-neutral-text-muted/10 hover:border-primary-blue/30 hover:text-primary-blue hover:bg-primary-blue/5"
               }`}
             >
               {category}
@@ -188,30 +188,32 @@ export default function ServicesCatalog() {
             return (
               <Card
                 key={service.name}
-                hoverable
-                className="group flex flex-col bg-white border border-neutral-text-muted/15 rounded-2xl p-5"
+                className="group flex flex-col bg-white border border-neutral-text-muted/10 rounded-[2rem] p-6 sm:p-8 transition-all duration-500 hover:-translate-y-2 hover:shadow-2xl hover:shadow-primary-blue/10 hover:border-primary-blue/30"
               >
-                <div className="w-11 h-11 rounded-lg bg-primary-blue/10 flex items-center justify-center mb-4 group-hover:bg-accent-orange/10 transition-colors">
-                  <Icon className="w-5 h-5 text-primary-blue group-hover:text-accent-orange transition-colors" />
+                <div className="w-14 h-14 rounded-2xl bg-primary-blue/5 flex items-center justify-center mb-6 group-hover:bg-primary-blue group-hover:scale-110 group-hover:-rotate-3 transition-all duration-500 shadow-inner">
+                  <Icon className="w-7 h-7 text-primary-blue group-hover:text-white transition-colors duration-500" />
                 </div>
-                <h3 className="font-heading font-bold text-neutral-text-dark mb-1.5">
+                <h3 className="font-heading font-black text-xl text-neutral-text-dark mb-2 group-hover:text-primary-blue transition-colors duration-300">
                   {service.name}
                 </h3>
-                <p className="font-body text-sm text-neutral-text-muted mb-4 flex-1">
+                <p className="font-body text-sm text-neutral-text-muted leading-relaxed mb-6 flex-1">
                   {service.description}
                 </p>
-                <div className="flex items-center justify-between pt-3 border-t border-neutral-text-muted/10">
-                  <div>
-                    <span className="font-body text-xs text-neutral-text-muted block">
+                
+                <div className="flex items-center justify-between pt-4 border-t border-neutral-text-muted/10">
+                  <div className="flex flex-col">
+                    <span className="font-body text-[11px] font-bold uppercase tracking-wider text-neutral-text-muted/70 mb-0.5">
                       Starting at
                     </span>
-                    <span className="font-heading font-bold text-neutral-text-dark">
+                    <span className="font-heading font-black text-lg text-neutral-text-dark">
                       {service.priceFrom}
                     </span>
                   </div>
-                  <Link href={`/services/${service.name.toLowerCase().replace(/[^a-z0-9]+/g, '-')}`} className="flex items-center gap-1 font-heading text-sm font-bold text-primary-blue hover:text-primary-blue-dark transition-colors">
-                    Get Quote
-                    <ArrowRight className="w-4 h-4" />
+                  <Link 
+                    href={`/services/${service.name.toLowerCase().replace(/[^a-z0-9]+/g, '-')}`} 
+                    className="flex items-center justify-center w-10 h-10 rounded-full bg-primary-blue/10 text-primary-blue group-hover:bg-primary-blue group-hover:text-white transition-colors duration-300"
+                  >
+                    <ArrowRight className="w-5 h-5" />
                   </Link>
                 </div>
               </Card>

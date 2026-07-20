@@ -1,8 +1,9 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect, Suspense } from "react";
 import Image from "next/image";
 import Link from "next/link";
+import { useSearchParams } from "next/navigation";
 import { 
   ChevronRight, 
   Car, 
@@ -19,17 +20,77 @@ import Button from "@/components/ui/Button";
 
 const MAKES = ["Toyota", "BMW", "Mercedes", "Audi", "Nissan", "Honda"];
 const MODELS = ["Sedan", "SUV", "Hatchback", "Coupe", "Luxury"];
-const SERVICES = ["Periodic Service", "Engine Repair", "Dent & Paint", "AC Repair", "Brake Service"];
 
-export default function QuotesPage() {
+const ALL_SERVICES = [
+  { name: "Periodic Service", price: "₹2,499" },
+  { name: "Engine Repair", price: "₹4,999" },
+  { name: "Dent & Paint", price: "₹5,499" },
+  { name: "Car Wash", price: "₹499" },
+  { name: "Detailing", price: "₹2,999" },
+  { name: "PPF (Paint Protection Film)", price: "₹25,999" },
+  { name: "Ceramic Coating", price: "₹14,999" },
+  { name: "Tyres", price: "₹5,499" },
+  { name: "Battery", price: "₹6,499" },
+  { name: "AC Repair", price: "₹1,499" },
+  { name: "Suspension", price: "₹3,999" },
+  { name: "Insurance Claims", price: "Free assistance" },
+  { name: "Clutch Repair", price: "₹5,999" },
+  { name: "Brake Service", price: "₹1,299" },
+];
+
+function QuotesForm() {
+  const searchParams = useSearchParams();
   const [step, setStep] = useState(1);
   const [formData, setFormData] = useState({
     make: "",
     model: "",
-    service: "",
+    services: [] as string[],
     name: "",
     phone: "",
   });
+
+  const [availableServices, setAvailableServices] = useState(ALL_SERVICES.map(s => s.name));
+
+  useEffect(() => {
+    const serviceParam = searchParams.get("service");
+    if (serviceParam) {
+      setFormData(prev => ({ ...prev, services: [serviceParam] }));
+      
+      if (!availableServices.includes(serviceParam)) {
+        setAvailableServices(prev => [serviceParam, ...prev]);
+      }
+    }
+  }, [searchParams]);
+
+  const toggleService = (serviceName: string) => {
+    setFormData((prev) => {
+      const isSelected = prev.services.includes(serviceName);
+      if (isSelected) {
+        return { ...prev, services: prev.services.filter(s => s !== serviceName) };
+      } else {
+        return { ...prev, services: [...prev.services, serviceName] };
+      }
+    });
+  };
+
+  const calculateTotalQuote = () => {
+    if (formData.services.length === 0) return "---";
+    let total = 0;
+    let hasFree = false;
+    formData.services.forEach(serviceName => {
+      const service = ALL_SERVICES.find(s => s.name === serviceName);
+      if (service) {
+        if (service.price.toLowerCase().includes("free")) {
+          hasFree = true;
+        } else {
+          const num = parseInt(service.price.replace(/[^0-9]/g, ""));
+          if (!isNaN(num)) total += num;
+        }
+      }
+    });
+    if (total === 0 && hasFree) return "Free";
+    return total > 0 ? `₹${total.toLocaleString()}` : "---";
+  };
 
   const nextStep = () => setStep((s) => Math.min(s + 1, 4));
   const prevStep = () => setStep((s) => Math.max(s - 1, 1));
@@ -99,28 +160,31 @@ export default function QuotesPage() {
       case 3:
         return (
           <div className="animate-in fade-in slide-in-from-bottom-4 duration-500">
-            <h2 className="font-heading font-black text-2xl text-neutral-text-dark mb-2">Select Service</h2>
-            <p className="font-body text-neutral-text-muted mb-6">What service does your {formData.make} {formData.model} need?</p>
+            <h2 className="font-heading font-black text-2xl text-neutral-text-dark mb-2">Select Services</h2>
+            <p className="font-body text-neutral-text-muted mb-6">What does your {formData.make} {formData.model} need? (Select multiple)</p>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-              {SERVICES.map((service) => (
-                <button
-                  key={service}
-                  onClick={() => updateForm("service", service)}
-                  className={`flex items-center gap-3 p-4 rounded-2xl border-2 transition-all text-left ${
-                    formData.service === service
-                      ? "border-primary-blue bg-primary-blue/5 text-primary-blue"
-                      : "border-neutral-text-muted/10 bg-white text-neutral-text-dark hover:border-primary-blue/30 hover:bg-neutral-bg"
-                  }`}
-                >
-                  <Settings className={`w-5 h-5 ${formData.service === service ? 'text-primary-blue' : 'text-neutral-text-muted'}`} />
-                  <span className="font-heading font-bold text-sm flex-1">{service}</span>
-                  {formData.service === service && <CheckCircle2 className="w-4 h-4 text-primary-blue" />}
-                </button>
-              ))}
+              {availableServices.map((service) => {
+                const isSelected = formData.services.includes(service);
+                return (
+                  <button
+                    key={service}
+                    onClick={() => toggleService(service)}
+                    className={`flex items-center gap-3 p-4 rounded-2xl border-2 transition-all text-left ${
+                      isSelected
+                        ? "border-primary-blue bg-primary-blue/5 text-primary-blue"
+                        : "border-neutral-text-muted/10 bg-white text-neutral-text-dark hover:border-primary-blue/30 hover:bg-neutral-bg"
+                    }`}
+                  >
+                    <Settings className={`w-5 h-5 ${isSelected ? 'text-primary-blue' : 'text-neutral-text-muted'}`} />
+                    <span className="font-heading font-bold text-sm flex-1">{service}</span>
+                    {isSelected && <CheckCircle2 className="w-4 h-4 text-primary-blue" />}
+                  </button>
+                );
+              })}
             </div>
             <div className="mt-8 flex justify-between">
               <Button variant="ghost" onClick={prevStep}>Back</Button>
-              <Button onClick={nextStep} disabled={!formData.service} rightIcon={<ArrowRight className="w-4 h-4" />}>
+              <Button onClick={nextStep} disabled={formData.services.length === 0} rightIcon={<ArrowRight className="w-4 h-4" />}>
                 Continue
               </Button>
             </div>
@@ -162,9 +226,7 @@ export default function QuotesPage() {
               <Button variant="ghost" onClick={prevStep}>Back</Button>
               <Button 
                 onClick={() => {
-                  alert("Quote requested successfully! Our team will contact you shortly.");
-                  setStep(1);
-                  setFormData({ make: "", model: "", service: "", name: "", phone: "" });
+                  setStep(5);
                 }} 
                 disabled={!formData.name || !formData.phone}
                 variant="accent"
@@ -173,6 +235,21 @@ export default function QuotesPage() {
                 Get Free Quote
               </Button>
             </div>
+          </div>
+        );
+      case 5:
+        return (
+          <div className="animate-in fade-in zoom-in-95 duration-500 flex flex-col items-center justify-center text-center py-10">
+            <div className="w-20 h-20 bg-success/10 rounded-full flex items-center justify-center mb-6 shadow-inner shadow-success/20">
+              <CheckCircle2 className="w-10 h-10 text-success" />
+            </div>
+            <h2 className="font-heading font-black text-3xl text-neutral-text-dark mb-4">Request Sent Successfully!</h2>
+            <p className="font-body text-neutral-text-muted text-lg max-w-md leading-relaxed mb-8">
+              Thank you, <span className="font-bold text-neutral-text-dark">{formData.name}</span>. We've received your request for <span className="font-bold text-neutral-text-dark">{formData.services.join(", ")}</span>. Our top-rated workshops are calculating your exact quote and we will contact you on <span className="font-bold text-neutral-text-dark">+91 {formData.phone}</span> shortly.
+            </p>
+            <Button variant="primary" size="lg" href="/">
+              Return to Home
+            </Button>
           </div>
         );
     }
@@ -246,15 +323,15 @@ export default function QuotesPage() {
                     </span>
                   </div>
                   <div className="flex justify-between items-center pb-4 border-b border-white/10">
-                    <span className="font-body text-white/70 text-sm">Service</span>
-                    <span className="font-heading font-bold text-right">
-                      {formData.service || "Not selected"}
+                    <span className="font-body text-white/70 text-sm shrink-0 mr-4">Service(s)</span>
+                    <span className="font-heading font-bold text-right text-sm line-clamp-2">
+                      {formData.services.length > 0 ? formData.services.join(", ") : "Not selected"}
                     </span>
                   </div>
                   <div className="flex justify-between items-center pt-2">
                     <span className="font-body text-white/90 text-sm font-semibold">Estimated Quote</span>
                     <span className="font-heading font-black text-xl text-accent-orange">
-                      {formData.service ? "Calculating..." : "---"}
+                      {calculateTotalQuote()}
                     </span>
                   </div>
                 </div>
@@ -297,5 +374,13 @@ export default function QuotesPage() {
         </div>
       </Container>
     </div>
+  );
+}
+
+export default function QuotesPage() {
+  return (
+    <Suspense fallback={<div className="min-h-screen flex items-center justify-center bg-neutral-bg">Loading...</div>}>
+      <QuotesForm />
+    </Suspense>
   );
 }
