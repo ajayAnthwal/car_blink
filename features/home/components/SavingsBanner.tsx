@@ -23,151 +23,119 @@ const PHONE_LISTINGS = [
 
 const TRUST_POINTS = ["Verified Workshops", "No Hidden Charges", "Instant Comparison"];
 
-const MINI_STATS = [
-  { value: "50+", label: "Verified Workshops" },
-  { value: "4.8★", label: "Average Rating" },
-  { value: "₹2,300", label: "Avg. Savings / Service" },
-];
-
 export default function SavingsBanner() {
   return (
-    <section className="pt-16 pb-28 md:pt-24 md:pb-36 bg-white relative">
-      <Container>
-        <div className="relative">
-          {/* Card background (clipped) */}
-         {/* Card background (clipped) */}
-          <div className="absolute inset-0 rounded-[2rem] overflow-hidden bg-gradient-to-br from-primary-blue/15 via-neutral-hero-bg to-primary-blue/5">
-            <div className="absolute inset-0">
-              <Image
-                src="/images/hero-car.png"
-                alt=""
-                fill
-                className="object-cover object-right opacity-15"
-              />
-            </div>
-            <svg viewBox="0 0 800 400" className="w-full h-full opacity-40" preserveAspectRatio="none">
-              <path d="M0 0C150 100 250 -50 400 100C550 250 650 100 800 200V400H0V0Z" fill="#2563EB" opacity="0.06" />
-            </svg>
-            {/* Fade so the left-side text stays readable */}
-            <div className="absolute inset-0 bg-gradient-to-r from-neutral-hero-bg via-neutral-hero-bg/80 to-transparent" />
-          </div>
-          
+    <section className="pt-24 pb-32 bg-white relative overflow-hidden">
+      {/* Decorative Blob */}
+      <div className="absolute top-1/2 left-0 w-96 h-96 bg-accent-orange/5 rounded-full blur-[100px] -translate-y-1/2 pointer-events-none" />
 
-          {/* Content */}
-          <div className="relative flex flex-col lg:flex-row items-center lg:items-start justify-between gap-10 p-6 sm:p-8 md:p-10 lg:p-14">
+      <Container>
+        <div className="relative bg-gradient-to-br from-primary-navy to-primary-blue-dark rounded-[3rem] overflow-hidden shadow-2xl shadow-primary-blue/20 border border-primary-blue/20">
+          
+          {/* Abstract Background patterns */}
+          <div className="absolute inset-0 z-0">
+            <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-accent-orange/20 rounded-full blur-[120px] mix-blend-screen opacity-50" />
+            <div className="absolute bottom-0 left-1/4 w-[400px] h-[400px] bg-primary-blue/30 rounded-full blur-[100px] mix-blend-screen opacity-50" />
+            <svg viewBox="0 0 800 400" className="w-full h-full opacity-10 absolute inset-0 mix-blend-overlay" preserveAspectRatio="none">
+              <path d="M0 0C150 100 250 -50 400 100C550 250 650 100 800 200V400H0V0Z" fill="white" />
+            </svg>
+          </div>
+
+          <div className="relative z-10 flex flex-col lg:flex-row items-center justify-between gap-12 p-8 sm:p-12 md:p-16">
+            
             {/* Left Content */}
-            <div className="flex flex-col z-10 max-w-xl">
-              <h2 className="font-heading font-black text-2xl sm:text-3xl lg:text-4xl text-neutral-text-dark tracking-tight mb-3 leading-tight">
+            <div className="flex flex-col flex-1 text-left">
+              <div className="inline-block px-4 py-1.5 bg-accent-orange/10 border border-accent-orange/20 text-accent-orange font-bold text-sm rounded-full mb-6 w-fit">
+                Start Saving Today
+              </div>
+              <h2 className="font-heading font-black text-4xl sm:text-5xl text-white tracking-tight mb-4 leading-[1.1]">
                 See How Much <br className="hidden sm:block" />
-                <span className="text-primary-blue">You Can Save</span>
+                <span className="text-transparent bg-clip-text bg-gradient-to-r from-accent-orange to-yellow-400">You Can Save</span>
               </h2>
-              <p className="font-body text-neutral-text-muted mb-8 text-sm sm:text-base">
-                Price comparison for BMW 5 Series &mdash; Full Service
+              <p className="font-body text-white/70 mb-8 text-lg max-w-md">
+                Stop overpaying for car maintenance. Compare prices instantly and save up to 40% on your next service.
               </p>
 
               {/* Price comparison cards */}
-              <div className="flex flex-col sm:flex-row items-stretch gap-3 mb-8">
-                <div className="flex flex-col justify-center bg-white px-5 py-4 rounded-2xl border border-neutral-text-muted/10 shadow-sm">
-                  <span className="font-heading font-bold text-[10px] text-neutral-text-muted uppercase tracking-wider mb-1.5">
+              <div className="flex flex-col sm:flex-row items-stretch gap-4 mb-10">
+                <div className="flex flex-col justify-center bg-white/5 backdrop-blur-md px-6 py-5 rounded-2xl border border-white/10">
+                  <span className="font-heading font-bold text-[11px] text-white/50 uppercase tracking-wider mb-1.5">
                     Avg. Market Price
                   </span>
-                  <span className="font-heading font-black text-xl text-neutral-text-dark">
+                  <span className="font-heading font-black text-2xl text-white/90 line-through decoration-accent-orange/50">
                     &#8377;8,500
                   </span>
                 </div>
 
-                <div className="relative flex flex-col justify-center bg-white px-5 py-4 rounded-2xl border border-success/20 shadow-sm">
-                  <span className="font-heading font-bold text-[10px] text-primary-blue uppercase tracking-wider mb-1.5">
+                <div className="relative flex flex-col justify-center bg-accent-orange/10 backdrop-blur-md px-6 py-5 rounded-2xl border border-accent-orange/30 shadow-lg shadow-accent-orange/10">
+                  <span className="font-heading font-bold text-[11px] text-accent-orange uppercase tracking-wider mb-1.5">
                     Best Price on Car Blink
                   </span>
-                  <div className="flex items-center gap-2.5">
-                    <span className="font-heading font-black text-xl text-success">
+                  <div className="flex items-center gap-3">
+                    <span className="font-heading font-black text-3xl text-white">
                       &#8377;6,200
                     </span>
-                    <div className="bg-success text-white font-bold text-[10px] px-2.5 py-1 rounded-full">
-                      Save 27%
-                    </div>
-                  </div>
-
-                  {/* Green Arrow Annotation */}
-                  <div className="absolute -top-9 -right-10 hidden md:block rotate-12">
-                    <svg width="52" height="36" viewBox="0 0 60 40" fill="none" stroke="#16A34A" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" className="drop-shadow-md">
-                      <path d="M5 35 C 10 10, 40 5, 55 20" />
-                      <path d="M45 20 L 55 20 L 50 10" />
-                    </svg>
                   </div>
                 </div>
               </div>
 
               {/* Trust checklist */}
-              <div className="flex flex-wrap items-center gap-x-6 gap-y-2 mb-8">
+              <div className="flex flex-wrap items-center gap-x-6 gap-y-3 mb-10">
                 {TRUST_POINTS.map((point) => (
-                  <div key={point} className="flex items-center gap-1.5">
-                    <CheckCircle2 className="w-4 h-4 text-success shrink-0" />
-                    <span className="font-body text-xs sm:text-sm text-neutral-text-dark">{point}</span>
-                  </div>
-                ))}
-              </div>
-
-              {/* Mini stats */}
-              <div className="flex items-stretch gap-6 sm:gap-8 mb-8 pt-6 border-t border-neutral-text-dark/10">
-                {MINI_STATS.map((stat, idx) => (
-                  <div
-                    key={stat.label}
-                    className={`flex flex-col ${idx > 0 ? "pl-6 sm:pl-8 border-l border-neutral-text-dark/10" : ""}`}
-                  >
-                    <span className="font-heading font-black text-lg sm:text-xl text-neutral-text-dark">
-                      {stat.value}
-                    </span>
-                    <span className="font-body text-[11px] sm:text-xs text-neutral-text-muted">
-                      {stat.label}
-                    </span>
+                  <div key={point} className="flex items-center gap-2">
+                    <CheckCircle2 className="w-5 h-5 text-success" />
+                    <span className="font-body text-sm text-white/90 font-medium">{point}</span>
                   </div>
                 ))}
               </div>
 
               {/* CTA */}
-              <Button variant="primary" size="lg" rightIcon={<ArrowRight className="w-5 h-5" />} href="/quotes">
-                Compare Prices Now
-              </Button>
+              <div className="flex">
+                <Button variant="accent" size="lg" className="font-bold px-8 shadow-xl shadow-accent-orange/20" rightIcon={<ArrowRight className="w-5 h-5" />} href="/quotes">
+                  Compare Prices Now
+                </Button>
+              </div>
             </div>
 
             {/* Right Content (Phone Mockup) */}
-            <div className="relative z-10 w-full max-w-[200px] sm:max-w-[220px] shrink-0 flex justify-center lg:justify-end lg:translate-y-20">
-              <div className="relative w-full aspect-[9/19] -rotate-6 hover:rotate-0 transition-transform duration-500">
+            <div className="w-full max-w-[240px] shrink-0 flex justify-center lg:justify-end lg:translate-y-12 relative group perspective-1000">
+              <div className="relative w-full aspect-[9/19] -rotate-6 group-hover:rotate-0 transition-transform duration-700 ease-out">
+                {/* Glow behind phone */}
+                <div className="absolute inset-0 bg-primary-blue-light/30 rounded-[3rem] blur-2xl group-hover:bg-primary-blue-light/50 transition-colors duration-700" />
+                
                 {/* Phone Frame */}
-                <div className="absolute inset-0 bg-neutral-text-dark rounded-[2rem] border-[6px] border-neutral-text-dark shadow-2xl overflow-hidden flex flex-col">
+                <div className="absolute inset-0 bg-neutral-bg rounded-[2.5rem] border-[8px] border-neutral-text-dark shadow-2xl overflow-hidden flex flex-col relative z-10">
                   {/* Status Bar */}
-                  <div className="relative bg-white px-4 pt-2 pb-1 flex items-center justify-between text-[9px] font-bold text-neutral-text-dark shrink-0">
+                  <div className="relative bg-white px-5 pt-3 pb-1.5 flex items-center justify-between text-[10px] font-bold text-neutral-text-dark shrink-0">
                     <span>11:41</span>
-                    <div className="w-16 h-4 bg-neutral-text-dark rounded-full absolute left-1/2 -translate-x-1/2 top-1" />
-                    <div className="flex items-center gap-1">
-                      <Signal className="w-2.5 h-2.5" />
-                      <Wifi className="w-2.5 h-2.5" />
-                      <BatteryFull className="w-3 h-3" />
+                    <div className="w-16 h-5 bg-neutral-text-dark rounded-full absolute left-1/2 -translate-x-1/2 top-1" />
+                    <div className="flex items-center gap-1.5">
+                      <Signal className="w-3 h-3" />
+                      <Wifi className="w-3 h-3" />
+                      <BatteryFull className="w-3.5 h-3.5" />
                     </div>
                   </div>
 
                   {/* App Header */}
-                  <div className="bg-white px-3 py-2 border-b border-neutral-text-muted/10 flex items-center justify-between shrink-0">
-                    <ChevronLeft className="w-4 h-4 text-neutral-text-dark" />
-                    <span className="font-heading font-black text-xs text-neutral-text-dark">
+                  <div className="bg-white px-4 py-3 border-b border-neutral-text-muted/10 flex items-center justify-between shrink-0 shadow-sm relative z-20">
+                    <ChevronLeft className="w-5 h-5 text-neutral-text-dark" />
+                    <span className="font-heading font-black text-sm text-neutral-text-dark">
                       Car<span className="text-primary-blue">Blink</span>
                     </span>
-                    <div className="w-5 h-5 rounded-full bg-neutral-hero-bg flex items-center justify-center">
-                      <Search className="w-2.5 h-2.5 text-primary-blue" />
+                    <div className="w-6 h-6 rounded-full bg-neutral-bg flex items-center justify-center">
+                      <Search className="w-3 h-3 text-primary-blue" />
                     </div>
                   </div>
 
                   {/* Listings */}
-                  <div className="flex-1 bg-neutral-hero-bg p-2.5 flex flex-col gap-2">
+                  <div className="flex-1 bg-neutral-bg p-3 flex flex-col gap-3 relative z-10">
                     {PHONE_LISTINGS.map((item) => (
                       <div
                         key={item.name}
-                        className="bg-white p-2 rounded-xl border border-neutral-text-muted/10 shadow-sm flex items-center justify-between gap-2"
+                        className="bg-white p-2.5 rounded-2xl border border-neutral-text-muted/10 shadow-sm flex items-center justify-between gap-3 transform hover:-translate-y-0.5 transition-transform"
                       >
-                        <div className="flex items-center gap-2 min-w-0">
-                          <div className="relative w-8 h-8 rounded-lg overflow-hidden bg-neutral-hero-bg shrink-0">
+                        <div className="flex items-center gap-3 min-w-0">
+                          <div className="relative w-10 h-10 rounded-xl overflow-hidden bg-neutral-bg shrink-0">
                             <Image
                               src={item.image}
                               alt={item.name}
@@ -176,15 +144,15 @@ export default function SavingsBanner() {
                             />
                           </div>
                           <div className="flex flex-col min-w-0">
-                            <span className="font-heading font-bold text-[9px] text-neutral-text-dark truncate">
+                            <span className="font-heading font-bold text-[10px] text-neutral-text-dark truncate">
                               {item.name}
                             </span>
-                            <span className="font-body text-[8px] text-neutral-text-muted">
+                            <span className="font-body text-[9px] text-neutral-text-muted">
                               {item.subtitle}
                             </span>
                           </div>
                         </div>
-                        <span className="font-heading font-black text-[9px] text-success shrink-0">
+                        <span className="font-heading font-black text-[10px] text-accent-orange shrink-0">
                           &#8377;{item.price}
                         </span>
                       </div>
@@ -193,6 +161,7 @@ export default function SavingsBanner() {
                 </div>
               </div>
             </div>
+
           </div>
         </div>
       </Container>

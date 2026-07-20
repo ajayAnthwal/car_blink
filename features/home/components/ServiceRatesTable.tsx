@@ -5,22 +5,22 @@ import { SERVICE_RATES_LIST } from "../data/serviceRatesList";
 
 export default function ServiceRatesTable() {
   return (
-    <Card className="bg-white border border-neutral-text-muted/15 rounded-2xl p-6 md:p-7 shadow-sm w-full h-full">
-      {/* Column headers */}
-      <div className="grid grid-cols-3 gap-4 pb-3 border-b border-neutral-text-muted/15">
-        <span className="font-heading font-bold text-xs uppercase tracking-wide text-neutral-text-muted text-left">
-          Workshop
+    <div className="bg-white rounded-[2rem] border border-neutral-text-muted/10 shadow-lg shadow-neutral-text-muted/5 overflow-hidden h-full">
+      {/* Header */}
+      <div className="bg-primary-navy p-6 grid grid-cols-3 gap-4 text-white">
+        <span className="font-heading font-black tracking-wide text-sm text-left">
+          Top Workshops
         </span>
-        <span className="font-heading font-bold text-xs uppercase tracking-wide text-neutral-text-muted text-center">
-          Full Service
+        <span className="font-heading font-bold text-xs uppercase tracking-wide text-white/80 text-center">
+          Periodic Service
         </span>
-        <span className="font-heading font-bold text-xs uppercase tracking-wide text-neutral-text-muted text-center">
-          Oil Change
+        <span className="font-heading font-bold text-xs uppercase tracking-wide text-white/80 text-center">
+          Engine Repair
         </span>
       </div>
 
       {/* Rows */}
-      <div className="flex flex-col">
+      <div className="flex flex-col divide-y divide-neutral-text-muted/10">
         {SERVICE_RATES_LIST.map((rate, idx) => (
           <ServiceRateRow
             key={rate.workshopName}
@@ -29,6 +29,6 @@ export default function ServiceRatesTable() {
           />
         ))}
       </div>
-    </Card>
+    </div>
   );
 }
