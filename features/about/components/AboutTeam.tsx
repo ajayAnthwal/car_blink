@@ -15,7 +15,7 @@ export default function AboutTeam() {
             Leadership
           </Badge>
           <h2 className="font-heading font-black text-3xl sm:text-4xl text-neutral-text-dark tracking-tight mb-3">
-            The people behind CarBlink
+            The people behind Car Blink
           </h2>
           <p className="font-body text-neutral-text-muted max-w-md">
             A small team obsessed with making car servicing fair and simple.

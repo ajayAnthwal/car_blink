@@ -16,7 +16,7 @@ export default function HowItWorksPageHero() {
           </Badge>
 
           <h1 className="font-heading font-black text-4xl sm:text-5xl text-neutral-text-dark tracking-tight leading-tight">
-            How <span className="text-primary-blue">CarBlink</span> Works
+            How <span className="text-primary-blue">Car Blink</span> Works
           </h1>
 
           <p className="font-body text-neutral-text-muted text-base sm:text-lg leading-relaxed max-w-xl">

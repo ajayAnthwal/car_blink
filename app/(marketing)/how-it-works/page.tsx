@@ -5,9 +5,9 @@ import HowItWorksBenefits from "@/features/how-it-works/components/HowItWorksBen
 import FinalCTA from "@/features/home/components/FinalCTA";
 
 export const metadata: Metadata = {
-  title: "How It Works | CarBlink",
+  title: "How It Works | Car Blink",
   description:
-    "See how CarBlink helps you compare car service prices from verified workshops and book the best deal in four simple steps.",
+    "See how Car Blink helps you compare car service prices from verified workshops and book the best deal in four simple steps.",
 };
 
 export default function HowItWorksPage() {

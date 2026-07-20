@@ -51,7 +51,7 @@ export default function PricingContent() {
                 Always Free
               </Badge>
               <p className="mt-5 font-heading font-black text-5xl text-neutral-text-dark">
-                AED 0
+                ₹0
               </p>
               <p className="mt-1 font-body text-sm !text-black">
                 No subscription, no booking fee, no fine print.

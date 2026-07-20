@@ -22,7 +22,7 @@ export const ABOUT_VALUES: AboutValue[] = [
   {
     icon: ShieldCheck,
     title: "Trust First",
-    desc: "Every workshop on CarBlink is verified before it ever shows up in your search results.",
+    desc: "Every workshop on Car Blink is verified before it ever shows up in your search results.",
   },
   {
     icon: Sparkles,
@@ -50,7 +50,7 @@ export interface AboutJourneyStep {
 export const ABOUT_JOURNEY: AboutJourneyStep[] = [
   {
     year: "2021",
-    title: "CarBlink is founded",
+    title: "Car Blink is founded",
     desc: "Started with a simple idea: make car servicing as easy to compare as flight tickets.",
   },
   {
@@ -66,7 +66,7 @@ export const ABOUT_JOURNEY: AboutJourneyStep[] = [
   {
     year: "2025",
     title: "2,500+ workshops, 120K+ customers",
-    desc: "CarBlink becomes one of the region's most trusted car service comparison platforms.",
+    desc: "Car Blink becomes one of the region's most trusted car service comparison platforms.",
   },
 ];
 

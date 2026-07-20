@@ -17,7 +17,7 @@ export default function FinalCTA() {
               Ready to Save on Your Next Car Service?
             </h2>
             <p className="font-body text-neutral-text-muted text-base sm:text-lg mb-6">
-              Join 120,000+ smart car owners who already trust CarBlink.
+              Join 120,000+ smart car owners who already trust Car Blink.
             </p>
 
             <div className="flex flex-wrap items-center gap-x-6 gap-y-2 mb-8">

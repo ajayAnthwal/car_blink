@@ -47,7 +47,7 @@ export default function AboutJourney() {
           <div className="relative w-full aspect-[4/5] rounded-3xl overflow-hidden shadow-lg border border-neutral-text-muted/10">
             <Image
               src="/images/about3.png"
-              alt="CarBlink partnership with workshops"
+              alt="Car Blink partnership with workshops"
               fill
               className="object-cover"
               sizes="(max-width: 1024px) 100vw, 35vw"

@@ -20,7 +20,7 @@ export default function HowItWorks() {
           </Badge>
 
           <h2 className="font-heading font-black text-3xl sm:text-4xl text-neutral-text-dark tracking-tight mb-3">
-            How <span className="text-primary-blue">CarBlink</span> Works?
+            How <span className="text-primary-blue">Car Blink</span> Works?
           </h2>
           <p className="font-body text-neutral-text-muted max-w-md">
             Get the best car service in just 3 easy steps

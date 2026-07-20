@@ -56,7 +56,7 @@ export default function BlogPostPage({
             workshop when service is needed.
           </p>
           <p>
-            Want a transparent, upfront quote for your next service? CarBlink
+            Want a transparent, upfront quote for your next service? Car Blink
             connects you with verified workshops across 25+ cities so you always
             know the price before you commit.
           </p>

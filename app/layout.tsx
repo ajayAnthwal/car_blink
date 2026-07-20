@@ -17,8 +17,8 @@ const inter = Inter({
 });
 
 export const metadata: Metadata = {
-  title: "Carblink",
-  description: "Carblink application",
+  title: "Car Blink",
+  description: "Car Blink application",
 };
 
 export default function RootLayout({

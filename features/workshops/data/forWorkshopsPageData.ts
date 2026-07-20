@@ -26,7 +26,7 @@ export const WORKSHOP_BENEFITS: WorkshopBenefit[] = [
   {
     icon: UserCheck,
     title: "Verified Leads Only",
-    desc: "Every request comes from a verified CarBlink user, so your team spends time quoting, not filtering spam.",
+    desc: "Every request comes from a verified Car Blink user, so your team spends time quoting, not filtering spam.",
   },
   {
     icon: CreditCard,
@@ -46,7 +46,7 @@ export const WORKSHOP_BENEFITS: WorkshopBenefit[] = [
   {
     icon: Megaphone,
     title: "Marketing, Handled for You",
-    desc: "Your workshop gets featured across CarBlink's search, city pages and seasonal campaigns at no extra cost.",
+    desc: "Your workshop gets featured across Car Blink's search, city pages and seasonal campaigns at no extra cost.",
   },
 ];
 
@@ -74,7 +74,7 @@ export const WORKSHOP_STEPS: WorkshopStep[] = [
   },
   {
     icon: Rocket,
-    title: "Grow with CarBlink",
+    title: "Grow with Car Blink",
     desc: "Convert quotes to bookings and watch your monthly revenue climb.",
   },
 ];
@@ -88,13 +88,13 @@ export interface WorkshopTestimonial {
 export const WORKSHOP_TESTIMONIALS: WorkshopTestimonial[] = [
   {
     quote:
-      "Since joining CarBlink, our bay utilisation went from 60% to nearly full every weekday. The dashboard makes follow-ups painless.",
+      "Since joining Car Blink, our bay utilisation went from 60% to nearly full every weekday. The dashboard makes follow-ups painless.",
     name: "Ravi Malhotra",
     role: "Owner, Malhotra Auto Care",
   },
   {
     quote:
-      "No upfront fees, and payouts actually arrive on time. That alone makes CarBlink different from every other platform we tried.",
+      "No upfront fees, and payouts actually arrive on time. That alone makes Car Blink different from every other platform we tried.",
     name: "Sana Sheikh",
     role: "Manager, QuickFix Garage",
   },
@@ -115,7 +115,7 @@ export interface WorkshopFaq {
 export const WORKSHOP_FAQS: WorkshopFaq[] = [
   {
     id: "wf-1",
-    q: "Is there any cost to list my workshop on CarBlink?",
+    q: "Is there any cost to list my workshop on Car Blink?",
     a: "Listing is completely free. On the Starter plan we only charge a small commission on confirmed bookings — you don't pay unless you earn.",
   },
   {
@@ -126,7 +126,7 @@ export const WORKSHOP_FAQS: WorkshopFaq[] = [
   {
     id: "wf-3",
     q: "How and when do I get paid?",
-    a: "Customers pay through CarBlink at the time of booking. Funds are released to your linked bank account within 48 hours of job completion on the Growth plan, or 3–5 business days on Starter.",
+    a: "Customers pay through Car Blink at the time of booking. Funds are released to your linked bank account within 48 hours of job completion on the Growth plan, or 3–5 business days on Starter.",
   },
   {
     id: "wf-4",

@@ -16,7 +16,7 @@ export default function WorkshopsBenefits() {
             Everything a workshop needs to grow online
           </h2>
           <p className="mt-3 font-body text-neutral-text-muted">
-            Skip the ad spend and word-of-mouth guesswork. CarBlink brings
+            Skip the ad spend and word-of-mouth guesswork. Car Blink brings
             demand, tools and trust to your workshop — all in one place.
           </p>
         </div>

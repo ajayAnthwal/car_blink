@@ -51,7 +51,7 @@ export const DETAILED_STEPS: DetailedStep[] = [
     icon: CalendarCheck,
     title: "Book & Save",
     description:
-      "Confirm your booking and pay securely through CarBlink. Track your service live and drive away having saved real money.",
+      "Confirm your booking and pay securely through Car Blink. Track your service live and drive away having saved real money.",
     image: "/images/about1.png",
     alt: "Car being serviced in a workshop bay",
   },
@@ -68,7 +68,7 @@ export const HOW_IT_WORKS_BENEFITS: HowItWorksBenefit[] = [
     icon: ShieldCheck,
     title: "Verified Workshops Only",
     description:
-      "Every workshop on CarBlink is background-checked and quality-assured before it can quote you.",
+      "Every workshop on Car Blink is background-checked and quality-assured before it can quote you.",
   },
   {
     icon: Wallet,

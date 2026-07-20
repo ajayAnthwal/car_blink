@@ -10,7 +10,7 @@ export default function AboutValues() {
       <Container>
         <div className="flex flex-col items-center text-center mb-12">
           <Badge variant="info" className="mb-4">
-            The CarBlink Standard
+            The Car Blink Standard
           </Badge>
           <h2 className="font-heading font-black text-3xl sm:text-4xl text-neutral-text-dark tracking-tight mb-3">
             The principles behind every decision

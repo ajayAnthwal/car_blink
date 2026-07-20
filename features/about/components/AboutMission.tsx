@@ -28,7 +28,7 @@ export default function AboutMission() {
             struggle to find customers beyond their immediate neighbourhood.
           </p>
           <p className="font-body text-neutral-text-muted text-base leading-relaxed">
-            CarBlink closes that gap. We verify every workshop on our platform,
+            Car Blink closes that gap. We verify every workshop on our platform,
             surface real prices upfront, and let customers pick based on quality
             and cost — not guesswork.
           </p>
@@ -62,7 +62,7 @@ export default function AboutMission() {
           <div className="relative w-full max-w-md aspect-square rounded-3xl overflow-hidden shadow-lg border border-neutral-text-muted/10">
             <Image
               src="/images/about2.png"
-              alt="CarBlink diagnostics and transparent pricing"
+              alt="Car Blink diagnostics and transparent pricing"
               fill
               className="object-cover"
               sizes="(max-width: 768px) 100vw, 40vw"
@@ -76,7 +76,7 @@ export default function AboutMission() {
           <div className="hidden sm:block absolute -bottom-2 -left-2 w-32 h-32 rounded-2xl overflow-hidden shadow-xl border-4 border-white">
             <Image
               src="/images/about4.png"
-              alt="A CarBlink customer reviewing a service quote"
+              alt="A Car Blink customer reviewing a service quote"
               fill
               className="object-cover"
               sizes="128px"

@@ -12,7 +12,7 @@ export default function HowItWorksBenefits() {
             Why It Works So Well
           </h2>
           <p className="font-body text-neutral-text-muted max-w-md">
-            Thousands of car owners trust CarBlink because we take the
+            Thousands of car owners trust Car Blink because we take the
             guesswork out of car servicing.
           </p>
         </div>

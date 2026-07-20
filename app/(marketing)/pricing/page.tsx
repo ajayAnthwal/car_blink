@@ -5,7 +5,7 @@ import PricingFAQ from "@/features/pricing/components/PricingFAQ";
 import FinalCTA from "@/features/home/components/FinalCTA";
 
 export const metadata: Metadata = {
-  title: "Pricing | CarBlink",
+  title: "Pricing | Car Blink",
   description:
     "Free forever for car owners. Flexible, transparent plans for workshops that want to grow. No hidden fees, ever.",
 };

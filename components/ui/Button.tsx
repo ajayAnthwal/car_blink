@@ -1,4 +1,5 @@
 import React from "react";
+import Link from "next/link";
 
 export interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
   variant?: "primary" | "outline" | "white" | "ghost" | "link" | "accent";
@@ -6,6 +7,7 @@ export interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElemen
   fullWidth?: boolean;
   leftIcon?: React.ReactNode;
   rightIcon?: React.ReactNode;
+  href?: string;
 }
 
 export default function Button({
@@ -15,6 +17,7 @@ export default function Button({
   fullWidth = false,
   leftIcon,
   rightIcon,
+  href,
   children,
   ...props
 }: ButtonProps) {
@@ -36,10 +39,21 @@ export default function Button({
   };
 
   const widthStyle = fullWidth ? "w-full" : "";
+  const combinedClasses = `${baseStyles} ${variants[variant]} ${sizes[size]} ${widthStyle} ${className}`;
+
+  if (href) {
+    return (
+      <Link href={href} className={combinedClasses}>
+        {leftIcon && <span className="mr-2 flex items-center">{leftIcon}</span>}
+        {children}
+        {rightIcon && <span className="ml-2 flex items-center">{rightIcon}</span>}
+      </Link>
+    );
+  }
 
   return (
     <button
-      className={`${baseStyles} ${variants[variant]} ${sizes[size]} ${widthStyle} ${className}`}
+      className={combinedClasses}
       {...props}
     >
       {leftIcon && <span className="mr-2 flex items-center">{leftIcon}</span>}

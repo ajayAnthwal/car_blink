@@ -36,7 +36,7 @@ const STATS_DATA = [
   },
   {
     icon: MapPin,
-    number: "UAE Wide",
+    number: "India Wide",
     label: "Coverage",
     iconBg: "bg-primary-blue/10",
     iconColor: "text-primary-blue",

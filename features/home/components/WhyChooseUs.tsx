@@ -15,7 +15,7 @@ export default function WhyChooseUs() {
           <div className="relative w-full max-w-md aspect-square rounded-3xl overflow-hidden shadow-lg border border-neutral-text-muted/10">
             <Image
               src="/images/why-choose-us.png"
-              alt="Why Choose CarBlink"
+              alt="Why Choose Car Blink"
               fill
               className="object-cover"
               sizes="(max-width: 768px) 100vw, 40vw"
@@ -31,7 +31,7 @@ export default function WhyChooseUs() {
         <div className="lg:col-span-7 flex flex-col gap-8 text-left">
           <div className="flex flex-col gap-3">
             <h2 className="font-heading font-black text-3xl sm:text-4xl text-primary-navy tracking-tight">
-              Why Choose <span className="text-primary-blue">CarBlink</span>?
+              Why Choose <span className="text-primary-blue">Car Blink</span>?
             </h2>
           </div>
 

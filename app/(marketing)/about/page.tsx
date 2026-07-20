@@ -9,9 +9,9 @@ import TrustBadges from "@/features/home/components/TrustBadges";
 import FinalCTA from "@/features/home/components/FinalCTA";
 
 export const metadata: Metadata = {
-  title: "About Us | CarBlink",
+  title: "About Us | Car Blink",
   description:
-    "CarBlink connects car owners with verified workshops through transparent, upfront pricing. Learn about our mission, values, journey, and the team behind it.",
+    "Car Blink connects car owners with verified workshops through transparent, upfront pricing. Learn about our mission, values, journey, and the team behind it.",
 };
 
 export default function AboutPage() {

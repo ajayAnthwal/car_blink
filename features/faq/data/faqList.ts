@@ -7,13 +7,13 @@ export interface FAQItemData {
 export const FAQ_LIST: FAQItemData[] = [
   {
     id: "faq-1",
-    question: "How does CarBlink work?",
-    answer: "CarBlink allows you to compare car service quotes from top verified workshops in your city. Just choose your car, select the required service, and get live workshop offers.",
+    question: "How does Car Blink work?",
+    answer: "Car Blink allows you to compare car service quotes from top verified workshops in your city. Just choose your car, select the required service, and get live workshop offers.",
   },
   {
     id: "faq-2",
-    question: "Is CarBlink free to use?",
-    answer: "Yes! CarBlink is 100% free to use. There are no hidden service charges, booking fees, or price markup.",
+    question: "Is Car Blink free to use?",
+    answer: "Yes! Car Blink is 100% free to use. There are no hidden service charges, booking fees, or price markup.",
   },
   {
     id: "faq-3",

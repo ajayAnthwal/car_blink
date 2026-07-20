@@ -92,8 +92,8 @@ export default function LiveQuotes() {
             className="pl-12 bg-white border-neutral-text-muted/20"
             options={[
               { value: "", label: "Location" },
-              { value: "dubai", label: "Dubai, UAE" },
-              { value: "abudhabi", label: "Abu Dhabi, UAE" },
+              { value: "delhi", label: "Delhi NCR, India" },
+              { value: "mumbai", label: "Mumbai, India" },
             ]}
           />
         </div>

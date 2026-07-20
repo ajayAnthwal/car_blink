@@ -14,7 +14,7 @@ export default function WorkshopsTestimonials() {
             Partner Stories
           </Badge>
           <h2 className="font-heading font-black text-3xl sm:text-4xl text-neutral-text-dark tracking-tight">
-            Workshops that grew with CarBlink
+            Workshops that grew with Car Blink
           </h2>
         </div>
 

@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import Link from "next/link";
 import {
   Wrench,
   Cog,
@@ -44,77 +45,77 @@ const services: ServiceItem[] = [
   {
     name: "Periodic Service",
     description: "Complete health checkup, oil change & multi-point inspection.",
-    priceFrom: "AED 149",
+    priceFrom: "₹2,499",
     category: "Maintenance",
     icon: Wrench,
   },
   {
     name: "Engine Repair",
     description: "Diagnostics and repair for engine noise, leaks & performance.",
-    priceFrom: "AED 299",
+    priceFrom: "₹4,999",
     category: "Repair",
     icon: Cog,
   },
   {
     name: "Dent & Paint",
     description: "Dent removal and panel repainting with colour-match guarantee.",
-    priceFrom: "AED 349",
+    priceFrom: "₹5,499",
     category: "Cosmetic",
     icon: PaintBucket,
   },
   {
     name: "Car Wash",
     description: "Exterior foam wash, interior vacuuming & tyre shine.",
-    priceFrom: "AED 29",
+    priceFrom: "₹499",
     category: "Maintenance",
     icon: Droplets,
   },
   {
     name: "Detailing",
     description: "Deep interior & exterior detailing to restore that new-car feel.",
-    priceFrom: "AED 199",
+    priceFrom: "₹2,999",
     category: "Cosmetic",
     icon: Sparkles,
   },
   {
     name: "PPF (Paint Protection Film)",
     description: "Long-lasting film that shields your paint from scratches.",
-    priceFrom: "AED 1,599",
+    priceFrom: "₹25,999",
     category: "Cosmetic",
     icon: ShieldCheck,
   },
   {
     name: "Ceramic Coating",
     description: "Glass-like shine with lasting protection from the elements.",
-    priceFrom: "AED 899",
+    priceFrom: "₹14,999",
     category: "Cosmetic",
     icon: CircleDot,
   },
   {
     name: "Tyres",
     description: "Genuine tyre brands with free fitting & wheel balancing.",
-    priceFrom: "AED 349 / tyre",
+    priceFrom: "₹5,499 / tyre",
     category: "Maintenance",
     icon: Disc3,
   },
   {
     name: "Battery",
     description: "Doorstep battery replacement with warranty, top brands.",
-    priceFrom: "AED 449",
+    priceFrom: "₹6,499",
     category: "Maintenance",
     icon: BatteryCharging,
   },
   {
     name: "AC Repair",
     description: "Gas top-up, compressor & cooling system diagnostics.",
-    priceFrom: "AED 99",
+    priceFrom: "₹1,499",
     category: "Repair",
     icon: Wind,
   },
   {
     name: "Suspension",
     description: "Shock absorbers, struts & suspension noise fixes.",
-    priceFrom: "AED 249",
+    priceFrom: "₹3,999",
     category: "Repair",
     icon: SlidersHorizontal,
   },
@@ -128,14 +129,14 @@ const services: ServiceItem[] = [
   {
     name: "Clutch Repair",
     description: "Clutch plate, pressure plate & release bearing service.",
-    priceFrom: "AED 399",
+    priceFrom: "₹5,999",
     category: "Repair",
     icon: Settings2,
   },
   {
     name: "Brake Service",
     description: "Brake pad replacement, disc skimming & fluid change.",
-    priceFrom: "AED 89",
+    priceFrom: "₹1,299",
     category: "Maintenance",
     icon: Disc,
   },
@@ -208,10 +209,10 @@ export default function ServicesCatalog() {
                       {service.priceFrom}
                     </span>
                   </div>
-                  <button className="flex items-center gap-1 font-heading text-sm font-bold text-primary-blue hover:text-primary-blue-dark transition-colors">
+                  <Link href={`/services/${service.name.toLowerCase().replace(/[^a-z0-9]+/g, '-')}`} className="flex items-center gap-1 font-heading text-sm font-bold text-primary-blue hover:text-primary-blue-dark transition-colors">
                     Get Quote
                     <ArrowRight className="w-4 h-4" />
-                  </button>
+                  </Link>
                 </div>
               </Card>
             );

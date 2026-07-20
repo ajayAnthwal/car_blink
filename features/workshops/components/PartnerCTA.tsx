@@ -33,7 +33,7 @@ export default function PartnerCTA() {
             Become a Verified Partner
           </h3>
           <p className="font-body text-sm text-neutral-text-muted max-w-sm">
-            Join CarBlink&apos;s trusted workshop network and get discovered by thousands of car owners looking for service near them.
+            Join Car Blink&apos;s trusted workshop network and get discovered by thousands of car owners looking for service near them.
           </p>
         </div>
 

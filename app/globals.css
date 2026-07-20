@@ -3,7 +3,7 @@
 @tailwind utilities;
 
 :root {
-  /* Brand colors — matched exactly to the CarBlink logo */
+  /* Brand colors — matched exactly to the Car Blink logo */
   --color-primary-blue: #0C79D8;
   --color-primary-blue-dark: #0A63B0;
   --color-primary-navy: #0B1220;

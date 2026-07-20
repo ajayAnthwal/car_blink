@@ -130,7 +130,7 @@ export default function Footer() {
         {/* Copyright Notice */}
         <div className="mt-12 pt-8 border-t border-primary-navy-light text-center">
           <p className="font-body text-xs text-neutral-text-muted">
-            &copy; {currentYear} CarBlink. All rights reserved.
+            &copy; {currentYear} Car Blink. All rights reserved.
           </p>
         </div>
       </div>

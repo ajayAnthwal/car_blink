@@ -25,7 +25,7 @@ export default function AboutHero() {
           <Badge variant="info" className="bg-white border-primary-blue/20 text-primary-blue shadow-sm">
             <span className="flex items-center gap-2">
               <Sparkles className="w-3.5 h-3.5" />
-              <span className="font-bold">About CarBlink</span>
+              <span className="font-bold">About Car Blink</span>
             </span>
           </Badge>
 

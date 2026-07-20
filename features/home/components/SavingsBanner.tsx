@@ -78,7 +78,7 @@ export default function SavingsBanner() {
 
                 <div className="relative flex flex-col justify-center bg-white px-5 py-4 rounded-2xl border border-success/20 shadow-sm">
                   <span className="font-heading font-bold text-[10px] text-primary-blue uppercase tracking-wider mb-1.5">
-                    Best Price on CarBlink
+                    Best Price on Car Blink
                   </span>
                   <div className="flex items-center gap-2.5">
                     <span className="font-heading font-black text-xl text-success">
@@ -127,7 +127,7 @@ export default function SavingsBanner() {
               </div>
 
               {/* CTA */}
-              <Button variant="primary" size="lg" rightIcon={<ArrowRight className="w-5 h-5" />}>
+              <Button variant="primary" size="lg" rightIcon={<ArrowRight className="w-5 h-5" />} href="/quotes">
                 Compare Prices Now
               </Button>
             </div>

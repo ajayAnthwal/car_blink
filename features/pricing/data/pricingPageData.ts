@@ -28,7 +28,7 @@ export const WORKSHOP_PLANS: WorkshopPlan[] = [
     period: "forever",
     tagline: "For workshops just getting started with online leads.",
     features: [
-      { label: "Listing on CarBlink search", included: true },
+      { label: "Listing on Car Blink search", included: true },
       { label: "Up to 20 leads / month", included: true },
       { label: "Standard dashboard access", included: true },
       { label: "Payout in 3–5 business days", included: true },
@@ -41,11 +41,11 @@ export const WORKSHOP_PLANS: WorkshopPlan[] = [
   },
   {
     name: "Growth",
-    price: { monthly: "AED 149", yearly: "AED 119" },
+    price: { monthly: "₹2,499", yearly: "₹1,999" },
     period: "/month",
     tagline: "For workshops ready to scale bookings city-wide.",
     features: [
-      { label: "Listing on CarBlink search", included: true },
+      { label: "Listing on Car Blink search", included: true },
       { label: "Unlimited leads", included: true },
       { label: "Advanced dashboard + analytics", included: true },
       { label: "Payout in 48 hours", included: true },
@@ -84,12 +84,12 @@ export interface PricingFaq {
 export const PRICING_FAQS: PricingFaq[] = [
   {
     id: "pf-1",
-    q: "Is CarBlink really free for car owners?",
-    a: "Yes. Comparing quotes and booking a service through CarBlink costs nothing extra — you pay the workshop's quoted price, with no hidden platform fee.",
+    q: "Is Car Blink really free for car owners?",
+    a: "Yes. Comparing quotes and booking a service through Car Blink costs nothing extra — you pay the workshop's quoted price, with no hidden platform fee.",
   },
   {
     id: "pf-2",
-    q: "How does CarBlink make money?",
+    q: "How does Car Blink make money?",
     a: "We charge workshops a small commission on confirmed bookings, plus optional subscription plans like Growth for workshops that want more visibility and leads.",
   },
   {

@@ -17,7 +17,7 @@ export function Logo({ light = false }: { light?: boolean }) {
     <Link href="/" className="flex items-center group">
       <Image
         src={light ? "/images/brand/logo-wordmark.png" : "/images/brand/logo-wordmark-dark.png"}
-        alt="CarBlink — One Platform For Every Car Service"
+        alt="Car Blink — One Platform For Every Car Service"
         width={219}
         height={67}
         priority

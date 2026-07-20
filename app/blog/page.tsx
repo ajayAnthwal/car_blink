@@ -13,7 +13,7 @@ export default function BlogPage() {
 
         <div className="relative mx-auto w-full max-w-7xl px-4 py-16 text-center sm:px-6 lg:px-8 sm:py-20">
           <span className="inline-flex items-center rounded-full bg-white/5 px-3 py-1 text-xs font-semibold tracking-wide text-primary-blue ring-1 ring-white/10">
-            CarBlink Blog
+            Car Blink Blog
           </span>
           <h1 className="mx-auto mt-5 max-w-2xl text-4xl font-extrabold leading-[1.1] text-white sm:text-5xl">
             Tips, guides & <span className="text-primary-blue">car care</span>{" "}

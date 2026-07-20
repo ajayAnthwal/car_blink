@@ -27,11 +27,16 @@ export default function ServicesGrid() {
         {/* Services Responsive Grid */}
         <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3">
           {SERVICES_LIST.map((service, idx) => (
-            <ServiceCard
-              key={idx}
-              label={service.label}
-              iconName={service.iconName}
-            />
+            <Link 
+              key={idx} 
+              href={`/services/${service.label.toLowerCase().replace(/[^a-z0-9]+/g, '-')}`}
+              className="block"
+            >
+              <ServiceCard
+                label={service.label}
+                iconName={service.iconName}
+              />
+            </Link>
           ))}
         </div>
       </Container>

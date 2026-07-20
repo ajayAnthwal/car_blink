@@ -49,7 +49,7 @@ export default function HeroSection() {
           {/* Badge Tagline */}
           <Badge variant="info" className="bg-white border-primary-blue/20 text-primary-blue shadow-sm">
             <span className="flex items-center gap-2">
-              <span className="font-bold">#1 Car Service Comparison Platform in UAE</span>
+              <span className="font-bold">#1 Car Service Comparison Platform in India</span>
               <span className="flex -space-x-2">
                 <div className="w-5 h-5 rounded-full bg-gray-200 border border-white" />
                 <div className="w-5 h-5 rounded-full bg-gray-300 border border-white" />
@@ -76,6 +76,7 @@ export default function HeroSection() {
               size="lg"
               className="w-full sm:w-auto"
               rightIcon={<ArrowRight className="w-5 h-5" />}
+              href="/quotes"
             >
               Get Free Quote
             </Button>
@@ -84,13 +85,14 @@ export default function HeroSection() {
               size="lg"
               className="w-full sm:w-auto border border-neutral-text-muted/20"
               leftIcon={<div className="w-5 h-5 rounded-full border-2 border-primary-blue flex items-center justify-center pl-0.5"><div className="w-0 h-0 border-t-4 border-t-transparent border-l-6 border-l-primary-blue border-b-4 border-b-transparent" /></div>}
+              href="/how-it-works"
             >
               Watch How It Works
             </Button>
           </div>
 
           <div className="text-sm font-medium text-neutral-text-dark mt-2">
-            Trusted by <span className="text-primary-blue font-bold">120,000+</span> car owners across UAE
+            Trusted by <span className="text-primary-blue font-bold">120,000+</span> car owners across India
           </div>
 
           {/* Hero Feature Badges Grid */}
@@ -126,7 +128,7 @@ export default function HeroSection() {
           {/* <div className="absolute -left-32 -bottom-24 w-[140%] z-10 hidden lg:block opacity-90 pointer-events-none">
             <Image
               src="/images/homeheroimage.png"
-              alt="Carblink Hero Car"
+              alt="Car Blink Hero Car"
               width={800}
               height={500}
               className="object-contain drop-shadow-2xl"

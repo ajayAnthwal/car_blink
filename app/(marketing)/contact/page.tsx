@@ -269,7 +269,7 @@ export default function ContactPage() {
               </div>
               <div className="p-6">
                 <h3 className="font-heading font-bold text-sm text-neutral-text-dark">
-                  CarBlink Head Office
+                  Car Blink Head Office
                 </h3>
                 <p className="font-body mt-1 text-sm text-neutral-text-muted">
                   4th Floor, DLF Cyber City, Gurugram, Haryana 122002

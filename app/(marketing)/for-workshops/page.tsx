@@ -8,9 +8,9 @@ import WorkshopsFAQ from "@/features/workshops/components/WorkshopsFAQ";
 import PartnerCTA from "@/features/workshops/components/PartnerCTA";
 
 export const metadata: Metadata = {
-  title: "For Workshops | CarBlink",
+  title: "For Workshops | Car Blink",
   description:
-    "Join 2,500+ verified workshops on CarBlink and get a steady stream of genuine service requests from car owners near you — zero setup cost, reliable payouts.",
+    "Join 2,500+ verified workshops on Car Blink and get a steady stream of genuine service requests from car owners near you — zero setup cost, reliable payouts.",
 };
 
 export default function ForWorkshopsPage() {

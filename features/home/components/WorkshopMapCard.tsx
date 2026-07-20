@@ -49,12 +49,12 @@ export default function WorkshopMapCard() {
           <span className="font-heading font-bold text-sm text-neutral-text-dark leading-tight">
             Elite Auto Service
           </span>
-          <span className="font-body text-xs text-neutral-text-muted">Al Quoz, Dubai</span>
+          <span className="font-body text-xs text-neutral-text-muted">Gurugram, Delhi NCR</span>
           <span className="flex items-center gap-1">
             <Star className="w-3.5 h-3.5 text-warning fill-warning" />
             <span className="font-body text-xs font-medium text-neutral-text-dark">4.8 (1.2K Reviews)</span>
           </span>
-          <span className="font-heading font-bold text-sm text-success mt-1">From AED 620</span>
+          <span className="font-heading font-bold text-sm text-success mt-1">From ₹4,500</span>
           <Button variant="primary" size="sm" fullWidth className="mt-2 rounded-lg">
             View Profile
           </Button>
