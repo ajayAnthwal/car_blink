@@ -87,6 +87,7 @@ export default function LoginPage() {
                   Log out
                 </Button>
               </div>
+            ) : (
               <div>
                 {step === 1 ? (
                   <form onSubmit={handleSendOtp} className="space-y-5">
