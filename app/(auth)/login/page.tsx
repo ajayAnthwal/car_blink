@@ -142,7 +142,7 @@ export default function LoginPage() {
                   </form>
                 )}
               </div>
-
+            )}
             <p className="font-body mt-6 text-center text-sm text-neutral-text-muted">
               Want to partner your workshop?{" "}
               <Link
