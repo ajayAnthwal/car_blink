@@ -13,10 +13,13 @@ import {
   ArrowRight,
   ShieldCheck,
   Star,
-  MapPin
+  MapPin,
+  LocateFixed,
+  Loader2
 } from "lucide-react";
 import Container from "@/components/ui/Container";
 import Button from "@/components/ui/Button";
+import LocationModal from "@/components/ui/LocationModal";
 
 const MAKES = [
   "Maruti Suzuki", "Hyundai", "Tata", "Mahindra", "Kia", 
@@ -45,6 +48,8 @@ const ALL_SERVICES = [
 function QuotesForm() {
   const searchParams = useSearchParams();
   const [step, setStep] = useState(1);
+  const [isLocating, setIsLocating] = useState(false);
+  const [showMapModal, setShowMapModal] = useState(false);
   const [formData, setFormData] = useState({
     make: "",
     model: "",
@@ -121,6 +126,42 @@ function QuotesForm() {
     }
     
     return "---";
+  };
+
+  const detectLocation = () => {
+    if ("geolocation" in navigator) {
+      setIsLocating(true);
+      navigator.geolocation.getCurrentPosition(
+        async (position) => {
+          try {
+            const { latitude, longitude } = position.coords;
+            const response = await fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${latitude}&lon=${longitude}&zoom=14&addressdetails=1`);
+            const data = await response.json();
+            
+            if (data && data.address) {
+              const city = data.address.city || data.address.town || data.address.state_district || data.address.state;
+              const area = data.address.suburb || data.address.neighbourhood || data.address.residential || "";
+              const locationStr = area ? `${area}, ${city}` : city || "Location found";
+              updateForm("location", locationStr);
+            } else {
+              updateForm("location", `${latitude.toFixed(4)}, ${longitude.toFixed(4)}`);
+            }
+          } catch (error) {
+            console.error("Error fetching location details:", error);
+          } finally {
+            setIsLocating(false);
+          }
+        },
+        (error) => {
+          console.error("Geolocation error:", error);
+          alert("Please allow location access to auto-detect.");
+          setIsLocating(false);
+        },
+        { enableHighAccuracy: true, timeout: 10000, maximumAge: 0 }
+      );
+    } else {
+      alert("Location detection is not supported by your browser.");
+    }
   };
 
   const nextStep = () => setStep((s) => Math.min(s + 1, 4));
@@ -313,14 +354,29 @@ function QuotesForm() {
                   />
                 </div>
                 <div>
-                  <label className="block font-heading font-semibold text-sm text-neutral-text-dark mb-1.5">Current Location</label>
-                  <input 
-                    type="text" 
-                    value={formData.location}
-                    onChange={(e) => updateForm("location", e.target.value)}
-                    placeholder="New Delhi"
-                    className="w-full px-4 py-3 rounded-xl border border-neutral-text-muted/20 bg-neutral-bg focus:bg-white focus:outline-none focus:ring-2 focus:ring-primary-blue/20 transition-all font-body text-sm"
-                  />
+                  <div className="flex items-center justify-between mb-1.5">
+                    <label className="block font-heading font-semibold text-sm text-neutral-text-dark">Current Location</label>
+                    <button 
+                      type="button"
+                      onClick={() => setShowMapModal(true)}
+                      className="flex items-center gap-1.5 text-xs font-semibold text-primary-blue hover:text-primary-blue-dark transition-colors"
+                    >
+                      <LocateFixed className="w-3.5 h-3.5" />
+                      Select on Map
+                    </button>
+                  </div>
+                  <div className="relative">
+                    <input 
+                      type="text" 
+                      value={formData.location}
+                      onChange={(e) => updateForm("location", e.target.value)}
+                      onClick={() => setShowMapModal(true)}
+                      placeholder="e.g. Connaught Place, New Delhi"
+                      readOnly
+                      className="w-full pl-10 pr-4 py-3 rounded-xl border border-neutral-text-muted/20 bg-neutral-bg focus:bg-white focus:outline-none focus:ring-2 focus:ring-primary-blue/20 transition-all font-body text-sm cursor-pointer"
+                    />
+                    <MapPin className="w-4 h-4 text-neutral-text-muted absolute left-3.5 top-1/2 -translate-y-1/2" />
+                  </div>
                 </div>
               </div>
               <div>
@@ -485,6 +541,13 @@ function QuotesForm() {
 
         </div>
       </Container>
+      <LocationModal 
+        isOpen={showMapModal} 
+        onClose={() => setShowMapModal(false)} 
+        onConfirm={(locStr) => {
+          updateForm("location", locStr);
+        }} 
+      />
     </div>
   );
 }

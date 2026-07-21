@@ -2,6 +2,8 @@
 
 import { useState } from "react";
 import Button from "@/components/ui/Button";
+import LocationModal from "@/components/ui/LocationModal";
+import { LocateFixed, MapPin } from "lucide-react";
 
 export default function HeroForm() {
   const [formData, setFormData] = useState({
@@ -10,6 +12,7 @@ export default function HeroForm() {
     carDetails: "",
     address: "",
   });
+  const [showMapModal, setShowMapModal] = useState(false);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -86,19 +89,34 @@ export default function HeroForm() {
         </div>
 
         <div>
-          <label htmlFor="address" className="block text-sm font-medium text-neutral-text-dark mb-1">
-            Address / Location
-          </label>
-          <textarea
-            id="address"
-            name="address"
-            value={formData.address}
-            onChange={handleChange}
-            required
-            rows={2}
-            className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-primary-blue focus:border-transparent transition-all resize-none"
-            placeholder="Your residential address or area"
-          />
+          <div className="flex items-center justify-between mb-1">
+            <label htmlFor="address" className="block text-sm font-medium text-neutral-text-dark">
+              Address / Location
+            </label>
+            <button 
+              type="button"
+              onClick={() => setShowMapModal(true)}
+              className="flex items-center gap-1.5 text-xs font-semibold text-primary-blue hover:text-primary-blue-dark transition-colors"
+            >
+              <LocateFixed className="w-3.5 h-3.5" />
+              Select on Map
+            </button>
+          </div>
+          <div className="relative">
+            <input
+              type="text"
+              id="address"
+              name="address"
+              value={formData.address}
+              onChange={handleChange}
+              onClick={() => setShowMapModal(true)}
+              required
+              readOnly
+              className="w-full pl-10 pr-4 py-3 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-primary-blue focus:border-transparent transition-all cursor-pointer"
+              placeholder="e.g., Cyber City, Gurgaon"
+            />
+            <MapPin className="w-4 h-4 text-neutral-text-muted absolute left-3.5 top-1/2 -translate-y-1/2" />
+          </div>
         </div>
 
         <Button
@@ -110,6 +128,14 @@ export default function HeroForm() {
           Submit Query
         </Button>
       </form>
+
+      <LocationModal 
+        isOpen={showMapModal} 
+        onClose={() => setShowMapModal(false)} 
+        onConfirm={(locStr) => {
+          setFormData(prev => ({ ...prev, address: locStr }));
+        }} 
+      />
     </div>
   );
 }
