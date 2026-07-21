@@ -213,9 +213,9 @@ export default function ServicesCatalog() {
                   </div>
                   <Link 
                     href={`/services/${service.name.toLowerCase().replace(/[^a-z0-9]+/g, '-')}`} 
-                    className="flex items-center justify-center w-10 h-10 rounded-full bg-primary-blue/10 text-primary-blue group-hover:bg-primary-blue group-hover:text-white transition-colors duration-300"
+                    className="inline-flex items-center justify-center px-4 py-2 rounded-full font-heading text-xs font-bold bg-primary-blue/10 text-primary-blue group-hover:bg-primary-blue group-hover:text-white transition-all duration-300"
                   >
-                    <ArrowRight className="w-5 h-5" />
+                    Compare Now
                   </Link>
                 </div>
               </Card>
