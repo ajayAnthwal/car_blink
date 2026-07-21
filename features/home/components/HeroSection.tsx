@@ -5,8 +5,8 @@ import { ShieldCheck, FileText, CheckCircle, ArrowRight, MapPin } from "lucide-r
 import Button from "@/components/ui/Button";
 import Badge from "@/components/ui/Badge";
 import Container from "@/components/ui/Container";
-import LiveQuotes from "@/features/quotes/components/LiveQuotes";
 import HeroFeatureBadge from "./HeroFeatureBadge";
+import HeroForm from "./HeroForm";
 
 const HERO_FEATURES = [
   {
@@ -65,9 +65,14 @@ export default function HeroSection() {
           </h1>
 
           {/* Subheading Description */}
-          <p className="font-body text-base sm:text-lg text-neutral-text-muted leading-relaxed max-w-lg">
-            Book the best car service near you at the most competitive prices — Save Time, Save Money.
-          </p>
+          <div className="flex flex-col gap-2 max-w-lg">
+            <p className="font-body text-base sm:text-lg text-primary-blue font-semibold">
+              We compare, we negotiate for better prices for you.
+            </p>
+            <p className="font-body text-base sm:text-lg text-neutral-text-muted leading-relaxed">
+              Book the best car service near you at the most competitive prices — Save Time, Save Money.
+            </p>
+          </div>
 
           {/* Call to Actions */}
           <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-4 w-full sm:w-auto mt-2">
@@ -109,32 +114,8 @@ export default function HeroSection() {
         </div>
 
         {/* Right Column - Quote Card & Visual */}
-        <div className="lg:col-span-6 relative flex items-center justify-center lg:justify-end mt-8 lg:mt-0">
-
-          {/* Main visual wrapper */}
-          {/* <div className="relative w-full max-w-lg lg:max-w-md z-20">
-            <div className="absolute -top-12 -right-12 hidden md:flex flex-col items-end rotate-12 z-30">
-              <span className="font-heading font-medium italic text-neutral-text-dark text-sm mb-1 transform -rotate-12">Start here to compare prices!</span>
-              <svg width="40" height="40" viewBox="0 0 60 60" fill="none" stroke="currentColor" className="text-neutral-text-dark" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                <path d="M10 10 C 20 40, 40 50, 50 50" />
-                <path d="M40 45 L 50 50 L 45 40" />
-              </svg>
-            </div>
-
-            <LiveQuotes />
-          </div> */}
-
-          {/* Blue Car Image (Background for Quote Card) */}
-          {/* <div className="absolute -left-32 -bottom-24 w-[140%] z-10 hidden lg:block opacity-90 pointer-events-none">
-            <Image
-              src="/images/homeheroimage.png"
-              alt="Car Blink Hero Car"
-              width={800}
-              height={500}
-              className="object-contain drop-shadow-2xl"
-              priority
-            />
-          </div> */}
+        <div className="lg:col-span-6 relative flex items-center justify-center lg:justify-end mt-8 lg:mt-0 w-full">
+          <HeroForm />
         </div>
       </Container>
     </section>

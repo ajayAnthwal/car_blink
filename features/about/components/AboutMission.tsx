@@ -61,7 +61,7 @@ export default function AboutMission() {
         <div className="lg:col-span-6 relative flex justify-center lg:justify-end pb-8 pr-8">
           <div className="relative w-full max-w-md aspect-square rounded-3xl overflow-hidden shadow-lg border border-neutral-text-muted/10">
             <Image
-              src="/images/about2.png"
+              src="/images/about3.png"
               alt="Car Blink diagnostics and transparent pricing"
               fill
               className="object-cover"

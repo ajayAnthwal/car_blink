@@ -2,7 +2,7 @@ export const DUMMY_SERVICES: Record<string, any> = {
   "periodic-service": {
     name: "Periodic Service",
     description: "Complete health checkup, oil change & multi-point inspection to keep your car running smooth and efficient.",
-    priceFrom: "₹2,499",
+    priceFrom: "₹2,499 - ₹4,999",
     category: "Maintenance",
     heroImage: "/images/hero-car.png",
     inclusions: [
@@ -23,7 +23,7 @@ export const DUMMY_SERVICES: Record<string, any> = {
   "engine-repair": {
     name: "Engine Repair",
     description: "Diagnostics and repair for engine noise, leaks & performance.",
-    priceFrom: "₹4,999",
+    priceFrom: "₹4,999 - ₹12,000",
     category: "Repair",
     heroImage: "/images/homeheroimage.png",
     inclusions: [
@@ -40,7 +40,7 @@ export const DUMMY_SERVICES: Record<string, any> = {
   "dent-paint": {
     name: "Dent & Paint",
     description: "Dent removal and panel repainting with colour-match guarantee.",
-    priceFrom: "₹5,499",
+    priceFrom: "₹2,500 - ₹5,499",
     category: "Cosmetic",
     heroImage: "/images/hero-car.png",
     inclusions: [
@@ -52,6 +52,24 @@ export const DUMMY_SERVICES: Record<string, any> = {
     ],
     faqs: [
       { q: "Does the paint match exactly?", a: "Yes, we use computerized color mixing for a 100% factory match." }
+    ]
+  },
+  "car-wash": {
+    name: "Car Wash",
+    description: "Premium doorstep wash with waterless tech, interior vacuuming & tyre shine.",
+    priceFrom: "₹499 - ₹999",
+    category: "Doorstep Service",
+    heroImage: "/images/hero-car.png",
+    inclusions: [
+      "Exterior Waterless Wash",
+      "Interior Vacuuming",
+      "Dashboard Polishing",
+      "Tyre Cleaning & Shine",
+      "Glass Cleaning"
+    ],
+    faqs: [
+      { q: "Do I need to provide water?", a: "No, we use a specialized waterless wash technology." },
+      { q: "How long does it take?", a: "A complete wash takes around 45-60 minutes." }
     ]
   }
 };

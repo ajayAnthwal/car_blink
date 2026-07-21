@@ -11,7 +11,8 @@ import Input from "@/components/ui/Input";
 import { Logo } from "@/components/layout/Navbar";
 
 export default function LoginPage() {
-  const [form, setForm] = useState({ email: "", password: "" });
+  const [form, setForm] = useState({ phone: "", otp: "" });
+  const [step, setStep] = useState<1 | 2>(1);
   const [submitted, setSubmitted] = useState(false);
 
   function handleChange(e: React.ChangeEvent<HTMLInputElement>) {
@@ -19,9 +20,18 @@ export default function LoginPage() {
     setForm((prev) => ({ ...prev, [name]: value }));
   }
 
-  function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
+  function handleSendOtp(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
-    setSubmitted(true);
+    if (form.phone.length >= 10) {
+      setStep(2);
+    }
+  }
+
+  function handleVerifyOtp(e: React.FormEvent<HTMLFormElement>) {
+    e.preventDefault();
+    if (form.otp.length === 6) {
+      setSubmitted(true);
+    }
   }
 
   return (
@@ -62,68 +72,75 @@ export default function LoginPage() {
                   You&apos;re logged in!
                 </h3>
                 <p className="font-body mt-1 max-w-sm text-sm text-neutral-text-muted">
-                  Welcome back, {form.email || "driver"}.
+                  Welcome back, {form.phone || "driver"}.
                 </p>
                 <Button
                   variant="link"
                   leftIcon={<LogOut className="h-3.5 w-3.5" />}
                   className="mt-6"
-                  onClick={() => setSubmitted(false)}
+                  onClick={() => {
+                    setSubmitted(false);
+                    setStep(1);
+                    setForm({ phone: "", otp: "" });
+                  }}
                 >
                   Log out
                 </Button>
               </div>
-            ) : (
-              <form onSubmit={handleSubmit} className="space-y-5">
-                <Input
-                  label="Email Address"
-                  type="email"
-                  name="email"
-                  required
-                  value={form.email}
-                  onChange={handleChange}
-                  placeholder="you@example.com"
-                  icon={<Mail className="h-4 w-4" />}
-                />
-
-                <Input
-                  label="Password"
-                  type="password"
-                  name="password"
-                  required
-                  value={form.password}
-                  onChange={handleChange}
-                  placeholder="••••••••"
-                  icon={<Lock className="h-4 w-4" />}
-                />
-
-                <div className="flex items-center justify-between text-xs">
-                  <label className="flex items-center gap-2 font-body text-neutral-text-muted">
-                    <input
-                      type="checkbox"
-                      className="h-3.5 w-3.5 rounded border-neutral-text-muted/40 text-primary-blue focus:ring-primary-blue"
+              <div>
+                {step === 1 ? (
+                  <form onSubmit={handleSendOtp} className="space-y-5">
+                    <Input
+                      label="Mobile Number"
+                      type="tel"
+                      name="phone"
+                      required
+                      value={form.phone}
+                      onChange={handleChange}
+                      placeholder="98765 43210"
+                      maxLength={10}
                     />
-                    Remember me
-                  </label>
-                  <Link
-                    href="/contact"
-                    className="font-heading font-semibold text-primary-blue hover:text-primary-blue-dark"
-                  >
-                    Forgot password?
-                  </Link>
-                </div>
-
-                <Button
-                  type="submit"
-                  variant="primary"
-                  size="lg"
-                  fullWidth
-                  rightIcon={<ArrowRight className="h-4 w-4" />}
-                >
-                  Log In
-                </Button>
-              </form>
-            )}
+                    <Button
+                      type="submit"
+                      variant="primary"
+                      size="lg"
+                      fullWidth
+                      rightIcon={<ArrowRight className="h-4 w-4" />}
+                      disabled={form.phone.length < 10}
+                    >
+                      Send OTP
+                    </Button>
+                  </form>
+                ) : (
+                  <form onSubmit={handleVerifyOtp} className="space-y-5">
+                    <div className="text-center mb-4">
+                      <p className="text-sm text-neutral-text-muted">OTP sent to +91 {form.phone}</p>
+                      <button type="button" onClick={() => setStep(1)} className="text-xs text-primary-blue hover:underline">Change Number</button>
+                    </div>
+                    <Input
+                      label="Enter 6-digit OTP"
+                      type="text"
+                      name="otp"
+                      required
+                      value={form.otp}
+                      onChange={handleChange}
+                      placeholder="123456"
+                      maxLength={6}
+                      icon={<Lock className="h-4 w-4" />}
+                    />
+                    <Button
+                      type="submit"
+                      variant="primary"
+                      size="lg"
+                      fullWidth
+                      rightIcon={<ArrowRight className="h-4 w-4" />}
+                      disabled={form.otp.length < 6}
+                    >
+                      Verify OTP & Login
+                    </Button>
+                  </form>
+                )}
+              </div>
 
             <p className="font-body mt-6 text-center text-sm text-neutral-text-muted">
               Want to partner your workshop?{" "}

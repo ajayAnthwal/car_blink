@@ -23,7 +23,7 @@ import {
 import Container from "@/components/ui/Container";
 import Card from "@/components/ui/Card";
 
-type Category = "All" | "Maintenance" | "Repair" | "Cosmetic" | "Insurance & Claims";
+type Category = "All" | "Maintenance" | "Repair" | "Cosmetic" | "Insurance & Claims" | "Doorstep Service";
 
 interface ServiceItem {
   name: string;
@@ -39,83 +39,84 @@ const categories: Category[] = [
   "Repair",
   "Cosmetic",
   "Insurance & Claims",
+  "Doorstep Service",
 ];
 
 const services: ServiceItem[] = [
   {
     name: "Periodic Service",
     description: "Complete health checkup, oil change & multi-point inspection.",
-    priceFrom: "₹2,499",
+    priceFrom: "₹2,499 - ₹4,999",
     category: "Maintenance",
     icon: Wrench,
   },
   {
     name: "Engine Repair",
     description: "Diagnostics and repair for engine noise, leaks & performance.",
-    priceFrom: "₹4,999",
+    priceFrom: "₹4,999 - ₹12,000",
     category: "Repair",
     icon: Cog,
   },
   {
     name: "Dent & Paint",
     description: "Dent removal and panel repainting with colour-match guarantee.",
-    priceFrom: "₹5,499",
+    priceFrom: "₹2,500 - ₹5,499",
     category: "Cosmetic",
     icon: PaintBucket,
   },
   {
     name: "Car Wash",
-    description: "Exterior foam wash, interior vacuuming & tyre shine.",
-    priceFrom: "₹499",
-    category: "Maintenance",
+    description: "Premium doorstep wash with waterless tech, interior vacuuming & tyre shine.",
+    priceFrom: "₹499 - ₹999",
+    category: "Doorstep Service",
     icon: Droplets,
   },
   {
     name: "Detailing",
     description: "Deep interior & exterior detailing to restore that new-car feel.",
-    priceFrom: "₹2,999",
+    priceFrom: "₹2,999 - ₹5,999",
     category: "Cosmetic",
     icon: Sparkles,
   },
   {
     name: "PPF (Paint Protection Film)",
     description: "Long-lasting film that shields your paint from scratches.",
-    priceFrom: "₹25,999",
+    priceFrom: "₹25,000 - ₹85,000",
     category: "Cosmetic",
     icon: ShieldCheck,
   },
   {
     name: "Ceramic Coating",
     description: "Glass-like shine with lasting protection from the elements.",
-    priceFrom: "₹14,999",
+    priceFrom: "₹14,999 - ₹35,000",
     category: "Cosmetic",
     icon: CircleDot,
   },
   {
     name: "Tyres",
     description: "Genuine tyre brands with free fitting & wheel balancing.",
-    priceFrom: "₹5,499 / tyre",
+    priceFrom: "₹3,499 - ₹8,499 / tyre",
     category: "Maintenance",
     icon: Disc3,
   },
   {
     name: "Battery",
     description: "Doorstep battery replacement with warranty, top brands.",
-    priceFrom: "₹6,499",
-    category: "Maintenance",
+    priceFrom: "₹4,499 - ₹8,999",
+    category: "Doorstep Service",
     icon: BatteryCharging,
   },
   {
     name: "AC Repair",
     description: "Gas top-up, compressor & cooling system diagnostics.",
-    priceFrom: "₹1,499",
+    priceFrom: "₹1,499 - ₹4,499",
     category: "Repair",
     icon: Wind,
   },
   {
     name: "Suspension",
     description: "Shock absorbers, struts & suspension noise fixes.",
-    priceFrom: "₹3,999",
+    priceFrom: "₹3,999 - ₹9,999",
     category: "Repair",
     icon: SlidersHorizontal,
   },
@@ -129,14 +130,14 @@ const services: ServiceItem[] = [
   {
     name: "Clutch Repair",
     description: "Clutch plate, pressure plate & release bearing service.",
-    priceFrom: "₹5,999",
+    priceFrom: "₹4,999 - ₹9,999",
     category: "Repair",
     icon: Settings2,
   },
   {
     name: "Brake Service",
     description: "Brake pad replacement, disc skimming & fluid change.",
-    priceFrom: "₹1,299",
+    priceFrom: "₹1,299 - ₹3,499",
     category: "Maintenance",
     icon: Disc,
   },
@@ -203,11 +204,12 @@ export default function ServicesCatalog() {
                 <div className="flex items-center justify-between pt-4 border-t border-neutral-text-muted/10">
                   <div className="flex flex-col">
                     <span className="font-body text-[11px] font-bold uppercase tracking-wider text-neutral-text-muted/70 mb-0.5">
-                      Starting at
+                      Estimated
                     </span>
                     <span className="font-heading font-black text-lg text-neutral-text-dark">
                       {service.priceFrom}
                     </span>
+                    <span className="text-[10px] text-neutral-text-muted mt-1">*T&C Apply</span>
                   </div>
                   <Link 
                     href={`/services/${service.name.toLowerCase().replace(/[^a-z0-9]+/g, '-')}`} 

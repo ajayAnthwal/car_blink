@@ -18,24 +18,28 @@ import {
 import Container from "@/components/ui/Container";
 import Button from "@/components/ui/Button";
 
-const MAKES = ["Toyota", "BMW", "Mercedes", "Audi", "Nissan", "Honda"];
+const MAKES = [
+  "Maruti Suzuki", "Hyundai", "Tata", "Mahindra", "Kia", 
+  "Toyota", "Honda", "MG", "Skoda", "Volkswagen", 
+  "Renault", "Nissan"
+];
 const MODELS = ["Sedan", "SUV", "Hatchback", "Coupe", "Luxury"];
 
 const ALL_SERVICES = [
-  { name: "Periodic Service", price: "₹2,499" },
-  { name: "Engine Repair", price: "₹4,999" },
-  { name: "Dent & Paint", price: "₹5,499" },
-  { name: "Car Wash", price: "₹499" },
-  { name: "Detailing", price: "₹2,999" },
-  { name: "PPF (Paint Protection Film)", price: "₹25,999" },
-  { name: "Ceramic Coating", price: "₹14,999" },
-  { name: "Tyres", price: "₹5,499" },
-  { name: "Battery", price: "₹6,499" },
-  { name: "AC Repair", price: "₹1,499" },
-  { name: "Suspension", price: "₹3,999" },
+  { name: "Periodic Service", price: "₹2,499 - ₹4,999" },
+  { name: "Engine Repair", price: "₹4,999 - ₹12,000" },
+  { name: "Dent & Paint", price: "₹2,500 - ₹5,499" },
+  { name: "Car Wash", price: "₹499 - ₹999" },
+  { name: "Detailing", price: "₹2,999 - ₹5,999" },
+  { name: "PPF (Paint Protection Film)", price: "₹25,000 - ₹85,000" },
+  { name: "Ceramic Coating", price: "₹14,999 - ₹35,000" },
+  { name: "Tyres", price: "₹3,499 - ₹8,499" },
+  { name: "Battery", price: "₹4,499 - ₹8,999" },
+  { name: "AC Repair", price: "₹1,499 - ₹4,499" },
+  { name: "Suspension", price: "₹3,999 - ₹9,999" },
   { name: "Insurance Claims", price: "Free assistance" },
-  { name: "Clutch Repair", price: "₹5,999" },
-  { name: "Brake Service", price: "₹1,299" },
+  { name: "Clutch Repair", price: "₹4,999 - ₹9,999" },
+  { name: "Brake Service", price: "₹1,299 - ₹3,499" },
 ];
 
 function QuotesForm() {
@@ -44,9 +48,14 @@ function QuotesForm() {
   const [formData, setFormData] = useState({
     make: "",
     model: "",
+    fuelType: "",
     services: [] as string[],
     name: "",
     phone: "",
+    location: "",
+    address: "",
+    vehicleNumber: "",
+    otherServiceDetails: "",
   });
 
   const [availableServices, setAvailableServices] = useState(ALL_SERVICES.map(s => s.name));
@@ -75,21 +84,43 @@ function QuotesForm() {
 
   const calculateTotalQuote = () => {
     if (formData.services.length === 0) return "---";
-    let total = 0;
+    let minTotal = 0;
+    let maxTotal = 0;
     let hasFree = false;
+    
     formData.services.forEach(serviceName => {
       const service = ALL_SERVICES.find(s => s.name === serviceName);
       if (service) {
         if (service.price.toLowerCase().includes("free")) {
           hasFree = true;
         } else {
-          const num = parseInt(service.price.replace(/[^0-9]/g, ""));
-          if (!isNaN(num)) total += num;
+          // Extract ranges like ₹2,499 - ₹4,999
+          const parts = service.price.split("-");
+          if (parts.length === 2) {
+            const min = parseInt(parts[0].replace(/[^0-9]/g, ""));
+            const max = parseInt(parts[1].replace(/[^0-9]/g, ""));
+            if (!isNaN(min)) minTotal += min;
+            if (!isNaN(max)) maxTotal += max;
+          } else {
+            const num = parseInt(service.price.replace(/[^0-9]/g, ""));
+            if (!isNaN(num)) {
+              minTotal += num;
+              maxTotal += num;
+            }
+          }
         }
       }
     });
-    if (total === 0 && hasFree) return "Free";
-    return total > 0 ? `₹${total.toLocaleString()}` : "---";
+    
+    if (minTotal === 0 && maxTotal === 0 && hasFree) return "Free";
+    
+    if (minTotal > 0 && maxTotal > minTotal) {
+      return `₹${minTotal.toLocaleString()} - ₹${maxTotal.toLocaleString()}`;
+    } else if (minTotal > 0) {
+      return `₹${minTotal.toLocaleString()}`;
+    }
+    
+    return "---";
   };
 
   const nextStep = () => setStep((s) => Math.min(s + 1, 4));
@@ -132,9 +163,11 @@ function QuotesForm() {
       case 2:
         return (
           <div className="animate-in fade-in slide-in-from-bottom-4 duration-500">
-            <h2 className="font-heading font-black text-2xl text-neutral-text-dark mb-2">Select Car Model</h2>
-            <p className="font-body text-neutral-text-muted mb-6">What type of {formData.make} do you drive?</p>
-            <div className="grid grid-cols-2 sm:grid-cols-3 gap-4">
+            <h2 className="font-heading font-black text-2xl text-neutral-text-dark mb-2">Select Car Model & Fuel</h2>
+            <p className="font-body text-neutral-text-muted mb-6">What type of {formData.make} do you drive and its fuel type?</p>
+            
+            <h3 className="font-heading font-semibold text-lg text-neutral-text-dark mb-3">Car Type</h3>
+            <div className="grid grid-cols-2 sm:grid-cols-3 gap-4 mb-8">
               {MODELS.map((model) => (
                 <button
                   key={model}
@@ -149,9 +182,27 @@ function QuotesForm() {
                 </button>
               ))}
             </div>
+
+            <h3 className="font-heading font-semibold text-lg text-neutral-text-dark mb-3">Fuel Type</h3>
+            <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
+              {["Petrol", "Diesel", "CNG", "EV"].map((fuel) => (
+                <button
+                  key={fuel}
+                  onClick={() => updateForm("fuelType", fuel)}
+                  className={`flex flex-col items-center gap-2 p-3 rounded-xl border-2 transition-all ${
+                    formData.fuelType === fuel
+                      ? "border-primary-blue bg-primary-blue/5 text-primary-blue"
+                      : "border-neutral-text-muted/10 bg-white text-neutral-text-dark hover:border-primary-blue/30 hover:bg-neutral-bg"
+                  }`}
+                >
+                  <span className="font-heading font-bold text-sm">{fuel}</span>
+                </button>
+              ))}
+            </div>
+
             <div className="mt-8 flex justify-between">
               <Button variant="ghost" onClick={prevStep}>Back</Button>
-              <Button onClick={nextStep} disabled={!formData.model} rightIcon={<ArrowRight className="w-4 h-4" />}>
+              <Button onClick={nextStep} disabled={!formData.model || !formData.fuelType} rightIcon={<ArrowRight className="w-4 h-4" />}>
                 Continue
               </Button>
             </div>
@@ -181,7 +232,34 @@ function QuotesForm() {
                   </button>
                 );
               })}
+              
+              {/* Other Option */}
+              <button
+                onClick={() => toggleService("Other")}
+                className={`flex items-center gap-3 p-4 rounded-2xl border-2 transition-all text-left ${
+                  formData.services.includes("Other")
+                    ? "border-primary-blue bg-primary-blue/5 text-primary-blue"
+                    : "border-neutral-text-muted/10 bg-white text-neutral-text-dark hover:border-primary-blue/30 hover:bg-neutral-bg"
+                }`}
+              >
+                <Settings className={`w-5 h-5 ${formData.services.includes("Other") ? 'text-primary-blue' : 'text-neutral-text-muted'}`} />
+                <span className="font-heading font-bold text-sm flex-1">Other</span>
+                {formData.services.includes("Other") && <CheckCircle2 className="w-4 h-4 text-primary-blue" />}
+              </button>
             </div>
+            
+            {formData.services.includes("Other") && (
+              <div className="mt-4 animate-in fade-in duration-300">
+                <input
+                  type="text"
+                  placeholder="Please specify what service you need..."
+                  value={formData.otherServiceDetails}
+                  onChange={(e) => updateForm("otherServiceDetails", e.target.value)}
+                  className="w-full px-4 py-3 rounded-xl border border-primary-blue/30 bg-primary-blue/5 focus:bg-white focus:outline-none focus:ring-2 focus:ring-primary-blue/50 transition-all font-body text-sm"
+                />
+              </div>
+            )}
+
             <div className="mt-8 flex justify-between">
               <Button variant="ghost" onClick={prevStep}>Back</Button>
               <Button onClick={nextStep} disabled={formData.services.length === 0} rightIcon={<ArrowRight className="w-4 h-4" />}>
@@ -195,31 +273,65 @@ function QuotesForm() {
           <div className="animate-in fade-in slide-in-from-bottom-4 duration-500">
             <h2 className="font-heading font-black text-2xl text-neutral-text-dark mb-2">Your Details</h2>
             <p className="font-body text-neutral-text-muted mb-6">Where should we send your custom quotation?</p>
-            <div className="flex flex-col gap-4 max-w-sm">
-              <div>
-                <label className="block font-heading font-semibold text-sm text-neutral-text-dark mb-1.5">Full Name</label>
-                <input 
-                  type="text" 
-                  value={formData.name}
-                  onChange={(e) => updateForm("name", e.target.value)}
-                  placeholder="John Doe"
-                  className="w-full px-4 py-3 rounded-xl border border-neutral-text-muted/20 bg-neutral-bg focus:bg-white focus:outline-none focus:ring-2 focus:ring-primary-blue/20 transition-all font-body text-sm"
-                />
-              </div>
-              <div>
-                <label className="block font-heading font-semibold text-sm text-neutral-text-dark mb-1.5">Phone Number</label>
-                <div className="flex">
-                  <span className="flex items-center justify-center px-4 bg-neutral-text-muted/5 border border-r-0 border-neutral-text-muted/20 rounded-l-xl text-neutral-text-muted text-sm font-semibold">
-                    +91
-                  </span>
+            <div className="flex flex-col gap-4 max-w-md">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div>
+                  <label className="block font-heading font-semibold text-sm text-neutral-text-dark mb-1.5">Full Name</label>
                   <input 
-                    type="tel" 
-                    value={formData.phone}
-                    onChange={(e) => updateForm("phone", e.target.value)}
-                    placeholder="50 123 4567"
-                    className="flex-1 px-4 py-3 rounded-r-xl border border-neutral-text-muted/20 bg-neutral-bg focus:bg-white focus:outline-none focus:ring-2 focus:ring-primary-blue/20 transition-all font-body text-sm"
+                    type="text" 
+                    value={formData.name}
+                    onChange={(e) => updateForm("name", e.target.value)}
+                    placeholder="John Doe"
+                    className="w-full px-4 py-3 rounded-xl border border-neutral-text-muted/20 bg-neutral-bg focus:bg-white focus:outline-none focus:ring-2 focus:ring-primary-blue/20 transition-all font-body text-sm"
                   />
                 </div>
+                <div>
+                  <label className="block font-heading font-semibold text-sm text-neutral-text-dark mb-1.5">Phone Number</label>
+                  <div className="flex">
+                    <span className="flex items-center justify-center px-3 bg-neutral-text-muted/5 border border-r-0 border-neutral-text-muted/20 rounded-l-xl text-neutral-text-muted text-sm font-semibold">
+                      +91
+                    </span>
+                    <input 
+                      type="tel" 
+                      value={formData.phone}
+                      onChange={(e) => updateForm("phone", e.target.value)}
+                      placeholder="98765 43210"
+                      className="flex-1 px-4 py-3 min-w-0 rounded-r-xl border border-neutral-text-muted/20 bg-neutral-bg focus:bg-white focus:outline-none focus:ring-2 focus:ring-primary-blue/20 transition-all font-body text-sm"
+                    />
+                  </div>
+                </div>
+              </div>
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div>
+                  <label className="block font-heading font-semibold text-sm text-neutral-text-dark mb-1.5">Vehicle Number</label>
+                  <input 
+                    type="text" 
+                    value={formData.vehicleNumber}
+                    onChange={(e) => updateForm("vehicleNumber", e.target.value)}
+                    placeholder="DL 01 AB 1234"
+                    className="w-full px-4 py-3 rounded-xl border border-neutral-text-muted/20 bg-neutral-bg focus:bg-white focus:outline-none focus:ring-2 focus:ring-primary-blue/20 transition-all font-body text-sm"
+                  />
+                </div>
+                <div>
+                  <label className="block font-heading font-semibold text-sm text-neutral-text-dark mb-1.5">Current Location</label>
+                  <input 
+                    type="text" 
+                    value={formData.location}
+                    onChange={(e) => updateForm("location", e.target.value)}
+                    placeholder="New Delhi"
+                    className="w-full px-4 py-3 rounded-xl border border-neutral-text-muted/20 bg-neutral-bg focus:bg-white focus:outline-none focus:ring-2 focus:ring-primary-blue/20 transition-all font-body text-sm"
+                  />
+                </div>
+              </div>
+              <div>
+                <label className="block font-heading font-semibold text-sm text-neutral-text-dark mb-1.5">Full Address</label>
+                <textarea 
+                  value={formData.address}
+                  onChange={(e) => updateForm("address", e.target.value)}
+                  placeholder="Flat No, Building, Street..."
+                  rows={2}
+                  className="w-full px-4 py-3 rounded-xl border border-neutral-text-muted/20 bg-neutral-bg focus:bg-white focus:outline-none focus:ring-2 focus:ring-primary-blue/20 transition-all font-body text-sm resize-none"
+                />
               </div>
             </div>
             <div className="mt-8 flex justify-between">
@@ -228,7 +340,7 @@ function QuotesForm() {
                 onClick={() => {
                   setStep(5);
                 }} 
-                disabled={!formData.name || !formData.phone}
+                disabled={!formData.name || !formData.phone || !formData.location || !formData.address || !formData.vehicleNumber}
                 variant="accent"
                 rightIcon={<ArrowRight className="w-4 h-4" />}
               >
@@ -325,7 +437,7 @@ function QuotesForm() {
                   <div className="flex justify-between items-center pb-4 border-b border-white/10">
                     <span className="font-body text-white/70 text-sm shrink-0 mr-4">Service(s)</span>
                     <span className="font-heading font-bold text-right text-sm line-clamp-2">
-                      {formData.services.length > 0 ? formData.services.join(", ") : "Not selected"}
+                      {formData.services.length > 0 ? formData.services.map(s => s === "Other" && formData.otherServiceDetails ? `Other (${formData.otherServiceDetails})` : s).join(", ") : "Not selected"}
                     </span>
                   </div>
                   <div className="flex justify-between items-center pt-2">

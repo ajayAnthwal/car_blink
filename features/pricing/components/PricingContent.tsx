@@ -71,6 +71,7 @@ export default function PricingContent() {
               <Button
                 variant="primary"
                 size="lg"
+                href="/quotes"
                 rightIcon={<ArrowRight className="w-5 h-5" />}
                 className="mt-9 w-full sm:w-auto"
               >

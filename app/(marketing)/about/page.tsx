@@ -4,7 +4,6 @@ import AboutStats from "@/features/about/components/AboutStats";
 import AboutMission from "@/features/about/components/AboutMission";
 import AboutValues from "@/features/about/components/AboutValues";
 import AboutJourney from "@/features/about/components/AboutJourney";
-import AboutTeam from "@/features/about/components/AboutTeam";
 import TrustBadges from "@/features/home/components/TrustBadges";
 import FinalCTA from "@/features/home/components/FinalCTA";
 
@@ -22,7 +21,6 @@ export default function AboutPage() {
       <AboutMission />
       <AboutValues />
       <AboutJourney />
-      <AboutTeam />
       <TrustBadges />
       <FinalCTA />
     </>
