@@ -8,20 +8,16 @@ import MobileMenu from "./MobileMenu";
 import { MAIN_NAV_LINKS } from "@/lib/constants";
 
 
-export function Logo({ light = false }: { light?: boolean }) {
-  // `light` = true is used on dark backgrounds (e.g. footer), so the
-  // full-color logo (white wordmark) reads correctly there.
-  // On light backgrounds (navbar / mobile menu) we use the dark-text
-  // variant so the wordmark stays legible against a white background.
+export function Logo() {
   return (
     <Link href="/" className="flex items-center group">
       <Image
-        src={light ? "/images/brand/logo-wordmark.png" : "/images/brand/logo-wordmark-dark.png"}
+        src="/images/brand/logo-original.png"
         alt="Car Blink — One Platform For Every Car Service"
         width={219}
         height={67}
         priority
-        className="h-9 sm:h-10 w-auto transition-transform duration-200 group-hover:scale-105"
+        className="h-10 sm:h-12 w-auto transition-transform duration-200 group-hover:scale-105"
       />
     </Link>
   );

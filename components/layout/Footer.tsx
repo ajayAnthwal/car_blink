@@ -21,7 +21,7 @@ export default function Footer() {
           
           {/* Logo & Description */}
           <div className="col-span-2 sm:col-span-3 lg:col-span-2 flex flex-col gap-6">
-            <Logo light />
+            <Logo />
             <p className="font-body text-sm leading-relaxed text-neutral-text-muted max-w-xs">
               India's leading car service comparison platform connecting car owners with verified workshops.
             </p>
