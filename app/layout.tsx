@@ -1,8 +1,10 @@
 import type { Metadata } from "next";
 import { Poppins, Inter } from "next/font/google";
 import "./globals.css";
-import Navbar from "@/components/layout/Navbar";
-import Footer from "@/components/layout/Footer";
+// import Navbar from "@/components/layout/Navbar";
+// import Footer from "@/components/layout/Footer";
+import Providers from "@/components/layout/providers";
+import { Toaster } from "sonner";
 
 const poppins = Poppins({
   subsets: ["latin"],
@@ -32,9 +34,16 @@ export default function RootLayout({
         <div className="bg-primary-blue text-white text-center py-2.5 px-4 text-sm font-semibold tracking-wide">
           We compare, we negotiate for better prices for you.
         </div>
-        <Navbar />
-        <main className="flex-grow">{children}</main>
-        <Footer />
+        {/* <Navbar /> */}
+        <Providers >
+          <Toaster
+            position="top-right"
+            richColors
+          />
+          <main className="flex-grow">{children}</main>
+        </Providers>
+
+        {/* <Footer /> */}
       </body>
     </html>
   );
