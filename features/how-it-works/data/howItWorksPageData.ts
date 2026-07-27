@@ -43,7 +43,7 @@ export const DETAILED_STEPS: DetailedStep[] = [
     title: "Car Blink compares best prices for you",
     description:
       "See every quote side-by-side — price, ratings, services offered, and workshop reviews — and pick what works best for you.",
-    image: "/images/about2.png",
+    image: "/images/rupee_comparison.png",
     alt: "Comparing pricing on a laptop screen",
   },
   {
@@ -51,7 +51,7 @@ export const DETAILED_STEPS: DetailedStep[] = [
     icon: Wallet,
     title: "Customer check the prices and book service",
     description: "and save up to 50 percent.",
-    image: "/images/about2.png",
+    image: "/images/rupee_comparison.png",
     alt: "Customer checking prices",
   },
   {
