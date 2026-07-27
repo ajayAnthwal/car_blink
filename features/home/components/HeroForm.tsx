@@ -11,6 +11,7 @@ export default function HeroForm() {
     number: "",
     carDetails: "",
     address: "",
+    query: "",
   });
   const [showMapModal, setShowMapModal] = useState(false);
 
@@ -18,7 +19,7 @@ export default function HeroForm() {
     e.preventDefault();
     // For now, just showing an alert. This can be connected to an API later.
     alert("Query Submitted Successfully! We will contact you soon.");
-    setFormData({ name: "", number: "", carDetails: "", address: "" });
+    setFormData({ name: "", number: "", carDetails: "", address: "", query: "" });
   };
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
@@ -117,6 +118,21 @@ export default function HeroForm() {
             />
             <MapPin className="w-4 h-4 text-neutral-text-muted absolute left-3.5 top-1/2 -translate-y-1/2" />
           </div>
+        </div>
+
+        <div>
+          <label htmlFor="query" className="block text-sm font-medium text-neutral-text-dark mb-1">
+            Query / Message
+          </label>
+          <textarea
+            id="query"
+            name="query"
+            value={formData.query}
+            onChange={handleChange}
+            rows={3}
+            className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-primary-blue focus:border-transparent transition-all resize-none"
+            placeholder="Type your query here..."
+          ></textarea>
         </div>
 
         <Button

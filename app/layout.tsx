@@ -1,8 +1,8 @@
 import type { Metadata } from "next";
 import { Poppins, Inter } from "next/font/google";
 import "./globals.css";
-// import Navbar from "@/components/layout/Navbar";
-// import Footer from "@/components/layout/Footer";
+import Navbar from "@/components/layout/Navbar";
+import Footer from "@/components/layout/Footer";
 import Providers from "@/components/layout/providers";
 import { Toaster } from "sonner";
 
@@ -34,7 +34,7 @@ export default function RootLayout({
         <div className="bg-primary-blue text-white text-center py-2.5 px-4 text-sm font-semibold tracking-wide">
           We compare, we negotiate for better prices for you.
         </div>
-        {/* <Navbar /> */}
+        <Navbar />
         <Providers >
           <Toaster
             position="top-right"
@@ -43,7 +43,7 @@ export default function RootLayout({
           <main className="flex-grow">{children}</main>
         </Providers>
 
-        {/* <Footer /> */}
+        <Footer />
       </body>
     </html>
   );

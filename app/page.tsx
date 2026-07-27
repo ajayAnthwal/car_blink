@@ -17,11 +17,11 @@ export default function Home() {
   return (
     <>
       <HeroSection />
-      <StatsBar />
+      <WhyChooseUs />
       <HowItWorks />
+      <StatsBar />
       <ServicesGrid />
       <SavingsBanner />
-      <WhyChooseUs />
 
       {/* Partner CTA */}
       <section className="pb-16 md:pb-20 bg-white">

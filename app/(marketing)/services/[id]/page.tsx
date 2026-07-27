@@ -88,7 +88,7 @@ export default function ServiceDetailsPage({ params }: { params: { id: string } 
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 relative">
 
           {/* Main Content */}
-          <div className="lg:col-span-8 flex flex-col gap-10">
+          <div className="lg:col-span-8 flex flex-col gap-10 pb-24 lg:pb-0">
             {/* What's Included */}
             <div className="bg-white rounded-[2rem] p-8 border border-neutral-text-muted/10 shadow-sm">
               <h2 className="font-heading font-black text-2xl text-neutral-text-dark mb-6">What's Included</h2>
@@ -143,8 +143,8 @@ export default function ServiceDetailsPage({ params }: { params: { id: string } 
             </div>
           </div>
 
-          {/* Sidebar CTA (Sticky) */}
-          <div className="lg:col-span-4">
+          {/* Sidebar CTA (Desktop Sticky) */}
+          <div className="hidden lg:block lg:col-span-4">
             <div className="sticky top-28 bg-white rounded-[2rem] p-8 border border-neutral-text-muted/10 shadow-lg shadow-neutral-text-muted/5">
               <h3 className="font-heading font-black text-2xl text-neutral-text-dark mb-2">Get Free Quote</h3>
               <p className="font-body text-sm text-neutral-text-muted mb-6">Starting price for {service.name}.</p>
@@ -166,6 +166,16 @@ export default function ServiceDetailsPage({ params }: { params: { id: string } 
                 No credit card required. Final price may vary by car model.
               </p>
             </div>
+          </div>
+
+          {/* Mobile Fixed CTA */}
+          <div className="lg:hidden fixed bottom-0 left-0 w-full p-4 bg-white border-t border-neutral-text-muted/10 shadow-[0_-4px_10px_rgba(0,0,0,0.05)] z-50 flex gap-3">
+            <Button variant="primary" className="flex-1 text-xs sm:text-sm" href={`/quotes?service=${encodeURIComponent(service.name)}`}>
+              Request Quote
+            </Button>
+            <Button variant="outline" className="flex-1 text-xs sm:text-sm" href="https://wa.me/919876543210">
+              WhatsApp
+            </Button>
           </div>
 
         </div>

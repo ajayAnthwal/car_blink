@@ -3,6 +3,7 @@ import { Zap, ShieldCheck, Star } from "lucide-react";
 import Container from "@/components/ui/Container";
 import Badge from "@/components/ui/Badge";
 import Image from "next/image";
+import Link from "next/link";
 
 export default function HowItWorksPageHero() {
   return (
@@ -88,9 +89,11 @@ export default function HowItWorksPageHero() {
             </div>
             
             <div className="mt-auto">
-              <button className="w-full py-3 rounded-xl bg-primary-blue hover:bg-primary-blue-dark text-white font-bold transition-colors shadow-lg shadow-primary-blue/30">
-                Book Best Quote
-              </button>
+              <Link href="/quotes" className="block w-full">
+                <button className="w-full py-3 rounded-xl bg-primary-blue hover:bg-primary-blue-dark text-white font-bold transition-colors shadow-lg shadow-primary-blue/30">
+                  Book Best Quote
+                </button>
+              </Link>
             </div>
           </div>
           

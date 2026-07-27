@@ -31,7 +31,7 @@ export const DETAILED_STEPS: DetailedStep[] = [
   {
     number: "02",
     icon: Mail,
-    title: "Get Multiple Quotes",
+    title: "Car Blink Get Multiple Quotes",
     description:
       "Verified workshops near you receive your request instantly and send back competitive, transparent quotes within minutes.",
     image: "/images/about3.png",
@@ -40,7 +40,7 @@ export const DETAILED_STEPS: DetailedStep[] = [
   {
     number: "03",
     icon: Scale,
-    title: "Compare Prices",
+    title: "Car Blink compares best prices for you",
     description:
       "See every quote side-by-side — price, ratings, services offered, and workshop reviews — and pick what works best for you.",
     image: "/images/about2.png",
@@ -48,6 +48,14 @@ export const DETAILED_STEPS: DetailedStep[] = [
   },
   {
     number: "04",
+    icon: Wallet,
+    title: "Customer check the prices and book service",
+    description: "and save up to 50 percent.",
+    image: "/images/about2.png",
+    alt: "Customer checking prices",
+  },
+  {
+    number: "05",
     icon: CalendarCheck,
     title: "Book & Save",
     description:

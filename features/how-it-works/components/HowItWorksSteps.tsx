@@ -21,7 +21,7 @@ export default function HowItWorksSteps() {
         {/* Vertical Timeline Structure */}
         <div className="relative">
           {/* Connecting Dashed Line (Desktop Only) */}
-          <div className="hidden md:block absolute left-1/2 top-0 bottom-0 w-1 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNCIgaGVpZ2h0PSI0IiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciPjxyZWN0IHdpZHRoPSI0IiBoZWlnaHQ9IjIiIGZpbGw9IiNFMkU4RjAiIC8+PC9zdmc+')] -translate-x-1/2 opacity-60 z-0"></div>
+          <div className="hidden md:block absolute left-1/2 top-8 bottom-8 w-0 border-l-4 border-dashed border-primary-blue/50 -translate-x-1/2 z-0"></div>
 
           <div className="flex flex-col gap-12 md:gap-24 relative z-10">
             {DETAILED_STEPS.map((step, index) => {

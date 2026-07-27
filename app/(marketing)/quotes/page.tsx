@@ -26,7 +26,20 @@ const MAKES = [
   "Toyota", "Honda", "MG", "Skoda", "Volkswagen", 
   "Renault", "Nissan"
 ];
-const MODELS = ["Sedan", "SUV", "Hatchback", "Coupe", "Luxury"];
+const CAR_MODELS_MAP: Record<string, string[]> = {
+  "Maruti Suzuki": ["Swift", "Baleno", "Brezza", "WagonR", "Alto", "Dzire", "Ertiga", "Celerio", "Ignis", "S-Cross", "Other"],
+  "Hyundai": ["Creta", "i20", "Venue", "Grand i10", "Verna", "Aura", "Tucson", "Alcazar", "Other"],
+  "Tata": ["Nexon", "Punch", "Altroz", "Tiago", "Harrier", "Safari", "Tigor", "Other"],
+  "Mahindra": ["XUV700", "Scorpio", "Thar", "XUV300", "Bolero", "Other"],
+  "Kia": ["Seltos", "Sonet", "Carens", "Other"],
+  "Toyota": ["Fortuner", "Innova", "Glanza", "Urban Cruiser", "Camry", "Other"],
+  "Honda": ["City", "Amaze", "Elevate", "Jazz", "WR-V", "Other"],
+  "MG": ["Hector", "Astor", "Gloster", "ZS EV", "Other"],
+  "Skoda": ["Slavia", "Kushaq", "Octavia", "Superb", "Other"],
+  "Volkswagen": ["Taigun", "Virtus", "Polo", "Vento", "Other"],
+  "Renault": ["Kwid", "Kiger", "Triber", "Other"],
+  "Nissan": ["Magnite", "Kicks", "Other"],
+};
 
 const ALL_SERVICES = [
   { name: "Periodic Service", price: "₹2,499 - ₹4,999" },
@@ -194,8 +207,8 @@ function QuotesForm() {
                 </button>
               ))}
             </div>
-            <div className="mt-8 flex justify-end">
-              <Button onClick={nextStep} disabled={!formData.make} rightIcon={<ArrowRight className="w-4 h-4" />}>
+            <div className="mt-8 md:mt-8 fixed md:static bottom-0 left-0 w-full p-4 md:p-0 bg-white md:bg-transparent border-t md:border-0 border-neutral-text-muted/10 z-50 flex justify-end shadow-[0_-4px_10px_rgba(0,0,0,0.05)] md:shadow-none">
+              <Button className="w-full md:w-auto" onClick={nextStep} disabled={!formData.make} rightIcon={<ArrowRight className="w-4 h-4" />}>
                 Continue
               </Button>
             </div>
@@ -207,9 +220,9 @@ function QuotesForm() {
             <h2 className="font-heading font-black text-2xl text-neutral-text-dark mb-2">Select Car Model & Fuel</h2>
             <p className="font-body text-neutral-text-muted mb-6">What type of {formData.make} do you drive and its fuel type?</p>
             
-            <h3 className="font-heading font-semibold text-lg text-neutral-text-dark mb-3">Car Type</h3>
+            <h3 className="font-heading font-semibold text-lg text-neutral-text-dark mb-3">Car Model</h3>
             <div className="grid grid-cols-2 sm:grid-cols-3 gap-4 mb-8">
-              {MODELS.map((model) => (
+              {(CAR_MODELS_MAP[formData.make] || ["Other"]).map((model) => (
                 <button
                   key={model}
                   onClick={() => updateForm("model", model)}
@@ -241,9 +254,9 @@ function QuotesForm() {
               ))}
             </div>
 
-            <div className="mt-8 flex justify-between">
-              <Button variant="ghost" onClick={prevStep}>Back</Button>
-              <Button onClick={nextStep} disabled={!formData.model || !formData.fuelType} rightIcon={<ArrowRight className="w-4 h-4" />}>
+            <div className="mt-8 md:mt-8 fixed md:static bottom-0 left-0 w-full p-4 md:p-0 bg-white md:bg-transparent border-t md:border-0 border-neutral-text-muted/10 z-50 flex justify-between gap-4 shadow-[0_-4px_10px_rgba(0,0,0,0.05)] md:shadow-none">
+              <Button className="flex-1 md:flex-none" variant="ghost" onClick={prevStep}>Back</Button>
+              <Button className="flex-1 md:flex-none" onClick={nextStep} disabled={!formData.model || !formData.fuelType} rightIcon={<ArrowRight className="w-4 h-4" />}>
                 Continue
               </Button>
             </div>
@@ -301,9 +314,9 @@ function QuotesForm() {
               </div>
             )}
 
-            <div className="mt-8 flex justify-between">
-              <Button variant="ghost" onClick={prevStep}>Back</Button>
-              <Button onClick={nextStep} disabled={formData.services.length === 0} rightIcon={<ArrowRight className="w-4 h-4" />}>
+            <div className="mt-8 md:mt-8 fixed md:static bottom-0 left-0 w-full p-4 md:p-0 bg-white md:bg-transparent border-t md:border-0 border-neutral-text-muted/10 z-50 flex justify-between gap-4 shadow-[0_-4px_10px_rgba(0,0,0,0.05)] md:shadow-none">
+              <Button className="flex-1 md:flex-none" variant="ghost" onClick={prevStep}>Back</Button>
+              <Button className="flex-1 md:flex-none" onClick={nextStep} disabled={formData.services.length === 0} rightIcon={<ArrowRight className="w-4 h-4" />}>
                 Continue
               </Button>
             </div>
@@ -390,9 +403,10 @@ function QuotesForm() {
                 />
               </div>
             </div>
-            <div className="mt-8 flex justify-between">
-              <Button variant="ghost" onClick={prevStep}>Back</Button>
+            <div className="mt-8 md:mt-8 fixed md:static bottom-0 left-0 w-full p-4 md:p-0 bg-white md:bg-transparent border-t md:border-0 border-neutral-text-muted/10 z-50 flex justify-between gap-4 shadow-[0_-4px_10px_rgba(0,0,0,0.05)] md:shadow-none">
+              <Button className="flex-1 md:flex-none" variant="ghost" onClick={prevStep}>Back</Button>
               <Button 
+                className="flex-1 md:flex-none"
                 onClick={() => {
                   setStep(5);
                 }} 
@@ -400,7 +414,7 @@ function QuotesForm() {
                 variant="accent"
                 rightIcon={<ArrowRight className="w-4 h-4" />}
               >
-                Get Free Quote
+                Get Quotes Now
               </Button>
             </div>
           </div>
@@ -434,8 +448,8 @@ function QuotesForm() {
 
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12">
           {/* Left Column: Form */}
-          <div className="lg:col-span-7 xl:col-span-8">
-            <div className="bg-white rounded-[2rem] p-6 sm:p-10 border border-neutral-text-muted/10 shadow-sm min-h-[500px] flex flex-col">
+          <div className="lg:col-span-8 order-2 lg:order-1 mb-20 md:mb-0">
+            <div className="bg-white rounded-[2rem] p-6 pb-24 md:pb-10 sm:p-10 shadow-xl shadow-primary-blue/5 border border-neutral-text-muted/10">
               
               {/* Progress Steps */}
               <div className="flex items-center gap-2 mb-10 pb-6 border-b border-neutral-text-muted/10">
