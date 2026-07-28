@@ -146,7 +146,7 @@ export default function LoginPage() {
             <p className="font-body mt-6 text-center text-sm text-neutral-text-muted">
               Want to partner your workshop?{" "}
               <Link
-                href="/partner-signup"
+                href="/register"
                 className="font-heading font-semibold text-primary-blue hover:text-primary-blue-dark"
               >
                 Sign up here
