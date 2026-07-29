@@ -79,7 +79,7 @@ export const useGetTopWorkshops = () => {
 // --- Booking & Leads ---
 export const useCreateLead = () => {
   return useMutation({
-    mutationFn: (data: { name: string; phone: string; vehicleBrand?: string; vehicleModel?: string; city?: string; message?: string; source?: string }) => 
+    mutationFn: (data: { name: string; phone: string; email?: string; vehicleBrand?: string; vehicleModel?: string; city?: string; message?: string; source?: string }) => 
       fetchApi('/leads', {
         method: 'POST',
         body: JSON.stringify(data),
