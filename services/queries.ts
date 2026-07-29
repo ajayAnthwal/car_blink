@@ -1,5 +1,13 @@
 import { useQuery, useMutation } from '@tanstack/react-query';
 import { fetchApi } from '@/lib/apiClient';
+export interface ServiceItem {
+  name: string;
+  description: string;
+  priceFrom: string;
+  category: string;
+  icon: string;
+  slug: string;
+}
 
 // --- Master Data (Services) ---
 export const useGetServices = () => {
@@ -80,7 +88,7 @@ export const useGetTopWorkshops = () => {
 export const useCreateLead = () => {
   return useMutation({
     mutationFn: (data: { name: string; phone: string; email?: string; vehicleBrand?: string; vehicleModel?: string; city?: string; message?: string; source?: string }) => 
-      fetchApi('/leads', {
+      fetchApi<any>('/leads', {
         method: 'POST',
         body: JSON.stringify(data),
       })
@@ -90,7 +98,7 @@ export const useCreateLead = () => {
 export const useCreateBooking = () => {
   return useMutation({
     mutationFn: (data: { vehicleId: string; serviceId: string; cityId: string; description: string; preferredDate: string; latitude?: number; longitude?: number }) => 
-      fetchApi('/customer/bookings', {
+      fetchApi<any>('/customer/bookings', {
         method: 'POST',
         body: JSON.stringify(data),
       })
@@ -100,7 +108,7 @@ export const useCreateBooking = () => {
 export const useCreateGarageVehicle = () => {
   return useMutation({
     mutationFn: (data: { brand: string; model: string; registrationNumber: string; fuelType: string; year: number }) => 
-      fetchApi('/customer/garage', {
+      fetchApi<any>('/customer/garage', {
         method: 'POST',
         body: JSON.stringify(data),
       })

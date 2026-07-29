@@ -68,7 +68,7 @@ export default function ServicesCatalog() {
 
         {/* Services grid */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
-          {filteredServices.map((service) => {
+          {filteredServices.map((service: ServiceItem) => {
             // @ts-ignore
             const Icon = LucideIcons[service.icon] || LucideIcons.Wrench;
             return (
