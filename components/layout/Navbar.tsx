@@ -6,6 +6,7 @@ import Image from "next/image";
 import { Menu, ArrowRight } from "lucide-react";
 import MobileMenu from "./MobileMenu";
 import { MAIN_NAV_LINKS } from "@/lib/constants";
+import { useAuth } from "@/features/auth/hooks/useAuth";
 
 
 export function Logo() {
@@ -25,6 +26,7 @@ export function Logo() {
 
 export default function Navbar() {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const { user, isAuthenticated, logout } = useAuth();
 
   return (
     <>
@@ -48,14 +50,32 @@ export default function Navbar() {
 
           {/* Desktop CTA Buttons */}
           <div className="hidden md:flex items-center gap-4">
+            {isAuthenticated ? (
+              <div className="flex items-center gap-4">
+                <span className="font-heading font-semibold text-sm text-neutral-text-dark">Hi, {user?.fullName?.split(' ')[0] || 'User'}</span>
+                <Link
+                  href="http://localhost:3001/customer/dashboard"
+                  className="px-5 py-2 font-heading font-semibold text-sm text-neutral-text-dark border border-neutral-text-muted/30 rounded-full hover:bg-neutral-bg hover:border-primary-blue hover:text-primary-blue transition-all duration-200 text-center"
+                >
+                  Dashboard
+                </Link>
+                <button
+                  onClick={logout}
+                  className="px-5 py-2 font-heading font-semibold text-sm text-danger border border-danger/30 rounded-full hover:bg-danger/5 hover:border-danger hover:text-danger transition-all duration-200 text-center"
+                >
+                  Logout
+                </button>
+              </div>
+            ) : (
+              <Link
+                href="http://localhost:3001/auth/login"
+                className="px-5 py-2 font-heading font-semibold text-sm text-neutral-text-dark border border-neutral-text-muted/30 rounded-full hover:bg-neutral-bg hover:border-primary-blue hover:text-primary-blue transition-all duration-200 text-center"
+              >
+                Login / Sign Up
+              </Link>
+            )}
             <Link
-              href="/login"
-              className="px-5 py-2 font-heading font-semibold text-sm text-neutral-text-dark border border-neutral-text-muted/30 rounded-full hover:bg-neutral-bg hover:border-primary-blue hover:text-primary-blue transition-all duration-200 text-center"
-            >
-              Login / Sign Up
-            </Link>
-            <Link
-              href="/pricing"
+              href="/quotes"
               className="flex items-center gap-2 px-6 py-2.5 font-heading font-bold text-sm text-white bg-primary-blue rounded-full hover:bg-primary-blue-dark hover:shadow-lg hover:shadow-primary-blue/20 transition-all duration-200 text-center"
             >
               Get Free Quote
@@ -79,4 +99,6 @@ export default function Navbar() {
     </>
   );
 }
+
+// let a :string ="ajay";
 

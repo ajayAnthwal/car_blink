@@ -6,11 +6,14 @@ import Container from "@/components/ui/Container";
 import Badge from "@/components/ui/Badge";
 import Card from "@/components/ui/Card";
 import Button from "@/components/ui/Button";
-import { OWNER_FEATURES, WORKSHOP_PLANS } from "../data/pricingPageData";
+import { OWNER_FEATURES } from "../data/pricingPageData";
+import { useGetPlans } from "@/services/queries";
+import { Loader2 } from "lucide-react";
 
 export default function PricingContent() {
-  const [audience, setAudience] = useState<"owners" | "workshops">("owners");
+  const [audience, setAudience] = useState<"owners" | "workshops">("workshops");
   const [billing, setBilling] = useState<"monthly" | "yearly">("monthly");
+  const { data: plans = [], isLoading } = useGetPlans();
 
   return (
     <>
@@ -115,87 +118,83 @@ export default function PricingContent() {
               </div>
             </div>
 
-            <div className="mt-12 grid grid-cols-1 gap-6 lg:grid-cols-3">
-              {WORKSHOP_PLANS.map((plan) => (
-                <Card
-                  key={plan.name}
-                  className={`relative flex flex-col rounded-2xl p-8 ${
-                    plan.highlighted
-                      ? "border-2 border-accent-orange bg-primary-navy text-white shadow-xl shadow-accent-orange/10 lg:-translate-y-3"
-                      : "border border-neutral-text-muted/15 bg-white"
-                  }`}
-                >
-                  {plan.highlighted && (
-                    <span className="absolute -top-3 right-8 rounded-full bg-accent-orange px-3 py-1 font-heading text-xs font-bold text-white">
-                      Most Popular
-                    </span>
-                  )}
-
-                  <h3
-                    className={`font-heading text-lg font-bold ${
-                      plan.highlighted ? "text-black" : "!text-neutral-text-dark"
+            <div className="mt-12 grid grid-cols-1 gap-6 lg:grid-cols-2 max-w-4xl mx-auto">
+              {isLoading ? (
+                <div className="col-span-1 lg:col-span-2 flex justify-center py-20">
+                  <Loader2 className="w-8 h-8 animate-spin text-primary-blue" />
+                </div>
+              ) : (
+                plans.map((plan: any) => (
+                  <Card
+                    key={plan.slug}
+                    className={`relative flex flex-col rounded-2xl p-8 ${
+                      plan.isPopular
+                        ? "border-2 border-accent-orange bg-primary-navy text-white shadow-xl shadow-accent-orange/10 lg:-translate-y-3"
+                        : "border border-neutral-text-muted/15 bg-white"
                     }`}
                   >
-                    {plan.name}
-                  </h3>
-                  <p
-                    className={`mt-1 font-body text-sm ${
-                      plan.highlighted ? "text-black" : "text-neutral-text-muted"
-                    }`}
-                  >
-                    {plan.tagline}
-                  </p>
+                    {plan.isPopular && (
+                      <span className="absolute -top-3 right-8 rounded-full bg-accent-orange px-3 py-1 font-heading text-xs font-bold text-white">
+                        Most Popular
+                      </span>
+                    )}
 
-                  <div className="mt-5 flex items-baseline gap-1">
-                    <span className="font-heading font-black text-3xl text-black">
-                      {plan.price[billing]}
-                    </span>
-                    <span
-                      className={`font-body text-sm ${
-                        plan.highlighted ? "text-white/50" : "text-neutral-text-muted"
+                    <h3
+                      className={`font-heading text-lg font-bold ${
+                        plan.isPopular ? "text-white" : "!text-neutral-text-dark"
                       }`}
                     >
-                      {plan.period}
-                    </span>
-                  </div>
+                      {plan.name}
+                    </h3>
+                    
+                    <div className="mt-5 flex items-baseline gap-1">
+                      <span className={`font-heading font-black text-3xl ${plan.isPopular ? "text-white" : "text-black"}`}>
+                        ₹{plan.price}
+                      </span>
+                      <span
+                        className={`font-body text-sm ${
+                          plan.isPopular ? "text-white/50" : "text-neutral-text-muted"
+                        }`}
+                      >
+                        / {plan.durationMonths} months
+                      </span>
+                    </div>
+                    {plan.originalPrice && (
+                      <div className="font-body text-sm text-neutral-text-muted/60 line-through">
+                        ₹{plan.originalPrice}
+                      </div>
+                    )}
 
-                  <ul className="mt-6 flex-1 space-y-3">
-                    {plan.features.map((f) => (
-                      <li key={f.label} className="flex items-start gap-2 font-body text-sm">
-                        {f.included ? (
+                    <ul className="mt-6 flex-1 space-y-3">
+                      {plan.features.map((f: string) => (
+                        <li key={f} className="flex items-start gap-2 font-body text-sm">
                           <CheckCircle2
                             className={`mt-0.5 h-4 w-4 flex-shrink-0 ${
-                              plan.highlighted ? "text-accent-orange" : "text-success"
+                              plan.isPopular ? "text-accent-orange" : "text-success"
                             }`}
                           />
-                        ) : (
-                          <X className="mt-0.5 h-4 w-4 flex-shrink-0 text-neutral-text-muted/40" />
-                        )}
-                        <span
-                          className={
-                            f.included
-                              ? plan.highlighted
-                                ? "text-black"
-                                : "text-neutral-text-dark"
-                              : "text-neutral-text-muted/60 line-through"
-                          }
-                        >
-                          {f.label}
-                        </span>
-                      </li>
-                    ))}
-                  </ul>
+                          <span
+                            className={
+                              plan.isPopular ? "text-white" : "text-neutral-text-dark"
+                            }
+                          >
+                            {f}
+                          </span>
+                        </li>
+                      ))}
+                    </ul>
 
-                  <Button
-                    variant={plan.highlighted ? "accent" : "primary"}
-                    size="md"
-                    fullWidth
-                    className="mt-8"
-                  >
-                    {plan.cta}
-                  </Button>
-                </Card>
-              ))}
+                    <Button
+                      variant={plan.isPopular ? "accent" : "primary"}
+                      size="md"
+                      fullWidth
+                      className="mt-8"
+                    >
+                      Subscribe Now
+                    </Button>
+                  </Card>
+                ))
+              )}
             </div>
           </Container>
         </section>

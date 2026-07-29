@@ -1,16 +1,27 @@
 import { notFound } from "next/navigation";
 import Link from "next/link";
 import { ArrowLeft, ArrowRight, Calendar, Clock } from "lucide-react";
-import { BLOG_POSTS_LIST } from "@/features/blog/data/blogPostsList";
+import { fetchApi } from "@/lib/apiClient";
 
-export default function BlogPostPage({
+export const revalidate = 60; // ISR revalidate
+
+export default async function BlogPostPage({
   params,
 }: {
   params: { slug: string };
 }) {
-  const post = BLOG_POSTS_LIST.find((p) => p.slug === params.slug);
+  let post = null;
 
-  if (!post) {
+  try {
+    const response = await fetchApi<any>(`/blogs/${params.slug}`);
+    if (response?.data) {
+      post = response.data;
+    }
+  } catch (err) {
+    console.error("Failed to fetch blog:", err);
+  }
+
+  if (!post || post.status !== 'PUBLISHED') {
     notFound();
   }
 
@@ -36,30 +47,16 @@ export default function BlogPostPage({
         <div className="mt-4 flex items-center gap-5 text-sm text-neutral-text-muted">
           <span className="inline-flex items-center gap-1.5">
             <Calendar className="h-4 w-4" />
-            {post.date}
+            {post.publishedAt ? new Date(post.publishedAt).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }) : new Date(post.createdAt).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}
           </span>
           <span className="inline-flex items-center gap-1.5">
             <Clock className="h-4 w-4" />
-            {post.readTime}
+            5 min read
           </span>
         </div>
 
         <div className="mt-8 space-y-5 text-base leading-relaxed text-neutral-text-dark/80">
-          <p>
-            Keeping your car in top shape does not have to be complicated. In
-            this article we break down the essentials so you can drive with
-            confidence and avoid costly surprises down the road.
-          </p>
-          <p>
-            Whether you are a first-time car owner or a seasoned driver, the
-            tips below will help you spot issues early and choose the right
-            workshop when service is needed.
-          </p>
-          <p>
-            Want a transparent, upfront quote for your next service? Car Blink
-            connects you with verified workshops across 25+ cities so you always
-            know the price before you commit.
-          </p>
+          <div dangerouslySetInnerHTML={{ __html: post.content }} />
         </div>
 
         <div className="mt-10 border-t border-neutral-text-muted/15 pt-8 text-center">

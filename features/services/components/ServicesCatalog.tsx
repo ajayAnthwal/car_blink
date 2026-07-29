@@ -3,153 +3,37 @@
 import { useState } from "react";
 import Link from "next/link";
 import {
-  Wrench,
-  Cog,
-  PaintBucket,
-  Droplets,
-  Sparkles,
-  ShieldCheck,
-  CircleDot,
-  Disc3,
-  BatteryCharging,
-  Wind,
-  SlidersHorizontal,
-  FileText,
-  Settings2,
-  Disc,
   ArrowRight,
   type LucideIcon,
 } from "lucide-react";
 import Container from "@/components/ui/Container";
 import Card from "@/components/ui/Card";
 
-type Category = "All" | "Maintenance" | "Repair" | "Cosmetic" | "Insurance & Claims" | "Doorstep Service";
+import * as LucideIcons from "lucide-react";
 
-interface ServiceItem {
-  name: string;
-  description: string;
-  priceFrom: string;
-  category: Exclude<Category, "All">;
-  icon: LucideIcon;
-}
+type Category = "All" | string;
 
-const categories: Category[] = [
-  "All",
-  "Maintenance",
-  "Repair",
-  "Cosmetic",
-  "Insurance & Claims",
-  "Doorstep Service",
-];
-
-const services: ServiceItem[] = [
-  {
-    name: "Periodic Service",
-    description: "Complete health checkup, oil change & multi-point inspection.",
-    priceFrom: "₹2,499 - ₹4,999",
-    category: "Maintenance",
-    icon: Wrench,
-  },
-  {
-    name: "Engine Repair",
-    description: "Diagnostics and repair for engine noise, leaks & performance.",
-    priceFrom: "₹4,999 - ₹12,000",
-    category: "Repair",
-    icon: Cog,
-  },
-  {
-    name: "Dent & Paint",
-    description: "Dent removal and panel repainting with colour-match guarantee.",
-    priceFrom: "₹2,500 - ₹5,499",
-    category: "Cosmetic",
-    icon: PaintBucket,
-  },
-  {
-    name: "Car Wash",
-    description: "Premium doorstep wash with waterless tech, interior vacuuming & tyre shine.",
-    priceFrom: "₹499 - ₹999",
-    category: "Doorstep Service",
-    icon: Droplets,
-  },
-  {
-    name: "Detailing",
-    description: "Deep interior & exterior detailing to restore that new-car feel.",
-    priceFrom: "₹2,999 - ₹5,999",
-    category: "Cosmetic",
-    icon: Sparkles,
-  },
-  {
-    name: "PPF (Paint Protection Film)",
-    description: "Long-lasting film that shields your paint from scratches.",
-    priceFrom: "₹25,000 - ₹85,000",
-    category: "Cosmetic",
-    icon: ShieldCheck,
-  },
-  {
-    name: "Ceramic Coating",
-    description: "Glass-like shine with lasting protection from the elements.",
-    priceFrom: "₹14,999 - ₹35,000",
-    category: "Cosmetic",
-    icon: CircleDot,
-  },
-  {
-    name: "Tyres",
-    description: "Genuine tyre brands with free fitting & wheel balancing.",
-    priceFrom: "₹3,499 - ₹8,499 / tyre",
-    category: "Maintenance",
-    icon: Disc3,
-  },
-  {
-    name: "Battery",
-    description: "Doorstep battery replacement with warranty, top brands.",
-    priceFrom: "₹4,499 - ₹8,999",
-    category: "Doorstep Service",
-    icon: BatteryCharging,
-  },
-  {
-    name: "AC Repair",
-    description: "Gas top-up, compressor & cooling system diagnostics.",
-    priceFrom: "₹1,499 - ₹4,499",
-    category: "Repair",
-    icon: Wind,
-  },
-  {
-    name: "Suspension",
-    description: "Shock absorbers, struts & suspension noise fixes.",
-    priceFrom: "₹3,999 - ₹9,999",
-    category: "Repair",
-    icon: SlidersHorizontal,
-  },
-  {
-    name: "Insurance Claims",
-    description: "Cashless claim assistance across all major insurers.",
-    priceFrom: "Free assistance",
-    category: "Insurance & Claims",
-    icon: FileText,
-  },
-  {
-    name: "Clutch Repair",
-    description: "Clutch plate, pressure plate & release bearing service.",
-    priceFrom: "₹4,999 - ₹9,999",
-    category: "Repair",
-    icon: Settings2,
-  },
-  {
-    name: "Brake Service",
-    description: "Brake pad replacement, disc skimming & fluid change.",
-    priceFrom: "₹1,299 - ₹3,499",
-    category: "Maintenance",
-    icon: Disc,
-  },
-];
+import { useGetServices, ServiceItem } from "@/services/queries";
 
 export default function ServicesCatalog() {
-  const [activeCategory, setActiveCategory] = useState<Category>("All");
+  const [activeCategory, setActiveCategory] = useState<string>("All");
+  const { data, isLoading, error } = useGetServices();
+
+  const services = data?.services || [];
+  const categories = data?.categories || ["All"];
 
   const filteredServices =
     activeCategory === "All"
       ? services
-      : services.filter((service) => service.category === activeCategory);
+      : services.filter((service: ServiceItem) => service.category === activeCategory);
+
+
+  if (isLoading) {
+    return <div className="py-20 text-center">Loading services...</div>;
+  }
+  if (error) {
+    return <div className="py-20 text-center text-red-500">Failed to load services.</div>;
+  }
 
   return (
     <section className="py-16 bg-neutral-bg">
@@ -185,7 +69,8 @@ export default function ServicesCatalog() {
         {/* Services grid */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
           {filteredServices.map((service) => {
-            const Icon = service.icon;
+            // @ts-ignore
+            const Icon = LucideIcons[service.icon] || LucideIcons.Wrench;
             return (
               <Card
                 key={service.name}
@@ -212,7 +97,7 @@ export default function ServicesCatalog() {
                     <span className="text-[10px] text-neutral-text-muted mt-1">*T&C Apply</span>
                   </div>
                   <Link 
-                    href={`/services/${service.name.toLowerCase().replace(/[^a-z0-9]+/g, '-')}`} 
+                    href={`/services/${service.slug || service.name.toLowerCase().replace(/[^a-z0-9]+/g, '-')}`} 
                     className="inline-flex items-center justify-center px-4 py-2 rounded-full font-heading text-xs font-bold bg-primary-blue/10 text-primary-blue group-hover:bg-primary-blue group-hover:text-white transition-all duration-300"
                   >
                     Compare Now

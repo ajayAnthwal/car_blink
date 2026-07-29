@@ -17,6 +17,9 @@ import Card from "@/components/ui/Card";
 import Container from "@/components/ui/Container";
 import Input from "@/components/ui/Input";
 import Select from "@/components/ui/Select";
+import { useCreateLead } from "@/services/queries";
+import { toast } from "sonner";
+import { Loader2 } from "lucide-react";
 
 /* ------------------------------------------------------------------ */
 /*  Static content                                                    */
@@ -83,6 +86,8 @@ export default function ContactPage() {
   const [submitted, setSubmitted] = useState(false);
   const [openFaq, setOpenFaq] = useState(0);
 
+  const { mutateAsync: createLead, isPending: isSubmitting } = useCreateLead();
+
   function handleChange(
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>
   ) {
@@ -90,9 +95,21 @@ export default function ContactPage() {
     setForm((prev) => ({ ...prev, [name]: value }));
   }
 
-  function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
+  async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
-    setSubmitted(true);
+    try {
+      await createLead({
+        name: form.name,
+        phone: form.phone,
+        email: form.email,
+        source: 'WEBSITE_CONTACT',
+        message: `Topic: ${TOPICS.find(t => t.value === form.topic)?.label || form.topic} | Message: ${form.message}`,
+      });
+      setSubmitted(true);
+      toast.success("Message sent successfully!");
+    } catch (err: any) {
+      toast.error(err.message || "Failed to send message. Please try again.");
+    }
   }
 
   return (
@@ -246,10 +263,11 @@ export default function ContactPage() {
                     variant="primary"
                     size="lg"
                     fullWidth
+                    disabled={isSubmitting || !form.name || !form.phone || !form.email || !form.message}
                     className="sm:w-auto"
-                    rightIcon={<Send className="h-4 w-4" />}
+                    rightIcon={isSubmitting ? <Loader2 className="w-4 h-4 animate-spin" /> : <Send className="h-4 w-4" />}
                   >
-                    Send Message
+                    {isSubmitting ? "Sending..." : "Send Message"}
                   </Button>
                 </form>
               )}

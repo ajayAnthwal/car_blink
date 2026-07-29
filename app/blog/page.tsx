@@ -2,9 +2,28 @@ import Link from "next/link";
 import { ArrowRight } from "lucide-react";
 import Card from "@/components/ui/Card";
 import BlogCard from "@/features/blog/components/BlogCard";
-import { BLOG_POSTS_LIST } from "@/features/blog/data/blogPostsList";
+import { fetchApi } from "@/lib/apiClient";
 
-export default function BlogPage() {
+export const revalidate = 60; // ISR revalidate
+
+export default async function BlogPage() {
+  let blogs = [];
+
+  try {
+    const data = await fetchApi<any>('/blogs?status=PUBLISHED');
+    if (data?.data?.blogs) {
+      blogs = data.data.blogs.map((b: any) => ({
+        title: b.title,
+        date: b.publishedAt ? new Date(b.publishedAt).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }) : new Date(b.createdAt).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }),
+        readTime: "5 min read", // You can calculate this based on b.content length
+        image: b.featuredImage || "/images/blog-1.png",
+        slug: b.slug,
+      }));
+    }
+  } catch (error) {
+    console.error("Failed to fetch blogs:", error);
+  }
+
   return (
     <div className="min-h-screen bg-neutral-bg font-sans text-neutral-text-dark antialiased">
       <section className="relative overflow-hidden bg-primary-navy">
@@ -29,11 +48,13 @@ export default function BlogPage() {
       <section className="py-16 sm:py-20">
         <div className="mx-auto w-full max-w-7xl px-4 sm:px-6 lg:px-8">
           <div className="grid grid-cols-1 gap-8 md:grid-cols-2 lg:grid-cols-3">
-            {BLOG_POSTS_LIST.map((post) => (
+            {blogs.length > 0 ? blogs.map((post: any) => (
               <Card key={post.slug} hoverable className="p-4">
                 <BlogCard post={post} />
               </Card>
-            ))}
+            )) : (
+              <p className="text-slate-500 col-span-3 text-center py-10">No blogs found.</p>
+            )}
           </div>
 
           <div className="mt-12 text-center">

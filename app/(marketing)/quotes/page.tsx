@@ -20,7 +20,9 @@ import {
 import Container from "@/components/ui/Container";
 import Button from "@/components/ui/Button";
 import LocationModal from "@/components/ui/LocationModal";
-
+import { useCreateLead, useCreateBooking, useCreateGarageVehicle, useGetServices } from "@/services/queries";
+import { toast } from "sonner";
+import { useAuth } from "@/features/auth/hooks/useAuth";
 const MAKES = [
   "Maruti Suzuki", "Hyundai", "Tata", "Mahindra", "Kia", 
   "Toyota", "Honda", "MG", "Skoda", "Volkswagen", 
@@ -60,9 +62,17 @@ const ALL_SERVICES = [
 
 function QuotesForm() {
   const searchParams = useSearchParams();
+  const { user, isAuthenticated } = useAuth();
   const [step, setStep] = useState(1);
   const [isLocating, setIsLocating] = useState(false);
   const [showMapModal, setShowMapModal] = useState(false);
+  const { mutateAsync: createLead, isPending: isSubmittingLead } = useCreateLead();
+  const { mutateAsync: createBooking, isPending: isSubmittingBooking } = useCreateBooking();
+  const { mutateAsync: createGarageVehicle } = useCreateGarageVehicle();
+  const { data: servicesData } = useGetServices();
+  
+  const isSubmitting = isSubmittingLead || isSubmittingBooking;
+
   const [formData, setFormData] = useState({
     make: "",
     model: "",
@@ -77,6 +87,16 @@ function QuotesForm() {
   });
 
   const [availableServices, setAvailableServices] = useState(ALL_SERVICES.map(s => s.name));
+
+  useEffect(() => {
+    if (user) {
+      setFormData(prev => ({
+        ...prev,
+        name: user.fullName || prev.name,
+        phone: user.phone || prev.phone,
+      }));
+    }
+  }, [user]);
 
   useEffect(() => {
     const serviceParam = searchParams.get("service");
@@ -167,13 +187,13 @@ function QuotesForm() {
         },
         (error) => {
           console.error("Geolocation error:", error);
-          alert("Please allow location access to auto-detect.");
+          toast.error("Please allow location access to auto-detect.");
           setIsLocating(false);
         },
         { enableHighAccuracy: true, timeout: 10000, maximumAge: 0 }
       );
     } else {
-      alert("Location detection is not supported by your browser.");
+      toast.error("Location detection is not supported by your browser.");
     }
   };
 
@@ -407,14 +427,59 @@ function QuotesForm() {
               <Button className="flex-1 md:flex-none" variant="ghost" onClick={prevStep}>Back</Button>
               <Button 
                 className="flex-1 md:flex-none"
-                onClick={() => {
-                  setStep(5);
+                onClick={async () => {
+                  try {
+                    if (isAuthenticated) {
+                      // Authenticated Flow
+                      // 1. Create Garage Vehicle
+                      const vehicleRes = await createGarageVehicle({
+                        brand: formData.make,
+                        model: formData.model,
+                        registrationNumber: formData.vehicleNumber,
+                        fuelType: formData.fuelType,
+                        year: new Date().getFullYear(), // Default
+                      });
+                      
+                      const vehicleId = vehicleRes?.data?._id || vehicleRes?._id;
+                      
+                      // Match service to get ID
+                      const allMasterServices = servicesData?.services || [];
+                      const firstServiceName = formData.services[0];
+                      const matchedService = allMasterServices.find((s: any) => s.name === firstServiceName);
+                      const serviceId = matchedService?._id || "64f1a2b3c4d5e6f7a8b9c0d2"; // Dummy valid fallback
+
+                      // 2. Create Booking
+                      await createBooking({
+                        vehicleId,
+                        serviceId,
+                        cityId: formData.location, // Gets handled by backend as location string or ID
+                        description: `Services: ${formData.services.join(", ")} | Other Details: ${formData.otherServiceDetails} | Fuel: ${formData.fuelType} | Address: ${formData.address}`,
+                        preferredDate: new Date().toISOString(),
+                      });
+                      setStep(5);
+                    } else {
+                      // Guest Flow
+                      await createLead({
+                        name: formData.name,
+                        phone: formData.phone,
+                        source: 'WEBSITE_QUOTE',
+                        vehicleBrand: formData.make,
+                        vehicleModel: formData.model,
+                        city: formData.location,
+                        message: `Services: ${formData.services.join(", ")} | Fuel: ${formData.fuelType} | Vehicle No: ${formData.vehicleNumber} | Other: ${formData.otherServiceDetails} | Address: ${formData.address}`,
+                      });
+                      setStep(5);
+                    }
+                    toast.success("Query Submitted Successfully! We will contact you soon.");
+                  } catch (err: any) {
+                    toast.error(err.message || "Failed to submit quote request. Please try again.");
+                  }
                 }} 
-                disabled={!formData.name || !formData.phone || !formData.location || !formData.address || !formData.vehicleNumber}
+                disabled={!formData.name || !formData.phone || !formData.location || !formData.address || !formData.vehicleNumber || isSubmitting}
                 variant="accent"
-                rightIcon={<ArrowRight className="w-4 h-4" />}
+                rightIcon={isSubmitting ? <Loader2 className="w-4 h-4 animate-spin" /> : <ArrowRight className="w-4 h-4" />}
               >
-                Get Quotes Now
+                {isSubmitting ? "Submitting..." : (isAuthenticated ? "Book Now" : "Get Quotes Now")}
               </Button>
             </div>
           </div>
@@ -425,12 +490,16 @@ function QuotesForm() {
             <div className="w-20 h-20 bg-success/10 rounded-full flex items-center justify-center mb-6 shadow-inner shadow-success/20">
               <CheckCircle2 className="w-10 h-10 text-success" />
             </div>
-            <h2 className="font-heading font-black text-3xl text-neutral-text-dark mb-4">Request Sent Successfully!</h2>
+            <h2 className="font-heading font-black text-3xl text-neutral-text-dark mb-4">{isAuthenticated ? "Booking Confirmed!" : "Request Sent Successfully!"}</h2>
             <p className="font-body text-neutral-text-muted text-lg max-w-md leading-relaxed mb-8">
-              Thank you, <span className="font-bold text-neutral-text-dark">{formData.name}</span>. We've received your request for <span className="font-bold text-neutral-text-dark">{formData.services.join(", ")}</span>. Our top-rated workshops are calculating your exact quote and we will contact you on <span className="font-bold text-neutral-text-dark">+91 {formData.phone}</span> shortly.
+              {isAuthenticated ? (
+                <>Thank you, <span className="font-bold text-neutral-text-dark">{formData.name}</span>. Your booking for <span className="font-bold text-neutral-text-dark">{formData.services.join(", ")}</span> has been created. Partners are now bidding on your request.</>
+              ) : (
+                <>Thank you, <span className="font-bold text-neutral-text-dark">{formData.name}</span>. We've received your request for <span className="font-bold text-neutral-text-dark">{formData.services.join(", ")}</span>. Our top-rated workshops are calculating your exact quote and we will contact you on <span className="font-bold text-neutral-text-dark">+91 {formData.phone}</span> shortly.</>
+              )}
             </p>
-            <Button variant="primary" size="lg" href="/">
-              Return to Home
+            <Button variant="primary" size="lg" href={isAuthenticated ? "http://localhost:3001/customer/dashboard" : "/"}>
+              {isAuthenticated ? "Go to Dashboard" : "Return to Home"}
             </Button>
           </div>
         );

@@ -3,7 +3,9 @@
 import { useState } from "react";
 import Button from "@/components/ui/Button";
 import LocationModal from "@/components/ui/LocationModal";
-import { LocateFixed, MapPin } from "lucide-react";
+import { LocateFixed, MapPin, Loader2 } from "lucide-react";
+import { useCreateLead } from "@/services/queries";
+import { toast } from "sonner";
 
 export default function HeroForm() {
   const [formData, setFormData] = useState({
@@ -15,11 +17,24 @@ export default function HeroForm() {
   });
   const [showMapModal, setShowMapModal] = useState(false);
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const { mutateAsync: createLead, isPending: isSubmitting } = useCreateLead();
+
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    // For now, just showing an alert. This can be connected to an API later.
-    alert("Query Submitted Successfully! We will contact you soon.");
-    setFormData({ name: "", number: "", carDetails: "", address: "", query: "" });
+    try {
+      await createLead({
+        name: formData.name,
+        phone: formData.number,
+        source: 'QUICK_CALLBACK',
+        vehicleBrand: formData.carDetails,
+        city: formData.address,
+        message: formData.query,
+      });
+      toast.success("Query Submitted Successfully! We will contact you soon.");
+      setFormData({ name: "", number: "", carDetails: "", address: "", query: "" });
+    } catch (err: any) {
+      toast.error(err.message || "Failed to submit request. Please try again.");
+    }
   };
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
@@ -94,7 +109,7 @@ export default function HeroForm() {
             <label htmlFor="address" className="block text-sm font-medium text-neutral-text-dark">
               Address / Location
             </label>
-            <button 
+            <button
               type="button"
               onClick={() => setShowMapModal(true)}
               className="flex items-center gap-1.5 text-xs font-semibold text-primary-blue hover:text-primary-blue-dark transition-colors"
@@ -140,17 +155,24 @@ export default function HeroForm() {
           variant="primary"
           size="lg"
           className="w-full mt-2"
+          disabled={isSubmitting}
         >
-          Submit Query
+          {isSubmitting ? (
+            <span className="flex items-center justify-center gap-2">
+              <Loader2 className="w-5 h-5 animate-spin" /> Submitting...
+            </span>
+          ) : (
+            "Submit Query"
+          )}
         </Button>
       </form>
 
-      <LocationModal 
-        isOpen={showMapModal} 
-        onClose={() => setShowMapModal(false)} 
+      <LocationModal
+        isOpen={showMapModal}
+        onClose={() => setShowMapModal(false)}
         onConfirm={(locStr) => {
           setFormData(prev => ({ ...prev, address: locStr }));
-        }} 
+        }}
       />
     </div>
   );

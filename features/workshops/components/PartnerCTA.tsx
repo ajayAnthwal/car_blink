@@ -2,9 +2,12 @@
 
 import React from "react";
 import Image from "next/image";
-import { Check, TrendingUp } from "lucide-react";
+import { Check, TrendingUp, Send, Loader2, CheckCircle2 } from "lucide-react";
 import Button from "@/components/ui/Button";
 import Badge from "@/components/ui/Badge";
+import Input from "@/components/ui/Input";
+import { useCreateLead } from "@/services/queries";
+import { toast } from "sonner";
 
 const BENEFITS = [
   "Receive High Quality Leads Daily",
@@ -14,6 +17,27 @@ const BENEFITS = [
 ];
 
 export default function PartnerCTA() {
+  const [form, setForm] = React.useState({ name: "", phone: "", city: "" });
+  const [submitted, setSubmitted] = React.useState(false);
+  const { mutateAsync: createLead, isPending } = useCreateLead();
+
+  async function handleSubmit(e: React.FormEvent) {
+    e.preventDefault();
+    try {
+      await createLead({
+        name: form.name,
+        phone: form.phone,
+        city: form.city,
+        source: "WORKSHOP_PARTNER",
+        message: "Partner Onboarding Request",
+      });
+      setSubmitted(true);
+      toast.success("Application submitted successfully!");
+    } catch (err: any) {
+      toast.error(err.message || "Something went wrong. Please try again.");
+    }
+  }
+
   return (
     <div className="flex-1 bg-white rounded-3xl relative overflow-hidden flex flex-col lg:flex-row justify-between items-stretch w-full border border-neutral-text-muted/10 shadow-xl shadow-primary-blue/5 min-h-[360px]">
       {/* Background Decorative Glow */}
@@ -51,14 +75,55 @@ export default function PartnerCTA() {
           ))}
         </div>
 
-        {/* Button */}
-        <Button
-          variant="primary"
-          size="md"
-          className="w-full sm:w-auto mt-2 font-heading font-bold"
-        >
-          Join as Partner
-        </Button>
+        {/* Form */}
+        <div className="w-full mt-4 bg-neutral-bg p-4 rounded-2xl border border-neutral-text-muted/10">
+          {submitted ? (
+            <div className="flex flex-col items-center justify-center py-6 text-center">
+              <CheckCircle2 className="w-8 h-8 text-success mb-2" />
+              <h4 className="font-heading font-bold text-neutral-text-dark">Application Received!</h4>
+              <p className="font-body text-xs text-neutral-text-muted mt-1">Our team will call you within 24 hours.</p>
+            </div>
+          ) : (
+            <form onSubmit={handleSubmit} className="flex flex-col gap-3">
+              <Input
+                label=""
+                name="name"
+                placeholder="Workshop Name"
+                required
+                value={form.name}
+                onChange={(e) => setForm({ ...form, name: e.target.value })}
+              />
+              <div className="grid grid-cols-2 gap-3">
+                <Input
+                  label=""
+                  name="phone"
+                  placeholder="Phone Number"
+                  required
+                  value={form.phone}
+                  onChange={(e) => setForm({ ...form, phone: e.target.value })}
+                />
+                <Input
+                  label=""
+                  name="city"
+                  placeholder="City"
+                  required
+                  value={form.city}
+                  onChange={(e) => setForm({ ...form, city: e.target.value })}
+                />
+              </div>
+              <Button
+                type="submit"
+                variant="primary"
+                size="md"
+                disabled={isPending || !form.name || !form.phone || !form.city}
+                className="w-full font-heading font-bold mt-1"
+                rightIcon={isPending ? <Loader2 className="w-4 h-4 animate-spin" /> : <Send className="w-4 h-4" />}
+              >
+                {isPending ? "Submitting..." : "Apply Now"}
+              </Button>
+            </form>
+          )}
+        </div>
       </div>
 
       {/* Right Column - Image & Floating Speech Bubble */}
