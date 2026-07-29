@@ -498,9 +498,11 @@ function QuotesForm() {
                 <>Thank you, <span className="font-bold text-neutral-text-dark">{formData.name}</span>. We've received your request for <span className="font-bold text-neutral-text-dark">{formData.services.join(", ")}</span>. Our top-rated workshops are calculating your exact quote and we will contact you on <span className="font-bold text-neutral-text-dark">+91 {formData.phone}</span> shortly.</>
               )}
             </p>
-            <Button variant="primary" size="lg" href={isAuthenticated ? "http://localhost:3001/customer/dashboard" : "/"}>
-              {isAuthenticated ? "Go to Dashboard" : "Return to Home"}
-            </Button>
+            <div className="max-w-md mx-auto">
+              <Button variant="primary" size="lg" href={isAuthenticated ? (process.env.NEXT_PUBLIC_DASHBOARD_URL || "http://localhost:3001/customer/dashboard") : "/"}>
+                {isAuthenticated ? "Go to Dashboard" : "Return to Home"}
+              </Button>
+            </div>
           </div>
         );
     }

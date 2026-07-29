@@ -54,7 +54,7 @@ export default function Navbar() {
               <div className="flex items-center gap-4">
                 <span className="font-heading font-semibold text-sm text-neutral-text-dark">Hi, {user?.fullName?.split(' ')[0] || 'User'}</span>
                 <Link
-                  href="http://localhost:3001/customer/dashboard"
+                  href={process.env.NEXT_PUBLIC_DASHBOARD_URL || "http://localhost:3001/customer/dashboard"}
                   className="px-5 py-2 font-heading font-semibold text-sm text-neutral-text-dark border border-neutral-text-muted/30 rounded-full hover:bg-neutral-bg hover:border-primary-blue hover:text-primary-blue transition-all duration-200 text-center"
                 >
                   Dashboard
@@ -68,7 +68,7 @@ export default function Navbar() {
               </div>
             ) : (
               <Link
-                href="http://localhost:3001/auth/login"
+                href="/login"
                 className="px-5 py-2 font-heading font-semibold text-sm text-neutral-text-dark border border-neutral-text-muted/30 rounded-full hover:bg-neutral-bg hover:border-primary-blue hover:text-primary-blue transition-all duration-200 text-center"
               >
                 Login / Sign Up
