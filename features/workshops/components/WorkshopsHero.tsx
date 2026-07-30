@@ -38,10 +38,11 @@ export default function WorkshopsHero() {
             </p>
 
             <div className="mt-8 flex flex-wrap items-center gap-4">
-              <Button variant="accent" size="lg" rightIcon={<ArrowRight className="w-5 h-5" />}>
+              <Button href="/register" variant="accent" size="lg" rightIcon={<ArrowRight className="w-5 h-5" />}>
                 Become a Partner
               </Button>
               <Button
+                href="/login"
                 variant="ghost"
                 size="lg"
                 className="bg-white/5 text-white hover:bg-white/10 hover:text-white border border-white/15"

@@ -54,9 +54,7 @@ export const postRegister = async (
       payload
     );
 
-    const {
-      result: { data, message },
-    } = response.data;
+    const { data, message } = response.data;
 
     return {
       data,
@@ -77,9 +75,7 @@ export const getProfile = async (): Promise<{
 }> => {
   try {
     const response = await apiClient.get(`${BASE_URLS}`);
-    const {
-      result: { data, message }
-    } = response.data;
+    const { data, message } = response.data;
     return { data, message };
   } catch (error: any) {
     throw new Error(error?.message);

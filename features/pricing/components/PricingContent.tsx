@@ -189,6 +189,7 @@ export default function PricingContent() {
                       size="md"
                       fullWidth
                       className="mt-8"
+                      href="/register"
                     >
                       Subscribe Now
                     </Button>

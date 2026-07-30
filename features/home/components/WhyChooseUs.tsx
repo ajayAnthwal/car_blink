@@ -17,6 +17,7 @@ import {
   Sparkles,
 } from "lucide-react";
 import Container from "@/components/ui/Container";
+import Link from "next/link";
 
 const rows = [
   {
@@ -259,9 +260,9 @@ export default function WhyChooseUs() {
                 </span>
               ))}
             </div>
-            <button className="font-heading font-bold text-sm md:text-base bg-accent-orange text-white px-8 py-4 rounded-full hover:bg-accent-orange/90 transition-colors shadow-lg shadow-accent-orange/20">
+            <Link href="/quotes" className="font-heading font-bold text-sm md:text-base bg-accent-orange text-white px-8 py-4 rounded-full hover:bg-accent-orange/90 transition-colors shadow-lg shadow-accent-orange/20">
               Compare Quotes Now
-            </button>
+            </Link>
           </div>
         </div>
       </Container>

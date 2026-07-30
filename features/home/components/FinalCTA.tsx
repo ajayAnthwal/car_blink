@@ -34,6 +34,7 @@ export default function FinalCTA() {
             <Button
               variant="primary"
               size="lg"
+              href="/quotes"
               rightIcon={<ArrowRight className="w-5 h-5" />}
             >
               Get Free Quote Now
