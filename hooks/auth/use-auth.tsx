@@ -28,8 +28,10 @@ export const useLogin = (): UseMutationResult<
     onSuccess: ({ data, message }) => {
       data.token && storage.setToken(data.token);
       toast.success(message);
-      // Wait for toast to appear then redirect
-      setTimeout(() => router.push(data.role === 'PARTNER' ? `${process.env.NEXT_PUBLIC_DASHBOARD_URL}/partner/dashboard` : '/dashboard'), 100);
+      // Wait for toast to appear then redirect and hard reload to update auth context
+      setTimeout(() => {
+        window.location.href = data.role === 'PARTNER' ? `${process.env.NEXT_PUBLIC_DASHBOARD_URL}/partner/dashboard` : '/';
+      }, 1500);
     },
     onError: (error) => {
       toast.error(error.message);
@@ -65,7 +67,9 @@ export const useVerifyOtp = (): UseMutationResult<
     onSuccess: ({ data, message }) => {
       data.token && storage.setToken(data.token);
       toast.success(message);
-      setTimeout(() => router.push(data.role === 'PARTNER' ? `${process.env.NEXT_PUBLIC_DASHBOARD_URL}/partner/dashboard` : '/dashboard'), 100);
+      setTimeout(() => {
+        window.location.href = data.role === 'PARTNER' ? `${process.env.NEXT_PUBLIC_DASHBOARD_URL}/partner/dashboard` : '/';
+      }, 1500);
     },
     onError: (error) => {
       toast.error(error.message);
@@ -90,7 +94,9 @@ export const useRegister = (): UseMutationResult<
 
       toast.success(message);
 
-      router.push("/home");
+      setTimeout(() => {
+        window.location.href = data.role === 'PARTNER' ? `${process.env.NEXT_PUBLIC_DASHBOARD_URL}/partner/dashboard` : '/';
+      }, 1500);
     },
 
     onError: (error) => {

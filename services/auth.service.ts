@@ -16,7 +16,11 @@ export const postLogin = async (payload: {
     };
     const response = await apiClient.post(`${BASE_URLS}/login`, loginPayload);
     const { data, message } = response.data;
-    return { data, message };
+    const userProfile: TUserProfile = {
+      ...data.user,
+      token: data.tokens?.accessToken,
+    };
+    return { data: userProfile, message };
   } catch (error: any) {
     throw new Error(error.response?.data?.message || error.message || 'Login failed');
   }
@@ -35,7 +39,11 @@ export const postVerifyOtp = async (payload: { identifier: string, otp: string }
   try {
     const response = await apiClient.post(`${BASE_URLS}/verify-otp`, payload);
     const { data, message } = response.data;
-    return { data, message };
+    const userProfile: TUserProfile = {
+      ...data.user,
+      token: data.tokens?.accessToken,
+    };
+    return { data: userProfile, message };
   } catch (error: any) {
     throw new Error(error.response?.data?.message || error.message || 'OTP verification failed');
   }
@@ -77,9 +85,13 @@ export const postRegister = async (
     );
 
     const { data, message } = response.data;
+    const userProfile: TUserProfile = {
+      ...data.user,
+      token: data.tokens?.accessToken,
+    };
 
     return {
-      data,
+      data: userProfile,
       message,
     };
   } catch (error: any) {

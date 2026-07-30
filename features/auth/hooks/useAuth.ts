@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { fetchApi } from "@/lib/apiClient";
+import storage from "@/lib/storage";
 
 export interface User {
   _id: string;
@@ -18,7 +19,7 @@ export function useAuth() {
 
   useEffect(() => {
     const checkAuth = async () => {
-      const token = localStorage.getItem("token");
+      const token = storage.getToken();
       if (!token) {
         setLoading(false);
         return;
@@ -29,7 +30,7 @@ export function useAuth() {
         setUser(response.data);
       } catch (error) {
         console.error("Auth check failed:", error);
-        localStorage.removeItem("token");
+        storage.clearToken();
       } finally {
         setLoading(false);
       }
@@ -39,12 +40,12 @@ export function useAuth() {
   }, []);
 
   const login = (token: string, userData: User) => {
-    localStorage.setItem("token", token);
+    storage.setToken(token);
     setUser(userData);
   };
 
   const logout = () => {
-    localStorage.removeItem("token");
+    storage.clearToken();
     setUser(null);
   };
 
