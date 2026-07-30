@@ -7,6 +7,7 @@ export type TUserProfile = {
   email: string;
   profilePicture?: string;
   token?: string;
+  role?: string;
 };
 
 export type UserManagementTab = 'customer' | 'provider' | 'admins';
