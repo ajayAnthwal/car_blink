@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect, useRef } from "react";
-import { MapContainer, TileLayer, useMapEvents } from "react-leaflet";
+import { MapContainer, TileLayer, useMapEvents, useMap } from "react-leaflet";
 import "leaflet/dist/leaflet.css";
 import L from "leaflet";
 import { Loader2, MapPin, LocateFixed } from "lucide-react";
@@ -24,6 +24,7 @@ export default function MapComponent({ onConfirm, onClose }: MapComponentProps) 
   const [address, setAddress] = useState<string>("Detecting location...");
   const [isLocating, setIsLocating] = useState(true);
   const [isConfirming, setIsConfirming] = useState(false);
+  const [updateMapTrigger, setUpdateMapTrigger] = useState(0);
 
   // Initialize location
   useEffect(() => {
@@ -31,6 +32,7 @@ export default function MapComponent({ onConfirm, onClose }: MapComponentProps) 
       navigator.geolocation.getCurrentPosition(
         (position) => {
           setCenter([position.coords.latitude, position.coords.longitude]);
+          setUpdateMapTrigger(prev => prev + 1);
           fetchAddress(position.coords.latitude, position.coords.longitude);
         },
         (error) => {
@@ -73,6 +75,16 @@ export default function MapComponent({ onConfirm, onClose }: MapComponentProps) 
         fetchAddress(newCenter.lat, newCenter.lng);
       },
     });
+    return null;
+  }
+
+  function MapUpdater() {
+    const map = useMap();
+    useEffect(() => {
+      if (updateMapTrigger > 0) {
+        map.flyTo(center, 15);
+      }
+    }, [updateMapTrigger, map]);
     return null;
   }
 
@@ -140,6 +152,7 @@ export default function MapComponent({ onConfirm, onClose }: MapComponentProps) 
             attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'
           />
           <MapCenterObserver />
+          <MapUpdater />
           <CurrentLocationButton />
         </MapContainer>
 
