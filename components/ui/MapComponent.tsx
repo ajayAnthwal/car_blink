@@ -25,6 +25,7 @@ export default function MapComponent({ onConfirm, onClose }: MapComponentProps) 
   const [isLocating, setIsLocating] = useState(true);
   const [isConfirming, setIsConfirming] = useState(false);
   const [updateMapTrigger, setUpdateMapTrigger] = useState(0);
+  const lastFetchedCenter = useRef<string>("");
 
   const handleLocateUser = (e?: React.MouseEvent) => {
     if (e) {
@@ -43,7 +44,7 @@ export default function MapComponent({ onConfirm, onClose }: MapComponentProps) 
           console.error(error);
           fetchAddress(center[0], center[1]);
         },
-        { enableHighAccuracy: true }
+        { enableHighAccuracy: true, timeout: 10000, maximumAge: 0 }
       );
     } else {
       fetchAddress(center[0], center[1]);
@@ -57,7 +58,15 @@ export default function MapComponent({ onConfirm, onClose }: MapComponentProps) 
   }, []);
 
   const fetchAddress = async (lat: number, lng: number) => {
+    const cacheKey = `${lat.toFixed(4)},${lng.toFixed(4)}`;
+    if (lastFetchedCenter.current === cacheKey && address !== "Detecting location...") {
+      setIsLocating(false);
+      return;
+    }
+    
+    lastFetchedCenter.current = cacheKey;
     setIsLocating(true);
+    
     try {
       const response = await fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lng}&zoom=18&addressdetails=1`);
       const data = await response.json();
