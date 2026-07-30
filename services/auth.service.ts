@@ -11,7 +11,7 @@ export const postLogin = async (payload: {
 }): Promise<{ data: TUserProfile; message: string }> => {
   try {
     const loginPayload = {
-      identifier: payload.identifier || payload.email,
+      identifier: (payload.identifier || payload.email)?.toLowerCase(),
       password: payload.password
     };
     const response = await apiClient.post(`${BASE_URLS}/login`, loginPayload);
