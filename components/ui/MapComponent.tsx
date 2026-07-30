@@ -26,8 +26,12 @@ export default function MapComponent({ onConfirm, onClose }: MapComponentProps) 
   const [isConfirming, setIsConfirming] = useState(false);
   const [updateMapTrigger, setUpdateMapTrigger] = useState(0);
 
-  // Initialize location
-  useEffect(() => {
+  const handleLocateUser = (e?: React.MouseEvent) => {
+    if (e) {
+      e.preventDefault();
+      e.stopPropagation();
+    }
+    setIsLocating(true);
     if ("geolocation" in navigator) {
       navigator.geolocation.getCurrentPosition(
         (position) => {
@@ -44,6 +48,12 @@ export default function MapComponent({ onConfirm, onClose }: MapComponentProps) 
     } else {
       fetchAddress(center[0], center[1]);
     }
+  };
+
+  // Initialize location
+  useEffect(() => {
+    handleLocateUser();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const fetchAddress = async (lat: number, lng: number) => {
@@ -88,42 +98,7 @@ export default function MapComponent({ onConfirm, onClose }: MapComponentProps) 
     return null;
   }
 
-  function CurrentLocationButton() {
-    const map = useMapEvents({});
 
-    const handleLocate = (e: React.MouseEvent) => {
-      e.preventDefault();
-      if ("geolocation" in navigator) {
-        setIsLocating(true);
-        navigator.geolocation.getCurrentPosition(
-          (position) => {
-            const { latitude, longitude } = position.coords;
-            map.flyTo([latitude, longitude], 15);
-            // setCenter and fetchAddress are handled by moveend event in MapCenterObserver, 
-            // but we can call them explicitly to be safe or just let moveend handle it.
-            // Let's call them explicitly to update immediately.
-            setCenter([latitude, longitude]);
-            fetchAddress(latitude, longitude);
-          },
-          (error) => {
-            console.error(error);
-            setIsLocating(false);
-          },
-          { enableHighAccuracy: true }
-        );
-      }
-    };
-
-    return (
-      <button
-        onClick={handleLocate}
-        className="absolute bottom-6 right-4 z-[1000] bg-white p-3 rounded-full shadow-lg border border-neutral-text-muted/10 text-primary-blue hover:bg-neutral-text-muted/10 transition-colors flex items-center justify-center"
-        title="Use Current Location"
-      >
-        <LocateFixed className="w-6 h-6" />
-      </button>
-    );
-  }
 
   const handleConfirm = () => {
     setIsConfirming(true);
@@ -153,7 +128,6 @@ export default function MapComponent({ onConfirm, onClose }: MapComponentProps) 
           />
           <MapCenterObserver />
           <MapUpdater />
-          <CurrentLocationButton />
         </MapContainer>
 
         {/* Fixed Center Marker */}
@@ -161,6 +135,15 @@ export default function MapComponent({ onConfirm, onClose }: MapComponentProps) 
           <MapPin className="w-10 h-10 text-primary-blue fill-white" />
           <div className="w-2 h-2 bg-primary-blue rounded-full absolute -bottom-1 left-1/2 -translate-x-1/2 shadow-sm animate-pulse" />
         </div>
+
+        {/* Current Location Button */}
+        <button
+          onClick={handleLocateUser}
+          className="absolute bottom-6 right-4 z-[1000] bg-white p-3 rounded-full shadow-lg border border-neutral-text-muted/10 text-primary-blue hover:bg-neutral-text-muted/10 transition-colors flex items-center justify-center cursor-pointer"
+          title="Use Current Location"
+        >
+          <LocateFixed className="w-6 h-6 pointer-events-none" />
+        </button>
       </div>
 
       <div className="p-4 bg-white border-t border-neutral-text-muted/10 flex gap-3 z-[1000]">
