@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import Link from "next/link";
-import { Mail, Lock, LogOut, ArrowRight, ShieldCheck, Phone } from "lucide-react";
+import { Mail, Lock, LogOut, ArrowRight, ShieldCheck, Phone, Eye, EyeOff } from "lucide-react";
 import Button from "@/components/ui/Button";
 import Badge from "@/components/ui/Badge";
 import Card from "@/components/ui/Card";
@@ -15,6 +15,7 @@ export default function LoginPage() {
   const [loginMethod, setLoginMethod] = useState<"phone" | "email">("phone");
   const [form, setForm] = useState({ phone: "", otp: "", email: "", password: "" });
   const [step, setStep] = useState<1 | 2>(1);
+  const [showPassword, setShowPassword] = useState(false);
 
   const { mutate: login, isPending: isLoginPending } = useLogin();
   const { mutate: sendOtp, isPending: isSendOtpPending } = useSendOtp();
@@ -163,16 +164,28 @@ export default function LoginPage() {
                   placeholder="name@example.com"
                   icon={<Mail className="h-4 w-4" />}
                 />
-                <Input
-                  label="Password"
-                  type="password"
-                  name="password"
-                  required
-                  value={form.password}
-                  onChange={handleChange}
-                  placeholder="••••••••"
-                  icon={<Lock className="h-4 w-4" />}
-                />
+                <div>
+                  <div className="flex justify-between items-center mb-1">
+                    <label className="text-xs font-bold font-heading text-neutral-text-muted">Password</label>
+                    <Link
+                      href={`${process.env.NEXT_PUBLIC_DASHBOARD_URL || 'https://car-blink-dashboard.vercel.app'}/forgot-password`}
+                      className="text-xs font-bold text-primary-orange hover:text-primary-orange-dark"
+                    >
+                      Forgot password?
+                    </Link>
+                  </div>
+                  <Input
+                    type={showPassword ? "text" : "password"}
+                    name="password"
+                    required
+                    value={form.password}
+                    onChange={handleChange}
+                    placeholder="••••••••"
+                    icon={<Lock className="h-4 w-4" />}
+                    rightIcon={showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                    onRightIconClick={() => setShowPassword(!showPassword)}
+                  />
+                </div>
                 <Button
                   type="submit"
                   variant="primary"
