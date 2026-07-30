@@ -5,17 +5,39 @@ import { TUserProfile } from '@/types/user';
 const BASE_URLS = `/auth`;
 
 export const postLogin = async (payload: {
-  email: string;
-  password: string;
+  identifier?: string;
+  email?: string;
+  password?: string;
 }): Promise<{ data: TUserProfile; message: string }> => {
   try {
-    const response = await apiClient.post(`${BASE_URLS}/login`, payload);
-    const {
-      result: { data, message }
-    } = response.data;
+    const loginPayload = {
+      identifier: payload.identifier || payload.email,
+      password: payload.password
+    };
+    const response = await apiClient.post(`${BASE_URLS}/login`, loginPayload);
+    const { data, message } = response.data;
     return { data, message };
   } catch (error: any) {
-    throw new Error(error.message || 'Login failed');
+    throw new Error(error.response?.data?.message || error.message || 'Login failed');
+  }
+};
+
+export const postSendOtp = async (payload: { identifier: string }): Promise<{ message: string }> => {
+  try {
+    const response = await apiClient.post(`${BASE_URLS}/forgot-password`, payload);
+    return { message: response.data.message || 'OTP sent successfully' };
+  } catch (error: any) {
+    throw new Error(error.response?.data?.message || error.message || 'Failed to send OTP');
+  }
+};
+
+export const postVerifyOtp = async (payload: { identifier: string, otp: string }): Promise<{ data: TUserProfile; message: string }> => {
+  try {
+    const response = await apiClient.post(`${BASE_URLS}/verify-otp`, payload);
+    const { data, message } = response.data;
+    return { data, message };
+  } catch (error: any) {
+    throw new Error(error.response?.data?.message || error.message || 'OTP verification failed');
   }
 };
 

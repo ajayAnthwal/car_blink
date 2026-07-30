@@ -6,9 +6,8 @@ import {
 import {
   postLogin,
   postRegister,
-  // putProfile,
-  // resetPassword,
-  // sendResetOtp
+  postSendOtp,
+  postVerifyOtp
 } from '@/services/auth.service';
 import storage from '@/lib/storage';
 import { toast } from 'sonner';
@@ -19,8 +18,8 @@ import { RegisterPayload, RegisterResponse, TLoginFormValues } from '@/types/aut
 
 export const useLogin = (): UseMutationResult<
   { data: TUserProfile; message: string },
-  Error, // ✅ error type (e.g., thrown in catch block)
-  TLoginFormValues // ✅ variables (payload) type
+  Error,
+  { identifier?: string; email?: string; password?: string }
 > => {
   const router = useRouter();
 
@@ -29,7 +28,44 @@ export const useLogin = (): UseMutationResult<
     onSuccess: ({ data, message }) => {
       data.token && storage.setToken(data.token);
       toast.success(message);
-      router.push('/home');
+      // Wait for toast to appear then redirect
+      setTimeout(() => router.push(data.role === 'PARTNER' ? `${process.env.NEXT_PUBLIC_DASHBOARD_URL}/partner/dashboard` : '/dashboard'), 100);
+    },
+    onError: (error) => {
+      toast.error(error.message);
+    }
+  });
+};
+
+export const useSendOtp = (): UseMutationResult<
+  { message: string },
+  Error,
+  { identifier: string }
+> => {
+  return useMutation({
+    mutationFn: postSendOtp,
+    onSuccess: ({ message }) => {
+      toast.success(message);
+    },
+    onError: (error) => {
+      toast.error(error.message);
+    }
+  });
+};
+
+export const useVerifyOtp = (): UseMutationResult<
+  { data: TUserProfile; message: string },
+  Error,
+  { identifier: string; otp: string }
+> => {
+  const router = useRouter();
+
+  return useMutation({
+    mutationFn: postVerifyOtp,
+    onSuccess: ({ data, message }) => {
+      data.token && storage.setToken(data.token);
+      toast.success(message);
+      setTimeout(() => router.push(data.role === 'PARTNER' ? `${process.env.NEXT_PUBLIC_DASHBOARD_URL}/partner/dashboard` : '/dashboard'), 100);
     },
     onError: (error) => {
       toast.error(error.message);

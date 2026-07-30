@@ -2,18 +2,23 @@
 
 import { useState } from "react";
 import Link from "next/link";
-import { Mail, Lock, LogOut, ArrowRight, ShieldCheck } from "lucide-react";
+import { Mail, Lock, LogOut, ArrowRight, ShieldCheck, Phone } from "lucide-react";
 import Button from "@/components/ui/Button";
 import Badge from "@/components/ui/Badge";
 import Card from "@/components/ui/Card";
 import Container from "@/components/ui/Container";
 import Input from "@/components/ui/Input";
 import { Logo } from "@/components/layout/Navbar";
+import { useLogin, useSendOtp, useVerifyOtp } from "@/hooks/auth/use-auth";
 
 export default function LoginPage() {
-  const [form, setForm] = useState({ phone: "", otp: "" });
+  const [loginMethod, setLoginMethod] = useState<"phone" | "email">("phone");
+  const [form, setForm] = useState({ phone: "", otp: "", email: "", password: "" });
   const [step, setStep] = useState<1 | 2>(1);
-  const [submitted, setSubmitted] = useState(false);
+
+  const { mutate: login, isPending: isLoginPending } = useLogin();
+  const { mutate: sendOtp, isPending: isSendOtpPending } = useSendOtp();
+  const { mutate: verifyOtp, isPending: isVerifyOtpPending } = useVerifyOtp();
 
   function handleChange(e: React.ChangeEvent<HTMLInputElement>) {
     const { name, value } = e.target;
@@ -23,15 +28,23 @@ export default function LoginPage() {
   function handleSendOtp(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
     if (form.phone.length >= 10) {
-      setStep(2);
+      sendOtp(
+        { identifier: form.phone },
+        { onSuccess: () => setStep(2) }
+      );
     }
   }
 
   function handleVerifyOtp(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
     if (form.otp.length === 6) {
-      setSubmitted(true);
+      verifyOtp({ identifier: form.phone, otp: form.otp });
     }
+  }
+
+  function handleEmailLogin(e: React.FormEvent<HTMLFormElement>) {
+    e.preventDefault();
+    login({ email: form.email, password: form.password });
   }
 
   return (
@@ -63,31 +76,26 @@ export default function LoginPage() {
       <section className="-mt-16 pb-24 relative z-20">
         <Container className="max-w-md">
           <Card className="p-6 sm:p-8">
-            {submitted ? (
-              <div className="flex flex-col items-center rounded-2xl border border-primary-blue/15 bg-primary-blue/5 px-6 py-10 text-center">
-                <div className="flex h-14 w-14 items-center justify-center rounded-full bg-primary-blue/10">
-                  <ShieldCheck className="h-7 w-7 text-primary-blue" />
-                </div>
-                <h3 className="font-heading font-bold mt-4 text-base text-neutral-text-dark">
-                  You&apos;re logged in!
-                </h3>
-                <p className="font-body mt-1 max-w-sm text-sm text-neutral-text-muted">
-                  Welcome back, {form.phone || "driver"}.
-                </p>
-                <Button
-                  variant="link"
-                  leftIcon={<LogOut className="h-3.5 w-3.5" />}
-                  className="mt-6"
-                  onClick={() => {
-                    setSubmitted(false);
-                    setStep(1);
-                    setForm({ phone: "", otp: "" });
-                  }}
-                >
-                  Log out
-                </Button>
-              </div>
-            ) : (
+            <div className="flex bg-neutral-bg rounded-xl p-1 mb-6">
+              <button
+                className={`flex-1 py-2 text-sm font-semibold rounded-lg transition-colors ${
+                  loginMethod === "phone" ? "bg-white text-primary-blue shadow-sm" : "text-neutral-text-muted hover:text-neutral-text-dark"
+                }`}
+                onClick={() => { setLoginMethod("phone"); setStep(1); }}
+              >
+                Mobile Number
+              </button>
+              <button
+                className={`flex-1 py-2 text-sm font-semibold rounded-lg transition-colors ${
+                  loginMethod === "email" ? "bg-white text-primary-blue shadow-sm" : "text-neutral-text-muted hover:text-neutral-text-dark"
+                }`}
+                onClick={() => setLoginMethod("email")}
+              >
+                Email
+              </button>
+            </div>
+
+            {loginMethod === "phone" ? (
               <div>
                 {step === 1 ? (
                   <form onSubmit={handleSendOtp} className="space-y-5">
@@ -100,6 +108,7 @@ export default function LoginPage() {
                       onChange={handleChange}
                       placeholder="98765 43210"
                       maxLength={10}
+                      icon={<Phone className="h-4 w-4" />}
                     />
                     <Button
                       type="submit"
@@ -107,9 +116,9 @@ export default function LoginPage() {
                       size="lg"
                       fullWidth
                       rightIcon={<ArrowRight className="h-4 w-4" />}
-                      disabled={form.phone.length < 10}
+                      disabled={form.phone.length < 10 || isSendOtpPending}
                     >
-                      Send OTP
+                      {isSendOtpPending ? "Sending OTP..." : "Send OTP"}
                     </Button>
                   </form>
                 ) : (
@@ -135,14 +144,48 @@ export default function LoginPage() {
                       size="lg"
                       fullWidth
                       rightIcon={<ArrowRight className="h-4 w-4" />}
-                      disabled={form.otp.length < 6}
+                      disabled={form.otp.length < 6 || isVerifyOtpPending}
                     >
-                      Verify OTP & Login
+                      {isVerifyOtpPending ? "Verifying..." : "Verify OTP & Login"}
                     </Button>
                   </form>
                 )}
               </div>
+            ) : (
+              <form onSubmit={handleEmailLogin} className="space-y-5">
+                <Input
+                  label="Email Address"
+                  type="email"
+                  name="email"
+                  required
+                  value={form.email}
+                  onChange={handleChange}
+                  placeholder="name@example.com"
+                  icon={<Mail className="h-4 w-4" />}
+                />
+                <Input
+                  label="Password"
+                  type="password"
+                  name="password"
+                  required
+                  value={form.password}
+                  onChange={handleChange}
+                  placeholder="••••••••"
+                  icon={<Lock className="h-4 w-4" />}
+                />
+                <Button
+                  type="submit"
+                  variant="primary"
+                  size="lg"
+                  fullWidth
+                  rightIcon={<ArrowRight className="h-4 w-4" />}
+                  disabled={!form.email || !form.password || isLoginPending}
+                >
+                  {isLoginPending ? "Logging in..." : "Log in"}
+                </Button>
+              </form>
             )}
+
             <p className="font-body mt-6 text-center text-sm text-neutral-text-muted">
               Want to partner your workshop?{" "}
               <Link
