@@ -19,8 +19,13 @@ const inter = Inter({
 });
 
 export const metadata: Metadata = {
-  title: "Car Blink",
-  description: "Car Blink application",
+  title: "CarBlink — India's Leading Car Service Comparison Platform",
+  description: "Compare car service prices, book verified workshops near you, and save time and money with CarBlink.",
+  icons: {
+    icon: "/logo.png",
+    shortcut: "/logo.png",
+    apple: "/logo.png",
+  }
 };
 
 export default function RootLayout({
