@@ -1,5 +1,7 @@
 export const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000/api';
 
+import storage from './storage';
+
 /**
  * A simple fetch wrapper to hit the backend API.
  */
@@ -8,7 +10,7 @@ export async function fetchApi<T>(endpoint: string, options?: RequestInit): Prom
   
   let token = '';
   if (typeof window !== 'undefined') {
-    token = localStorage.getItem('token') || '';
+    token = storage.getToken() || '';
   }
 
   const defaultHeaders: Record<string, string> = {
