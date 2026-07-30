@@ -499,7 +499,7 @@ function QuotesForm() {
               )}
             </p>
             <div className="max-w-md mx-auto">
-              <Button variant="primary" size="lg" href={isAuthenticated ? (process.env.NEXT_PUBLIC_DASHBOARD_URL || "http://localhost:3001/customer/dashboard") : "/"}>
+              <Button variant="primary" size="lg" href={isAuthenticated ? `${process.env.NEXT_PUBLIC_DASHBOARD_URL}/customer/dashboard` : "/"}>
                 {isAuthenticated ? "Go to Dashboard" : "Return to Home"}
               </Button>
             </div>

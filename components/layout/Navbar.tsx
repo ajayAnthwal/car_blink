@@ -51,20 +51,34 @@ export default function Navbar() {
           {/* Desktop CTA Buttons */}
           <div className="hidden md:flex items-center gap-4">
             {isAuthenticated ? (
-              <div className="flex items-center gap-4">
-                <span className="font-heading font-semibold text-sm text-neutral-text-dark">Hi, {user?.fullName?.split(' ')[0] || 'User'}</span>
-                <Link
-                  href={process.env.NEXT_PUBLIC_DASHBOARD_URL || "http://localhost:3001/customer/dashboard"}
-                  className="px-5 py-2 font-heading font-semibold text-sm text-neutral-text-dark border border-neutral-text-muted/30 rounded-full hover:bg-neutral-bg hover:border-primary-blue hover:text-primary-blue transition-all duration-200 text-center"
-                >
-                  Dashboard
-                </Link>
-                <button
-                  onClick={logout}
-                  className="px-5 py-2 font-heading font-semibold text-sm text-danger border border-danger/30 rounded-full hover:bg-danger/5 hover:border-danger hover:text-danger transition-all duration-200 text-center"
-                >
-                  Logout
+              <div className="relative group">
+                <button className="flex items-center gap-2 px-4 py-2 font-heading font-semibold text-sm text-neutral-text-dark border border-neutral-text-muted/30 rounded-full hover:bg-neutral-bg hover:border-primary-blue transition-all duration-200">
+                  <div className="w-6 h-6 rounded-full bg-primary-blue/10 text-primary-blue flex items-center justify-center font-bold text-xs">
+                    {user?.fullName?.charAt(0)?.toUpperCase() || 'U'}
+                  </div>
+                  <span>{user?.fullName?.split(' ')[0] || 'Profile'}</span>
                 </button>
+                
+                <div className="absolute right-0 mt-2 w-48 bg-white border border-neutral-text-muted/15 rounded-xl shadow-lg opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 overflow-hidden translate-y-2 group-hover:translate-y-0">
+                  <div className="p-3 border-b border-neutral-text-muted/10">
+                    <p className="text-sm font-semibold text-neutral-text-dark truncate">{user?.fullName || 'User'}</p>
+                    <p className="text-xs text-neutral-text-muted truncate">{user?.email || user?.phone || 'Logged in'}</p>
+                  </div>
+                  <div className="p-2">
+                    <Link
+                      href={`${process.env.NEXT_PUBLIC_DASHBOARD_URL}/customer/dashboard`}
+                      className="flex items-center gap-2 px-3 py-2 text-sm text-neutral-text-dark hover:bg-neutral-bg hover:text-primary-blue rounded-lg transition-colors"
+                    >
+                      Dashboard
+                    </Link>
+                    <button
+                      onClick={logout}
+                      className="w-full flex items-center gap-2 px-3 py-2 text-sm text-danger hover:bg-danger/5 rounded-lg transition-colors text-left mt-1"
+                    >
+                      Logout
+                    </button>
+                  </div>
+                </div>
               </div>
             ) : (
               <Link
