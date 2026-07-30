@@ -65,12 +65,16 @@ export default function Navbar() {
                     <p className="text-xs text-neutral-text-muted truncate">{user?.email || user?.phone || 'Logged in'}</p>
                   </div>
                   <div className="p-2">
-                    <Link
-                      href={`${process.env.NEXT_PUBLIC_DASHBOARD_URL}/customer/dashboard`}
-                      className="flex items-center gap-2 px-3 py-2 text-sm text-neutral-text-dark hover:bg-neutral-bg hover:text-primary-blue rounded-lg transition-colors"
+                    <button
+                      onClick={() => {
+                        const dashboardUrl = process.env.NEXT_PUBLIC_DASHBOARD_URL || 'https://car-blink-dashboard.vercel.app';
+                        const token = typeof window !== 'undefined' ? window.localStorage.getItem('carBlink_token') : '';
+                        window.location.href = `${dashboardUrl}/login?token=${token}`;
+                      }}
+                      className="flex w-full items-center gap-2 px-3 py-2 text-sm text-neutral-text-dark hover:bg-neutral-bg hover:text-primary-blue rounded-lg transition-colors text-left"
                     >
                       Dashboard
-                    </Link>
+                    </button>
                     <button
                       onClick={logout}
                       className="w-full flex items-center gap-2 px-3 py-2 text-sm text-danger hover:bg-danger/5 rounded-lg transition-colors text-left mt-1"

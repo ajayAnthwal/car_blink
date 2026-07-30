@@ -30,7 +30,8 @@ export const useLogin = (): UseMutationResult<
       toast.success(message);
       // Wait for toast to appear then redirect and hard reload to update auth context
       setTimeout(() => {
-        window.location.href = data.role === 'PARTNER' ? `${process.env.NEXT_PUBLIC_DASHBOARD_URL}/partner/dashboard` : '/';
+        const dashboardUrl = process.env.NEXT_PUBLIC_DASHBOARD_URL || 'https://car-blink-dashboard.vercel.app';
+        window.location.href = data.role === 'PARTNER' ? `${dashboardUrl}/login?token=${data.token}` : '/';
       }, 1500);
     },
     onError: (error) => {
@@ -68,7 +69,8 @@ export const useVerifyOtp = (): UseMutationResult<
       data.token && storage.setToken(data.token);
       toast.success(message);
       setTimeout(() => {
-        window.location.href = data.role === 'PARTNER' ? `${process.env.NEXT_PUBLIC_DASHBOARD_URL}/partner/dashboard` : '/';
+        const dashboardUrl = process.env.NEXT_PUBLIC_DASHBOARD_URL || 'https://car-blink-dashboard.vercel.app';
+        window.location.href = data.role === 'PARTNER' ? `${dashboardUrl}/login?token=${data.token}` : '/';
       }, 1500);
     },
     onError: (error) => {
@@ -95,7 +97,8 @@ export const useRegister = (): UseMutationResult<
       toast.success(message);
 
       setTimeout(() => {
-        window.location.href = data.role === 'PARTNER' ? `${process.env.NEXT_PUBLIC_DASHBOARD_URL}/partner/dashboard` : '/';
+        const dashboardUrl = process.env.NEXT_PUBLIC_DASHBOARD_URL || 'https://car-blink-dashboard.vercel.app';
+        window.location.href = data.role === 'PARTNER' ? `${dashboardUrl}/login?token=${data.token}` : '/';
       }, 1500);
     },
 
