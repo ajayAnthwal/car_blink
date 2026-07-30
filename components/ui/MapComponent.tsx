@@ -4,7 +4,7 @@ import { useState, useEffect, useRef } from "react";
 import { MapContainer, TileLayer, useMapEvents } from "react-leaflet";
 import "leaflet/dist/leaflet.css";
 import L from "leaflet";
-import { Loader2, MapPin } from "lucide-react";
+import { Loader2, MapPin, LocateFixed } from "lucide-react";
 
 // Fix leaflet icon issue in Next.js/React
 delete (L.Icon.Default.prototype as any)._getIconUrl;
@@ -49,7 +49,7 @@ export default function MapComponent({ onConfirm, onClose }: MapComponentProps) 
     try {
       const response = await fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lng}&zoom=18&addressdetails=1`);
       const data = await response.json();
-      
+
       if (data && data.address) {
         const city = data.address.city || data.address.town || data.address.state_district || data.address.state;
         const area = data.address.suburb || data.address.neighbourhood || data.address.residential || data.address.road || "";
@@ -76,6 +76,43 @@ export default function MapComponent({ onConfirm, onClose }: MapComponentProps) 
     return null;
   }
 
+  function CurrentLocationButton() {
+    const map = useMapEvents({});
+
+    const handleLocate = (e: React.MouseEvent) => {
+      e.preventDefault();
+      if ("geolocation" in navigator) {
+        setIsLocating(true);
+        navigator.geolocation.getCurrentPosition(
+          (position) => {
+            const { latitude, longitude } = position.coords;
+            map.flyTo([latitude, longitude], 15);
+            // setCenter and fetchAddress are handled by moveend event in MapCenterObserver, 
+            // but we can call them explicitly to be safe or just let moveend handle it.
+            // Let's call them explicitly to update immediately.
+            setCenter([latitude, longitude]);
+            fetchAddress(latitude, longitude);
+          },
+          (error) => {
+            console.error(error);
+            setIsLocating(false);
+          },
+          { enableHighAccuracy: true }
+        );
+      }
+    };
+
+    return (
+      <button
+        onClick={handleLocate}
+        className="absolute bottom-6 right-4 z-[1000] bg-white p-3 rounded-full shadow-lg border border-neutral-text-muted/10 text-primary-blue hover:bg-neutral-text-muted/10 transition-colors flex items-center justify-center"
+        title="Use Current Location"
+      >
+        <LocateFixed className="w-6 h-6" />
+      </button>
+    );
+  }
+
   const handleConfirm = () => {
     setIsConfirming(true);
     onConfirm(address, center[0], center[1]);
@@ -91,10 +128,10 @@ export default function MapComponent({ onConfirm, onClose }: MapComponentProps) 
       </div>
 
       <div className="flex-1 w-full relative z-0">
-        <MapContainer 
-          center={center} 
-          zoom={15} 
-          scrollWheelZoom={true} 
+        <MapContainer
+          center={center}
+          zoom={15}
+          scrollWheelZoom={true}
           style={{ height: '100%', width: '100%' }}
           zoomControl={false}
         >
@@ -103,8 +140,9 @@ export default function MapComponent({ onConfirm, onClose }: MapComponentProps) 
             attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'
           />
           <MapCenterObserver />
+          <CurrentLocationButton />
         </MapContainer>
-        
+
         {/* Fixed Center Marker */}
         <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-full z-[400] pointer-events-none drop-shadow-xl">
           <MapPin className="w-10 h-10 text-primary-blue fill-white" />
@@ -113,13 +151,13 @@ export default function MapComponent({ onConfirm, onClose }: MapComponentProps) 
       </div>
 
       <div className="p-4 bg-white border-t border-neutral-text-muted/10 flex gap-3 z-[1000]">
-        <button 
+        <button
           onClick={onClose}
           className="flex-1 py-3 px-4 rounded-xl font-heading font-bold text-sm bg-neutral-bg text-neutral-text-dark hover:bg-neutral-text-muted/10 transition-colors"
         >
           Cancel
         </button>
-        <button 
+        <button
           onClick={handleConfirm}
           disabled={isLocating || isConfirming}
           className="flex-1 py-3 px-4 rounded-xl font-heading font-bold text-sm bg-primary-blue text-white hover:bg-primary-blue-dark transition-colors disabled:opacity-50 flex items-center justify-center gap-2"
