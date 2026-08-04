@@ -25,6 +25,7 @@ export const FOOTER_WORKSHOPS_LINKS: NavLink[] = [
   { name: "Partner Login", href: "/login" },
   { name: "How It Works", href: "/how-it-works" },
   { name: "Pricing", href: "/pricing" },
+  { name: "Partner Policy", href: "/partner-policy" },
   { name: "Success Stories", href: "/" },
 ];
 
@@ -38,7 +39,7 @@ export const FOOTER_COMPANY_LINKS: NavLink[] = [
 
 export const FOOTER_SUPPORT_LINKS: NavLink[] = [
   { name: "Help Center", href: "/" },
-  { name: "Privacy Policy", href: "/" },
-  { name: "Terms of Service", href: "/" },
-  { name: "Refund Policy", href: "/" },
+  { name: "Privacy Policy", href: "/privacy-policy" },
+  { name: "Terms & Conditions", href: "/terms-and-conditions" },
+  { name: "Refund Policy", href: "/refund-policy" },
 ];
