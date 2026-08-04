@@ -63,10 +63,10 @@ export default function MapComponent({ onConfirm, onClose }: MapComponentProps) 
       setIsLocating(false);
       return;
     }
-    
+
     lastFetchedCenter.current = cacheKey;
     setIsLocating(true);
-    
+
     try {
       const response = await fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lng}&zoom=18&addressdetails=1`);
       const data = await response.json();
