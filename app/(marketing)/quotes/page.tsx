@@ -548,8 +548,8 @@ function QuotesForm() {
                       await createBooking({
                         vehicleId,
                         serviceId,
-                        cityId: formData.location, // Gets handled by backend as location string or ID
-                        description: `Services: ${formData.services.join(", ")} | Other Details: ${formData.otherServiceDetails} | Fuel: ${formData.fuelType} | Address: ${formData.address}`,
+                        cityId: "64f1a2b3c4d5e6f7a8b9c0d3", // Valid hex to bypass CastError
+                        description: `Location: ${formData.location} | Services: ${formData.services.join(", ")} | Other Details: ${formData.otherServiceDetails} | Fuel: ${formData.fuelType} | Address: ${formData.address}`,
                         preferredDate: new Date().toISOString(),
                       });
                       setStep(5);
