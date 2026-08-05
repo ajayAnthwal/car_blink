@@ -10,7 +10,7 @@ export default function PrivacyPolicyPage() {
     <main className="min-h-screen bg-neutral-bg pt-24 pb-16">
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 bg-white p-8 md:p-12 rounded-2xl shadow-sm border border-neutral-200">
         <h1 className="font-heading font-bold text-3xl md:text-4xl text-primary-navy mb-4">Privacy Policy</h1>
-        <p className="text-neutral-text-muted mb-8 text-sm md:text-base">Effective Date: [DD/MM/YYYY]</p>
+        <p className="text-neutral-text-muted mb-8 text-sm md:text-base">Effective Date: 05/08/2026</p>
 
         <div className="space-y-8 font-body text-neutral-text-dark leading-relaxed">
           <section>

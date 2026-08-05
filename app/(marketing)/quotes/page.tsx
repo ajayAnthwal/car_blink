@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, Suspense } from "react";
+import { useState, useEffect, Suspense, useRef } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
@@ -26,8 +26,8 @@ import { useAuth } from "@/features/auth/hooks/useAuth";
 const MAKES = [
   "Maruti Suzuki", "Hyundai", "Tata", "Mahindra", "Kia", 
   "Toyota", "Honda", "MG", "Skoda", "Volkswagen", 
-  "Renault", "Nissan", "Ford", "Chevrolet", "Jeep", 
-  "Citroen", "Fiat", "Datsun", "Isuzu"
+  "Renault", "Nissan", "Ford", "Jeep", "Citroen", 
+  "BMW", "Mercedes", "Land Rover", "Audi"
 ];
 const CAR_MODELS_MAP: Record<string, string[]> = {
   "Maruti Suzuki": [
@@ -93,24 +93,23 @@ const CAR_MODELS_MAP: Record<string, string[]> = {
     "Figo", "Aspire", "Freestyle", "EcoSport", "Endeavour", 
     "Mustang", "Fiesta", "Ikon", "Escort", "Fusion", "Other"
   ],
-  "Chevrolet": [
-    "Spark", "Beat", "Sail", "Aveo", "Optra", "Cruze", 
-    "Tavera", "Enjoy", "Captiva", "Trailblazer", "Other"
-  ],
   "Jeep": [
     "Compass", "Meridian", "Wrangler", "Grand Cherokee", "Other"
   ],
   "Citroen": [
     "C3", "eC3", "C3 Aircross", "C5 Aircross", "Basalt", "Other"
   ],
-  "Fiat": [
-    "Linea", "Punto", "Punto Evo", "Avventura", "Palio", "Uno", "Other"
+  "BMW": [
+    "X1", "X3", "X5", "X7", "3 Series", "5 Series", "7 Series", "Z4", "Other"
   ],
-  "Datsun": [
-    "GO", "GO+", "redi-GO", "Other"
+  "Mercedes": [
+    "A-Class", "C-Class", "E-Class", "S-Class", "GLA", "GLC", "GLE", "GLS", "Other"
   ],
-  "Isuzu": [
-    "D-Max", "V-Cross", "MU-X", "Other"
+  "Land Rover": [
+    "Range Rover", "Range Rover Sport", "Range Rover Evoque", "Discovery", "Discovery Sport", "Defender", "Other"
+  ],
+  "Audi": [
+    "A3", "A4", "A6", "A8", "Q3", "Q5", "Q7", "Q8", "e-tron", "Other"
   ]
 };
 
@@ -155,7 +154,11 @@ function QuotesForm() {
     address: "",
     vehicleNumber: "",
     otherServiceDetails: "",
+    otherModelDetails: "",
   });
+
+  const fuelTypeRef = useRef<HTMLHeadingElement>(null);
+  const continueBtnRef = useRef<HTMLDivElement>(null);
 
   const [availableServices, setAvailableServices] = useState(ALL_SERVICES.map(s => s.name));
 
@@ -311,12 +314,17 @@ function QuotesForm() {
             <h2 className="font-heading font-black text-2xl text-neutral-text-dark mb-2">Select Car Model & Fuel</h2>
             <p className="font-body text-neutral-text-muted mb-6">What type of {formData.make} do you drive and its fuel type?</p>
             
-            <h3 className="font-heading font-semibold text-lg text-neutral-text-dark mb-3">Car Model</h3>
-            <div className="grid grid-cols-2 sm:grid-cols-3 gap-4 mb-8">
+            <h3 className="font-heading font-semibold text-lg text-primary-blue bg-primary-blue/10 inline-block px-4 py-1.5 rounded-lg mb-4">Car Model</h3>
+            <div className="grid grid-cols-2 sm:grid-cols-3 gap-4 mb-4">
               {(CAR_MODELS_MAP[formData.make] || ["Other"]).map((model) => (
                 <button
                   key={model}
-                  onClick={() => updateForm("model", model)}
+                  onClick={() => {
+                    updateForm("model", model);
+                    setTimeout(() => {
+                      fuelTypeRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                    }, 100);
+                  }}
                   className={`flex flex-col items-center gap-3 p-4 rounded-2xl border-2 transition-all ${
                     formData.model === model
                       ? "border-primary-blue bg-primary-blue/5 text-primary-blue"
@@ -328,12 +336,29 @@ function QuotesForm() {
               ))}
             </div>
 
-            <h3 className="font-heading font-semibold text-lg text-neutral-text-dark mb-3">Fuel Type</h3>
+            {formData.model === "Other" && (
+              <div className="mb-8 animate-in fade-in duration-300">
+                <input
+                  type="text"
+                  placeholder="Please specify your car model..."
+                  value={formData.otherModelDetails}
+                  onChange={(e) => updateForm("otherModelDetails", e.target.value)}
+                  className="w-full px-4 py-3 rounded-xl border border-primary-blue/30 bg-primary-blue/5 focus:bg-white focus:outline-none focus:ring-2 focus:ring-primary-blue/50 transition-all font-body text-sm"
+                />
+              </div>
+            )}
+
+            <h3 ref={fuelTypeRef} className={`font-heading font-semibold text-lg text-primary-blue bg-primary-blue/10 inline-block px-4 py-1.5 rounded-lg mb-4 ${formData.model === "Other" ? "mt-4" : "mt-8"}`}>Fuel Type</h3>
             <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
               {["Petrol", "Diesel", "CNG", "EV"].map((fuel) => (
                 <button
                   key={fuel}
-                  onClick={() => updateForm("fuelType", fuel)}
+                  onClick={() => {
+                    updateForm("fuelType", fuel);
+                    setTimeout(() => {
+                      continueBtnRef.current?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                    }, 100);
+                  }}
                   className={`flex flex-col items-center gap-2 p-3 rounded-xl border-2 transition-all ${
                     formData.fuelType === fuel
                       ? "border-primary-blue bg-primary-blue/5 text-primary-blue"
@@ -345,9 +370,9 @@ function QuotesForm() {
               ))}
             </div>
 
-            <div className="mt-8 md:mt-8 fixed md:static bottom-0 left-0 w-full p-4 md:p-0 bg-white md:bg-transparent border-t md:border-0 border-neutral-text-muted/10 z-50 flex justify-between gap-4 shadow-[0_-4px_10px_rgba(0,0,0,0.05)] md:shadow-none">
+            <div ref={continueBtnRef} className="mt-8 md:mt-8 fixed md:static bottom-0 left-0 w-full p-4 md:p-0 bg-white md:bg-transparent border-t md:border-0 border-neutral-text-muted/10 z-50 flex justify-between gap-4 shadow-[0_-4px_10px_rgba(0,0,0,0.05)] md:shadow-none">
               <Button className="flex-1 md:flex-none" variant="ghost" onClick={prevStep}>Back</Button>
-              <Button className="flex-1 md:flex-none" onClick={nextStep} disabled={!formData.model || !formData.fuelType} rightIcon={<ArrowRight className="w-4 h-4" />}>
+              <Button className="flex-1 md:flex-none" onClick={nextStep} disabled={!formData.model || (formData.model === "Other" && !formData.otherModelDetails) || !formData.fuelType} rightIcon={<ArrowRight className="w-4 h-4" />}>
                 Continue
               </Button>
             </div>
@@ -505,7 +530,7 @@ function QuotesForm() {
                       // 1. Create Garage Vehicle
                       const vehicleRes = await createGarageVehicle({
                         brand: formData.make,
-                        model: formData.model,
+                        model: formData.model === "Other" ? formData.otherModelDetails : formData.model,
                         registrationNumber: formData.vehicleNumber,
                         fuelType: formData.fuelType,
                         year: new Date().getFullYear(), // Default
@@ -535,7 +560,7 @@ function QuotesForm() {
                         phone: formData.phone,
                         source: 'WEBSITE_QUOTE',
                         vehicleBrand: formData.make,
-                        vehicleModel: formData.model,
+                        vehicleModel: formData.model === "Other" ? formData.otherModelDetails : formData.model,
                         city: formData.location,
                         message: `Services: ${formData.services.join(", ")} | Fuel: ${formData.fuelType} | Vehicle No: ${formData.vehicleNumber} | Other: ${formData.otherServiceDetails} | Address: ${formData.address}`,
                       });
@@ -650,12 +675,6 @@ function QuotesForm() {
                     <span className="font-body text-white/70 text-sm shrink-0 mr-4">Service(s)</span>
                     <span className="font-heading font-bold text-right text-sm line-clamp-2">
                       {formData.services.length > 0 ? formData.services.map(s => s === "Other" && formData.otherServiceDetails ? `Other (${formData.otherServiceDetails})` : s).join(", ") : "Not selected"}
-                    </span>
-                  </div>
-                  <div className="flex justify-between items-center pt-2">
-                    <span className="font-body text-white/90 text-sm font-semibold">Estimated Quote</span>
-                    <span className="font-heading font-black text-xl text-accent-orange">
-                      {calculateTotalQuote()}
                     </span>
                   </div>
                 </div>

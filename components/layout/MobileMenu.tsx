@@ -57,10 +57,10 @@ export default function MobileMenu({ isOpen, onClose }: MobileMenuProps) {
             onClick={onClose}
             className="flex items-center justify-center px-6 py-3 font-heading font-semibold text-neutral-text-dark border-2 border-neutral-text-muted/30 rounded-full hover:bg-neutral-bg hover:border-primary-blue hover:text-primary-blue transition-all text-center"
           >
-            Login / Sign Up
+            Customer Login
           </Link>
           <Link 
-            href="/pricing"
+            href="/quotes"
             onClick={onClose}
             className="flex items-center justify-center gap-2 px-6 py-3 font-heading font-semibold text-white bg-primary-blue rounded-full hover:bg-primary-blue-dark transition-all text-center shadow-lg shadow-primary-blue/20"
           >

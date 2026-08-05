@@ -11,7 +11,7 @@ import { useAuth } from "@/features/auth/hooks/useAuth";
 
 export function Logo() {
   return (
-    <Link href="/" className="flex items-center group">
+    <Link href="/" className="flex items-center gap-2 group">
       <Image
         src="/logo.png"
         alt="Car Blink — One Platform For Every Car Service"
@@ -30,10 +30,11 @@ export default function Navbar() {
 
   return (
     <>
-      <header className="sticky top-0 z-40 w-full bg-white border-b border-neutral-text-muted/10 shadow-sm backdrop-blur-md bg-white/95">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-20 flex items-center justify-between">
-          {/* Logo */}
-          <Logo />
+      <header className="sticky top-0 z-40 w-full bg-white shadow-sm backdrop-blur-md bg-white/95">
+        <div className="border-b border-neutral-text-muted/10">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-20 flex items-center justify-between">
+            {/* Logo */}
+            <Logo />
 
           {/* Desktop Navigation Links */}
           <nav className="hidden md:flex items-center gap-7">
@@ -89,7 +90,7 @@ export default function Navbar() {
                 href="/login"
                 className="px-5 py-2 font-heading font-semibold text-sm text-neutral-text-dark border border-neutral-text-muted/30 rounded-full hover:bg-neutral-bg hover:border-primary-blue hover:text-primary-blue transition-all duration-200 text-center"
               >
-                Login / Sign Up
+                Customer Login
               </Link>
             )}
             <Link
@@ -109,6 +110,7 @@ export default function Navbar() {
           >
             <Menu className="w-6 h-6" />
           </button>
+        </div>
         </div>
       </header>
 

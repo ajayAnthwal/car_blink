@@ -157,7 +157,7 @@ export default function ServiceDetailsPage({ params }: { params: { id: string } 
                 <Button variant="primary" size="lg" fullWidth rightIcon={<ArrowRight className="w-5 h-5" />} href={`/quotes?service=${encodeURIComponent(service.name)}`}>
                   Request a Quote
                 </Button>
-                <Button variant="outline" size="lg" fullWidth href="https://wa.me/919876543210">
+                <Button variant="outline" size="lg" fullWidth href="https://wa.me/919068802453">
                   Chat on WhatsApp
                 </Button>
               </div>
@@ -173,7 +173,7 @@ export default function ServiceDetailsPage({ params }: { params: { id: string } 
             <Button variant="primary" className="flex-1 text-xs sm:text-sm" href={`/quotes?service=${encodeURIComponent(service.name)}`}>
               Request Quote
             </Button>
-            <Button variant="outline" className="flex-1 text-xs sm:text-sm" href="https://wa.me/919876543210">
+            <Button variant="outline" className="flex-1 text-xs sm:text-sm" href="https://wa.me/919068802453">
               WhatsApp
             </Button>
           </div>

@@ -26,12 +26,19 @@ export const useLogin = (): UseMutationResult<
   return useMutation({
     mutationFn: postLogin,
     onSuccess: ({ data, message }) => {
+      if (data.role === 'PARTNER') {
+        toast.error('Workshop Partners must login via the Partner Dashboard.');
+        setTimeout(() => {
+          const dashboardUrl = process.env.NEXT_PUBLIC_DASHBOARD_URL || 'https://car-blink-dashboard.vercel.app';
+          window.location.href = `${dashboardUrl}/login`;
+        }, 1500);
+        return;
+      }
       data.token && storage.setToken(data.token);
       toast.success(message);
       // Wait for toast to appear then redirect and hard reload to update auth context
       setTimeout(() => {
-        const dashboardUrl = process.env.NEXT_PUBLIC_DASHBOARD_URL || 'https://car-blink-dashboard.vercel.app';
-        window.location.href = data.role === 'PARTNER' ? `${dashboardUrl}/login?token=${data.token}` : '/';
+        window.location.href = '/';
       }, 1500);
     },
     onError: (error) => {
@@ -66,11 +73,18 @@ export const useVerifyOtp = (): UseMutationResult<
   return useMutation({
     mutationFn: postVerifyOtp,
     onSuccess: ({ data, message }) => {
+      if (data.role === 'PARTNER') {
+        toast.error('Workshop Partners must login via the Partner Dashboard.');
+        setTimeout(() => {
+          const dashboardUrl = process.env.NEXT_PUBLIC_DASHBOARD_URL || 'https://car-blink-dashboard.vercel.app';
+          window.location.href = `${dashboardUrl}/login`;
+        }, 1500);
+        return;
+      }
       data.token && storage.setToken(data.token);
       toast.success(message);
       setTimeout(() => {
-        const dashboardUrl = process.env.NEXT_PUBLIC_DASHBOARD_URL || 'https://car-blink-dashboard.vercel.app';
-        window.location.href = data.role === 'PARTNER' ? `${dashboardUrl}/login?token=${data.token}` : '/';
+        window.location.href = '/';
       }, 1500);
     },
     onError: (error) => {
@@ -90,6 +104,15 @@ export const useRegister = (): UseMutationResult<
     mutationFn: postRegister,
 
     onSuccess: ({ data, message }) => {
+      if (data.role === 'PARTNER') {
+        toast.error('Workshop Partners must login via the Partner Dashboard.');
+        setTimeout(() => {
+          const dashboardUrl = process.env.NEXT_PUBLIC_DASHBOARD_URL || 'https://car-blink-dashboard.vercel.app';
+          window.location.href = `${dashboardUrl}/login`;
+        }, 1500);
+        return;
+      }
+
       if (data?.token) {
         storage.setToken(data.token);
       }
@@ -97,8 +120,7 @@ export const useRegister = (): UseMutationResult<
       toast.success(message);
 
       setTimeout(() => {
-        const dashboardUrl = process.env.NEXT_PUBLIC_DASHBOARD_URL || 'https://car-blink-dashboard.vercel.app';
-        window.location.href = data.role === 'PARTNER' ? `${dashboardUrl}/login?token=${data.token}` : '/';
+        window.location.href = '/';
       }, 1500);
     },
 

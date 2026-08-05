@@ -37,7 +37,7 @@ export default function RootLayout({
     <html lang="en" className={`${poppins.variable} ${inter.variable}`}>
       <body className="font-body bg-neutral-bg text-neutral-text-dark min-h-screen flex flex-col">
         <div className="bg-primary-blue text-white text-center py-2.5 px-4 text-sm font-semibold tracking-wide">
-          We compare, we negotiate for better prices for you.
+          We Compare, We Negotiate, You Save.
         </div>
         <Navbar />
         <Providers >
