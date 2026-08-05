@@ -49,7 +49,7 @@ export default function HeroSection() {
           {/* Badge Tagline */}
           <Badge variant="info" className="bg-white border-primary-blue/20 text-primary-blue shadow-sm">
             <span className="flex items-center gap-2">
-              <span className="font-bold">#1 Car Service Comparison Platform in India</span>
+              <span className="font-bold !text-black">#1 Car Service Comparison Platform in India</span>
               <span className="flex -space-x-2">
                 <div className="w-5 h-5 rounded-full bg-gray-200 border border-white" />
                 <div className="w-5 h-5 rounded-full bg-gray-300 border border-white" />

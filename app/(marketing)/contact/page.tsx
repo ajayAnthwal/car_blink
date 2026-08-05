@@ -29,7 +29,7 @@ const CONTACT_INFO = [
   {
     icon: Phone,
     title: "Call Us",
-    lines: ["+91 98765 43210", "Mon–Sat, 9am – 8pm"],
+    lines: ["+91 9068802453", "Mon–Sat, 9am – 8pm"],
   },
   {
     icon: Mail,
@@ -39,7 +39,7 @@ const CONTACT_INFO = [
   {
     icon: MapPin,
     title: "Visit Us",
-    lines: ["4th Floor, DLF Cyber City", "Gurugram, Haryana 122002"],
+    lines: ["3rd Floor, Mohabbewala, Dehradun, Uttarakhand – 248002."],
   },
   {
     icon: Clock,
@@ -290,14 +290,9 @@ export default function ContactPage() {
                   Car Blink Head Office
                 </h3>
                 <p className="font-body mt-1 text-sm text-neutral-text-muted">
-                  4th Floor, DLF Cyber City, Gurugram, Haryana 122002
+                  3rd Floor, Mohabbewala, Dehradun, Uttarakhand – 248002.
                 </p>
-                <p className="font-heading font-bold mt-4 text-sm text-neutral-text-dark">
-                  Nearest Metro
-                </p>
-                <p className="font-body mt-1 text-sm text-neutral-text-muted">
-                  Cyber City Rapid Metro Station — 5 min walk
-                </p>
+
               </div>
             </Card>
           </div>
@@ -327,9 +322,8 @@ export default function ContactPage() {
                       {item.q}
                     </span>
                     <ChevronDown
-                      className={`h-4 w-4 flex-shrink-0 text-primary-blue transition-transform ${
-                        isOpen ? "rotate-180" : ""
-                      }`}
+                      className={`h-4 w-4 flex-shrink-0 text-primary-blue transition-transform ${isOpen ? "rotate-180" : ""
+                        }`}
                     />
                   </button>
                   {isOpen && (
