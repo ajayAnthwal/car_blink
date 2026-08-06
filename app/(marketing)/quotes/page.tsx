@@ -155,6 +155,8 @@ function QuotesForm() {
     vehicleNumber: "",
     otherServiceDetails: "",
     otherModelDetails: "",
+    latitude: undefined as number | undefined,
+    longitude: undefined as number | undefined,
   });
 
   const fuelTypeRef = useRef<HTMLHeadingElement>(null);
@@ -255,6 +257,9 @@ function QuotesForm() {
             } else {
               updateForm("location", `${latitude.toFixed(4)}, ${longitude.toFixed(4)}`);
             }
+            
+            // @ts-ignore - updateForm typing is strict
+            setFormData(prev => ({ ...prev, latitude, longitude }));
           } catch (error) {
             console.error("Error fetching location details:", error);
           } finally {
@@ -553,6 +558,8 @@ function QuotesForm() {
                         cityId: "64f1a2b3c4d5e6f7a8b9c0d3", // Valid hex to bypass CastError
                         description: `Location: ${formData.location} | Services: ${formData.services.join(", ")} | Other Details: ${formData.otherServiceDetails} | Fuel: ${formData.fuelType} | Address: ${formData.address}`,
                         preferredDate: new Date().toISOString(),
+                        latitude: formData.latitude,
+                        longitude: formData.longitude,
                       });
                       setStep(5);
                     } else {
@@ -721,8 +728,10 @@ function QuotesForm() {
       <LocationModal 
         isOpen={showMapModal} 
         onClose={() => setShowMapModal(false)} 
-        onConfirm={(locStr) => {
+        onConfirm={(locStr, lat, lng) => {
           updateForm("location", locStr);
+          // @ts-ignore
+          setFormData(prev => ({ ...prev, latitude: lat, longitude: lng }));
         }} 
       />
     </div>
