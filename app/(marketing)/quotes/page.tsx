@@ -245,7 +245,9 @@ function QuotesForm() {
             const response = await fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${latitude}&lon=${longitude}&zoom=14&addressdetails=1`);
             const data = await response.json();
             
-            if (data && data.address) {
+            if (data && data.display_name) {
+              updateForm("location", data.display_name);
+            } else if (data && data.address) {
               const city = data.address.city || data.address.town || data.address.state_district || data.address.state;
               const area = data.address.suburb || data.address.neighbourhood || data.address.residential || "";
               const locationStr = area ? `${area}, ${city}` : city || "Location found";

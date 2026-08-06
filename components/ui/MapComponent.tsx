@@ -71,7 +71,9 @@ export default function MapComponent({ onConfirm, onClose }: MapComponentProps) 
       const response = await fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lng}&zoom=18&addressdetails=1`);
       const data = await response.json();
 
-      if (data && data.address) {
+      if (data && data.display_name) {
+        setAddress(data.display_name);
+      } else if (data && data.address) {
         const city = data.address.city || data.address.town || data.address.state_district || data.address.state;
         const area = data.address.suburb || data.address.neighbourhood || data.address.residential || data.address.road || "";
         const locationStr = area ? `${area}, ${city}` : city || "Unknown Location";
