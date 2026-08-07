@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import Link from "next/link";
+import { useSearchParams } from "next/navigation";
 import {
   ArrowRight,
   type LucideIcon,
@@ -19,14 +20,17 @@ export default function ServicesCatalog() {
   const [activeCategory, setActiveCategory] = useState<string>("All");
   const { data, isLoading, error } = useGetServices();
 
+  const searchParams = useSearchParams();
+  const query = searchParams.get("q") || "";
+
   const services = data?.services || [];
   const categories = data?.categories || ["All"];
 
-  const filteredServices =
-    activeCategory === "All"
-      ? services
-      : services.filter((service: ServiceItem) => service.category === activeCategory);
-
+  const filteredServices = services.filter((service: ServiceItem) => {
+    const matchesCategory = activeCategory === "All" || service.category === activeCategory;
+    const matchesSearch = !query || service.name.toLowerCase().includes(query.toLowerCase()) || service.description.toLowerCase().includes(query.toLowerCase());
+    return matchesCategory && matchesSearch;
+  });
 
   if (isLoading) {
     return <div className="py-20 text-center">Loading services...</div>;

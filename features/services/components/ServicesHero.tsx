@@ -1,10 +1,32 @@
-import React from "react";
+"use client";
+
+import React, { useState } from "react";
+import { useRouter, useSearchParams } from "next/navigation";
 import { Search, Star, MapPin, CheckCircle2 } from "lucide-react";
 import Container from "@/components/ui/Container";
 import Badge from "@/components/ui/Badge";
 import Button from "@/components/ui/Button";
 
 export default function ServicesHero() {
+  const router = useRouter();
+  const searchParams = useSearchParams();
+  const initialQuery = searchParams.get("q") || "";
+  const [searchQuery, setSearchQuery] = useState(initialQuery);
+
+  const handleSearch = () => {
+    if (searchQuery.trim()) {
+      router.push(`/services?q=${encodeURIComponent(searchQuery)}`);
+    } else {
+      router.push(`/services`);
+    }
+  };
+
+  const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === "Enter") {
+      handleSearch();
+    }
+  };
+
   return (
     <section className="relative bg-gradient-to-br from-primary-navy via-[#0A1A3A] to-primary-blue-dark py-20 md:py-32 overflow-hidden">
       
@@ -42,11 +64,14 @@ export default function ServicesHero() {
               <Search className="w-6 h-6 text-white/50 shrink-0" />
               <input
                 type="text"
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                onKeyDown={handleKeyDown}
                 placeholder="Search a service e.g. Brake Service, AC Repair..."
                 className="w-full font-body text-base text-white placeholder:text-white/50 focus:outline-none bg-transparent"
               />
             </div>
-            <Button variant="accent" size="lg" className="shrink-0 w-full sm:w-auto font-bold px-8 shadow-lg shadow-accent-orange/20">
+            <Button onClick={handleSearch} variant="accent" size="lg" className="shrink-0 w-full sm:w-auto font-bold px-8 shadow-lg shadow-accent-orange/20">
               Search
             </Button>
           </div>
