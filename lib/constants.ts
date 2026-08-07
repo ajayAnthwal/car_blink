@@ -6,7 +6,6 @@ export interface NavLink {
 export const MAIN_NAV_LINKS: NavLink[] = [
   { name: "Home", href: "/" },
   { name: "Services", href: "/services" },
-  { name: "For Workshops", href: "/for-workshops" },
   { name: "About Us", href: "/about" },
   { name: "Contact", href: "/contact" },
 ];
@@ -21,8 +20,7 @@ export const FOOTER_SERVICES_LINKS: NavLink[] = [
 ];
 
 export const FOOTER_WORKSHOPS_LINKS: NavLink[] = [
-  { name: "Become a Partner", href: "/partner-signup" },
-  { name: "Partner Login", href: "/login" },
+  { name: "Become a Partner", href: "/for-workshops" },
   { name: "How It Works", href: "/how-it-works" },
   { name: "Pricing", href: "/pricing" },
   { name: "Partner Policy", href: "/partner-policy" },
