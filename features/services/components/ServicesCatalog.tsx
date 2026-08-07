@@ -5,6 +5,7 @@ import Link from "next/link";
 import { useSearchParams } from "next/navigation";
 import {
   ArrowRight,
+  Search,
   type LucideIcon,
 } from "lucide-react";
 import Container from "@/components/ui/Container";
@@ -71,46 +72,68 @@ export default function ServicesCatalog() {
         </div>
 
         {/* Services grid */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
-          {filteredServices.map((service: ServiceItem) => {
-            // @ts-ignore
-            const Icon = LucideIcons[service.icon] || LucideIcons.Wrench;
-            return (
-              <Card
-                key={service.name}
-                className="group flex flex-col bg-white border border-neutral-text-muted/10 rounded-[2rem] p-6 sm:p-8 transition-all duration-500 hover:-translate-y-2 hover:shadow-2xl hover:shadow-primary-blue/10 hover:border-primary-blue/30"
-              >
-                <div className="w-14 h-14 rounded-2xl bg-primary-blue/5 flex items-center justify-center mb-6 group-hover:bg-primary-blue group-hover:scale-110 group-hover:-rotate-3 transition-all duration-500 shadow-inner">
-                  <Icon className="w-7 h-7 text-primary-blue group-hover:text-white transition-colors duration-500" />
-                </div>
-                <h3 className="font-heading font-black text-xl text-neutral-text-dark mb-2 group-hover:text-primary-blue transition-colors duration-300">
-                  {service.name}
-                </h3>
-                <p className="font-body text-sm text-neutral-text-muted leading-relaxed mb-6 flex-1">
-                  {service.description}
-                </p>
-                
-                <div className="flex items-center justify-between pt-4 border-t border-neutral-text-muted/10">
-                  <div className="flex flex-col">
-                    <span className="font-body text-[11px] font-bold uppercase tracking-wider text-neutral-text-muted/70 mb-0.5">
-                      Estimated
-                    </span>
-                    <span className="font-heading font-black text-lg text-neutral-text-dark">
-                      {service.priceFrom}
-                    </span>
-                    <span className="text-[10px] text-neutral-text-muted mt-1">*T&C Apply</span>
+        {filteredServices.length > 0 ? (
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
+            {filteredServices.map((service: ServiceItem) => {
+              // @ts-ignore
+              const Icon = LucideIcons[service.icon] || LucideIcons.Wrench;
+              return (
+                <Card
+                  key={service.name}
+                  className="group flex flex-col bg-white border border-neutral-text-muted/10 rounded-[2rem] p-6 sm:p-8 transition-all duration-500 hover:-translate-y-2 hover:shadow-2xl hover:shadow-primary-blue/10 hover:border-primary-blue/30"
+                >
+                  <div className="w-14 h-14 rounded-2xl bg-primary-blue/5 flex items-center justify-center mb-6 group-hover:bg-primary-blue group-hover:scale-110 group-hover:-rotate-3 transition-all duration-500 shadow-inner">
+                    <Icon className="w-7 h-7 text-primary-blue group-hover:text-white transition-colors duration-500" />
                   </div>
-                  <Link 
-                    href={`/services/${service.slug || service.name.toLowerCase().replace(/[^a-z0-9]+/g, '-')}`} 
-                    className="inline-flex items-center justify-center px-4 py-2 rounded-full font-heading text-xs font-bold bg-primary-blue/10 text-primary-blue group-hover:bg-primary-blue group-hover:text-white transition-all duration-300"
-                  >
-                    Compare Now
-                  </Link>
-                </div>
-              </Card>
-            );
-          })}
-        </div>
+                  <h3 className="font-heading font-black text-xl text-neutral-text-dark mb-2 group-hover:text-primary-blue transition-colors duration-300">
+                    {service.name}
+                  </h3>
+                  <p className="font-body text-sm text-neutral-text-muted leading-relaxed mb-6 flex-1">
+                    {service.description}
+                  </p>
+                  
+                  <div className="flex items-center justify-between pt-4 border-t border-neutral-text-muted/10">
+                    <div className="flex flex-col">
+                      <span className="font-body text-[11px] font-bold uppercase tracking-wider text-neutral-text-muted/70 mb-0.5">
+                        Estimated
+                      </span>
+                      <span className="font-heading font-black text-lg text-neutral-text-dark">
+                        {service.priceFrom}
+                      </span>
+                      <span className="text-[10px] text-neutral-text-muted mt-1">*T&C Apply</span>
+                    </div>
+                    <Link 
+                      href={`/services/${service.slug || service.name.toLowerCase().replace(/[^a-z0-9]+/g, '-')}`} 
+                      className="inline-flex items-center justify-center px-4 py-2 rounded-full font-heading text-xs font-bold bg-primary-blue/10 text-primary-blue group-hover:bg-primary-blue group-hover:text-white transition-all duration-300"
+                    >
+                      Compare Now
+                    </Link>
+                  </div>
+                </Card>
+              );
+            })}
+          </div>
+        ) : (
+          <div className="flex flex-col items-center justify-center text-center py-24 px-4 bg-white border border-neutral-text-muted/10 rounded-[2rem]">
+            <div className="w-20 h-20 bg-neutral-text-muted/5 rounded-full flex items-center justify-center mb-6">
+              <Search className="w-10 h-10 text-neutral-text-muted/50" />
+            </div>
+            <h3 className="font-heading font-black text-2xl text-neutral-text-dark mb-2">
+              No services found
+            </h3>
+            <p className="font-body text-neutral-text-muted max-w-md mx-auto mb-8 leading-relaxed">
+              We couldn't find any services matching <span className="font-semibold text-neutral-text-dark">"{query}"</span>. Try checking for typos or searching with different keywords.
+            </p>
+            {query && (
+              <Link
+                href="/services"
+                className="inline-flex items-center justify-center px-8 py-3 rounded-xl font-heading text-sm font-bold bg-primary-blue text-white hover:bg-primary-blue-dark transition-all duration-300 shadow-md shadow-primary-blue/20"
+              >
+                Clear Search
+              </Link>
+            )}
+          </div>
+        )}
       </Container>
     </section>
   );

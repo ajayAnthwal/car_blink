@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { Search, Star, MapPin, CheckCircle2 } from "lucide-react";
 import Container from "@/components/ui/Container";
@@ -12,6 +12,28 @@ export default function ServicesHero() {
   const searchParams = useSearchParams();
   const initialQuery = searchParams.get("q") || "";
   const [searchQuery, setSearchQuery] = useState(initialQuery);
+  const debounceRef = useRef<NodeJS.Timeout | null>(null);
+
+  useEffect(() => {
+    setSearchQuery(searchParams.get("q") || "");
+  }, [searchParams]);
+
+  const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = e.target.value;
+    setSearchQuery(value);
+
+    if (debounceRef.current) {
+      clearTimeout(debounceRef.current);
+    }
+
+    debounceRef.current = setTimeout(() => {
+      if (value.trim()) {
+        router.push(`/services?q=${encodeURIComponent(value)}`);
+      } else {
+        router.push(`/services`);
+      }
+    }, 300);
+  };
 
   const handleSearch = () => {
     if (searchQuery.trim()) {
@@ -65,7 +87,7 @@ export default function ServicesHero() {
               <input
                 type="text"
                 value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
+                onChange={handleSearchChange}
                 onKeyDown={handleKeyDown}
                 placeholder="Search a service e.g. Brake Service, AC Repair..."
                 className="w-full font-body text-base text-white placeholder:text-white/50 focus:outline-none bg-transparent"
