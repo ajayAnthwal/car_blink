@@ -15,7 +15,18 @@ import {
   Star,
   MapPin,
   LocateFixed,
-  Loader2
+  Loader2,
+  Wrench,
+  Droplets,
+  Sparkles,
+  Shield,
+  Palette,
+  CircleDashed,
+  BatteryCharging,
+  ThermometerSnowflake,
+  MoveVertical,
+  FileText,
+  Disc
 } from "lucide-react";
 import Container from "@/components/ui/Container";
 import Button from "@/components/ui/Button";
@@ -114,20 +125,20 @@ const CAR_MODELS_MAP: Record<string, string[]> = {
 };
 
 const ALL_SERVICES = [
-  { name: "Periodic Service", price: "₹2,499 - ₹4,999" },
-  { name: "Engine Repair", price: "₹4,999 - ₹12,000" },
-  { name: "Dent & Paint", price: "₹2,500 - ₹5,499" },
-  { name: "Car Wash", price: "₹499 - ₹999" },
-  { name: "Detailing", price: "₹2,999 - ₹5,999" },
-  { name: "PPF (Paint Protection Film)", price: "₹25,000 - ₹85,000" },
-  { name: "Ceramic Coating", price: "₹14,999 - ₹35,000" },
-  { name: "Tyres", price: "₹3,499 - ₹8,499" },
-  { name: "Battery", price: "₹4,499 - ₹8,999" },
-  { name: "AC Repair", price: "₹1,499 - ₹4,499" },
-  { name: "Suspension", price: "₹3,999 - ₹9,999" },
-  { name: "Insurance Claims", price: "Free assistance" },
-  { name: "Clutch Repair", price: "₹4,999 - ₹9,999" },
-  { name: "Brake Service", price: "₹1,299 - ₹3,499" },
+  { name: "Periodic Service", price: "₹2,499 - ₹4,999", icon: Wrench },
+  { name: "Engine Repair", price: "₹4,999 - ₹12,000", icon: Settings },
+  { name: "Dent & Paint", price: "₹2,500 - ₹5,499", icon: Palette },
+  { name: "Car Wash", price: "₹499 - ₹999", icon: Droplets },
+  { name: "Detailing", price: "₹2,999 - ₹5,999", icon: Sparkles },
+  { name: "PPF (Paint Protection Film)", price: "₹25,000 - ₹85,000", icon: Shield },
+  { name: "Ceramic Coating", price: "₹14,999 - ₹35,000", icon: Sparkles },
+  { name: "Tyres", price: "₹3,499 - ₹8,499", icon: CircleDashed },
+  { name: "Battery", price: "₹4,499 - ₹8,999", icon: BatteryCharging },
+  { name: "AC Repair", price: "₹1,499 - ₹4,499", icon: ThermometerSnowflake },
+  { name: "Suspension", price: "₹3,999 - ₹9,999", icon: MoveVertical },
+  { name: "Insurance Claims", price: "Free assistance", icon: FileText },
+  { name: "Clutch Repair", price: "₹4,999 - ₹9,999", icon: Disc },
+  { name: "Brake Service", price: "₹1,299 - ₹3,499", icon: CircleDashed },
 ];
 
 function QuotesForm() {
@@ -393,6 +404,8 @@ function QuotesForm() {
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               {availableServices.map((service) => {
                 const isSelected = formData.services.includes(service);
+                const serviceDef = ALL_SERVICES.find(s => s.name === service);
+                const ServiceIcon = serviceDef?.icon || Settings;
                 return (
                   <button
                     key={service}
@@ -403,7 +416,7 @@ function QuotesForm() {
                         : "border-neutral-text-muted/10 bg-white text-neutral-text-dark hover:border-primary-blue/30 hover:bg-neutral-bg"
                     }`}
                   >
-                    <Settings className={`w-5 h-5 ${isSelected ? 'text-primary-blue' : 'text-neutral-text-muted'}`} />
+                    <ServiceIcon className={`w-5 h-5 ${isSelected ? 'text-primary-blue' : 'text-neutral-text-muted'}`} />
                     <span className="font-heading font-bold text-sm flex-1">{service}</span>
                     {isSelected && <CheckCircle2 className="w-4 h-4 text-primary-blue" />}
                   </button>
