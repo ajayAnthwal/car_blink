@@ -44,8 +44,8 @@ export default function MapComponent({ onConfirm, onClose }: MapComponentProps) 
         (error) => {
           console.error(error);
           if (error.code === error.PERMISSION_DENIED) {
-            toast.error("Location access denied. Please enable location permissions in your browser settings (Site Settings) and try again.", {
-              duration: 5000,
+            toast.error("Location blocked. Please click the 🔒 lock icon in your browser's address bar and turn on Location.", {
+              duration: 6000,
             });
           } else {
             toast.error("Unable to detect live location. Please select manually on the map.");
