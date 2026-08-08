@@ -26,7 +26,10 @@ import {
   ThermometerSnowflake,
   MoveVertical,
   FileText,
-  Disc
+  Disc,
+  Fuel,
+  Zap,
+  Leaf
 } from "lucide-react";
 import Container from "@/components/ui/Container";
 import Button from "@/components/ui/Button";
@@ -298,7 +301,7 @@ function QuotesForm() {
     }
   };
 
-  const nextStep = () => setStep((s) => Math.min(s + 1, 4));
+  const nextStep = () => setStep((s) => Math.min(s + 1, 5));
   const prevStep = () => setStep((s) => Math.max(s - 1, 1));
 
   const updateForm = (key: keyof typeof formData, value: string) => {
@@ -336,22 +339,17 @@ function QuotesForm() {
       case 2:
         return (
           <div className="animate-in fade-in slide-in-from-bottom-4 duration-500">
-            <h2 className="font-heading font-black text-2xl text-neutral-text-dark mb-2">Select Car Model & Fuel</h2>
-            <p className="font-body text-neutral-text-muted mb-6">What type of {formData.make} do you drive and its fuel type?</p>
+            <h2 className="font-heading font-black text-2xl text-neutral-text-dark mb-2">Select Car Model</h2>
+            <p className="font-body text-neutral-text-muted mb-6">What type of {formData.make} do you drive?</p>
             
-            <h3 className="font-heading font-semibold text-lg text-primary-blue bg-primary-blue/10 inline-block px-4 py-1.5 rounded-lg mb-4">Car Model</h3>
             <div className="grid grid-cols-2 sm:grid-cols-3 gap-4 mb-4">
               {(CAR_MODELS_MAP[formData.make] || ["Other"]).map((model) => (
                 <button
                   key={model}
                   onClick={() => {
                     updateForm("model", model);
-                    if (formData.fuelType && model !== "Other") {
+                    if (model !== "Other") {
                       setTimeout(() => nextStep(), 300);
-                    } else {
-                      setTimeout(() => {
-                        fuelTypeRef.current?.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
-                      }, 100);
                     }
                   }}
                   className={`flex flex-col items-center gap-3 p-4 rounded-2xl border-2 transition-all ${
@@ -377,35 +375,9 @@ function QuotesForm() {
               </div>
             )}
 
-            <h3 ref={fuelTypeRef} className={`font-heading font-semibold text-lg text-primary-blue bg-primary-blue/10 inline-block px-4 py-1.5 rounded-lg mb-4 ${formData.model === "Other" ? "mt-4" : "mt-8"}`}>Fuel Type</h3>
-            <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
-              {["Petrol", "Diesel", "CNG", "EV"].map((fuel) => (
-                <button
-                  key={fuel}
-                  onClick={() => {
-                    updateForm("fuelType", fuel);
-                    if (formData.model && (formData.model !== "Other" || formData.otherModelDetails)) {
-                      setTimeout(() => nextStep(), 300);
-                    } else {
-                      setTimeout(() => {
-                        continueBtnRef.current?.scrollIntoView({ behavior: 'smooth', block: 'center' });
-                      }, 100);
-                    }
-                  }}
-                  className={`flex flex-col items-center gap-2 p-3 rounded-xl border-2 transition-all ${
-                    formData.fuelType === fuel
-                      ? "border-primary-blue bg-primary-blue/5 text-primary-blue"
-                      : "border-neutral-text-muted/10 bg-white text-neutral-text-dark hover:border-primary-blue/30 hover:bg-neutral-bg"
-                  }`}
-                >
-                  <span className="font-heading font-bold text-sm">{fuel}</span>
-                </button>
-              ))}
-            </div>
-
-            <div ref={continueBtnRef} className="mt-8 md:mt-8 fixed md:static bottom-0 left-0 w-full p-4 md:p-0 bg-white md:bg-transparent border-t md:border-0 border-neutral-text-muted/10 z-50 flex justify-between gap-4 shadow-[0_-4px_10px_rgba(0,0,0,0.05)] md:shadow-none">
+            <div className="mt-8 md:mt-8 fixed md:static bottom-0 left-0 w-full p-4 md:p-0 bg-white md:bg-transparent border-t md:border-0 border-neutral-text-muted/10 z-50 flex justify-between gap-4 shadow-[0_-4px_10px_rgba(0,0,0,0.05)] md:shadow-none">
               <Button className="flex-1 md:flex-none" variant="ghost" onClick={prevStep}>Back</Button>
-              <Button className="flex-1 md:flex-none" onClick={nextStep} disabled={!formData.model || (formData.model === "Other" && !formData.otherModelDetails) || !formData.fuelType} rightIcon={<ArrowRight className="w-4 h-4" />}>
+              <Button className="flex-1 md:flex-none" onClick={nextStep} disabled={!formData.model || (formData.model === "Other" && !formData.otherModelDetails)} rightIcon={<ArrowRight className="w-4 h-4" />}>
                 Continue
               </Button>
             </div>
@@ -414,8 +386,47 @@ function QuotesForm() {
       case 3:
         return (
           <div className="animate-in fade-in slide-in-from-bottom-4 duration-500">
+            <h2 className="font-heading font-black text-2xl text-neutral-text-dark mb-2">Select Fuel Type</h2>
+            <p className="font-body text-neutral-text-muted mb-6">What fuel does your {formData.make} {formData.model === "Other" ? formData.otherModelDetails : formData.model} use?</p>
+            
+            <div className="grid grid-cols-2 gap-4">
+              {[
+                { name: "Petrol", icon: Fuel },
+                { name: "Diesel", icon: Fuel },
+                { name: "CNG", icon: Leaf },
+                { name: "EV", icon: Zap }
+              ].map((fuel) => (
+                <button
+                  key={fuel.name}
+                  onClick={() => {
+                    updateForm("fuelType", fuel.name);
+                    setTimeout(() => nextStep(), 300);
+                  }}
+                  className={`flex flex-col items-center justify-center gap-3 p-6 rounded-2xl border-2 transition-all ${
+                    formData.fuelType === fuel.name
+                      ? "border-primary-blue bg-primary-blue/5 text-primary-blue"
+                      : "border-neutral-text-muted/10 bg-white text-neutral-text-dark hover:border-primary-blue/30 hover:bg-neutral-bg"
+                  }`}
+                >
+                  <fuel.icon className={`w-8 h-8 ${formData.fuelType === fuel.name ? 'opacity-100' : 'opacity-70'}`} />
+                  <span className="font-heading font-bold text-base">{fuel.name}</span>
+                </button>
+              ))}
+            </div>
+
+            <div className="mt-8 md:mt-8 fixed md:static bottom-0 left-0 w-full p-4 md:p-0 bg-white md:bg-transparent border-t md:border-0 border-neutral-text-muted/10 z-50 flex justify-between gap-4 shadow-[0_-4px_10px_rgba(0,0,0,0.05)] md:shadow-none">
+              <Button className="flex-1 md:flex-none" variant="ghost" onClick={prevStep}>Back</Button>
+              <Button className="flex-1 md:flex-none" onClick={nextStep} disabled={!formData.fuelType} rightIcon={<ArrowRight className="w-4 h-4" />}>
+                Continue
+              </Button>
+            </div>
+          </div>
+        );
+      case 4:
+        return (
+          <div className="animate-in fade-in slide-in-from-bottom-4 duration-500">
             <h2 className="font-heading font-black text-2xl text-neutral-text-dark mb-2">Select Services</h2>
-            <p className="font-body text-neutral-text-muted mb-6">What does your {formData.make} {formData.model} need? (Select multiple)</p>
+            <p className="font-body text-neutral-text-muted mb-6">What does your {formData.make} need? (Select multiple)</p>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               {availableServices.map((service) => {
                 const isSelected = formData.services.includes(service);
@@ -473,7 +484,7 @@ function QuotesForm() {
             </div>
           </div>
         );
-      case 4:
+      case 5:
         return (
           <div className="animate-in fade-in slide-in-from-bottom-4 duration-500">
             <h2 className="font-heading font-black text-2xl text-neutral-text-dark mb-2">Your Details</h2>
@@ -589,7 +600,7 @@ function QuotesForm() {
                         latitude: formData.latitude,
                         longitude: formData.longitude,
                       });
-                      setStep(5);
+                      setStep(6);
                     } else {
                       // Guest Flow
                       await createLead({
@@ -601,7 +612,7 @@ function QuotesForm() {
                         city: formData.location,
                         message: `Services: ${formData.services.join(", ")} | Fuel: ${formData.fuelType} | Vehicle No: ${formData.vehicleNumber} | Other: ${formData.otherServiceDetails} | Address: ${formData.address}`,
                       });
-                      setStep(5);
+                      setStep(6);
                     }
                     toast.success("Query Submitted Successfully! We will contact you soon.");
                   } catch (err: any) {
@@ -617,7 +628,7 @@ function QuotesForm() {
             </div>
           </div>
         );
-      case 5:
+      case 6:
         return (
           <div className="animate-in fade-in zoom-in-95 duration-500 flex flex-col items-center justify-center text-center py-10">
             <div className="w-20 h-20 bg-success/10 rounded-full flex items-center justify-center mb-6 shadow-inner shadow-success/20">
@@ -658,10 +669,11 @@ function QuotesForm() {
               {/* Progress Steps */}
               <div className="flex items-center gap-2 mb-10 pb-6 border-b border-neutral-text-muted/10">
                 {[
-                  { id: 1, icon: Car, label: "Vehicle" },
+                  { id: 1, icon: Car, label: "Make" },
                   { id: 2, icon: Car, label: "Model" },
-                  { id: 3, icon: Settings, label: "Service" },
-                  { id: 4, icon: User, label: "Details" }
+                  { id: 3, icon: Fuel, label: "Fuel" },
+                  { id: 4, icon: Settings, label: "Service" },
+                  { id: 5, icon: User, label: "Details" }
                 ].map((s) => {
                   const isActive = step === s.id;
                   const isPassed = step > s.id;
@@ -677,8 +689,8 @@ function QuotesForm() {
                         </div>
                         <span className="font-heading font-bold text-xs hidden sm:block">{s.label}</span>
                       </div>
-                      {s.id < 4 && (
-                        <div className={`w-4 sm:w-8 h-0.5 mx-2 rounded-full ${isPassed ? 'bg-primary-blue/30' : 'bg-neutral-text-muted/10'}`} />
+                      {s.id < 5 && (
+                        <div className={`w-3 sm:w-6 h-0.5 mx-1 sm:mx-2 rounded-full ${isPassed ? 'bg-primary-blue/30' : 'bg-neutral-text-muted/10'}`} />
                       )}
                     </div>
                   );

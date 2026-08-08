@@ -5,6 +5,7 @@ import { MapContainer, TileLayer, useMapEvents, useMap, ZoomControl } from "reac
 import "leaflet/dist/leaflet.css";
 import L from "leaflet";
 import { Loader2, MapPin, LocateFixed } from "lucide-react";
+import { toast } from "sonner";
 
 // Fix leaflet icon issue in Next.js/React
 delete (L.Icon.Default.prototype as any)._getIconUrl;
@@ -42,6 +43,13 @@ export default function MapComponent({ onConfirm, onClose }: MapComponentProps) 
         },
         (error) => {
           console.error(error);
+          if (error.code === error.PERMISSION_DENIED) {
+            toast.error("Location access denied. Please enable location permissions in your browser settings (Site Settings) and try again.", {
+              duration: 5000,
+            });
+          } else {
+            toast.error("Unable to detect live location. Please select manually on the map.");
+          }
           fetchAddress(center[0], center[1]);
         },
         { enableHighAccuracy: true, timeout: 10000, maximumAge: 0 }
