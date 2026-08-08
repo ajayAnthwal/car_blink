@@ -307,7 +307,10 @@ function QuotesForm() {
               {MAKES.map((make) => (
                 <button
                   key={make}
-                  onClick={() => updateForm("make", make)}
+                  onClick={() => {
+                    updateForm("make", make);
+                    setTimeout(() => nextStep(), 300);
+                  }}
                   className={`flex flex-col items-center gap-3 p-4 rounded-2xl border-2 transition-all ${
                     formData.make === make
                       ? "border-primary-blue bg-primary-blue/5 text-primary-blue"
@@ -318,11 +321,6 @@ function QuotesForm() {
                   <span className="font-heading font-bold text-sm">{make}</span>
                 </button>
               ))}
-            </div>
-            <div className="mt-8 md:mt-8 fixed md:static bottom-0 left-0 w-full p-4 md:p-0 bg-white md:bg-transparent border-t md:border-0 border-neutral-text-muted/10 z-50 flex justify-end shadow-[0_-4px_10px_rgba(0,0,0,0.05)] md:shadow-none">
-              <Button className="w-full md:w-auto" onClick={nextStep} disabled={!formData.make} rightIcon={<ArrowRight className="w-4 h-4" />}>
-                Continue
-              </Button>
             </div>
           </div>
         );
@@ -339,9 +337,13 @@ function QuotesForm() {
                   key={model}
                   onClick={() => {
                     updateForm("model", model);
-                    setTimeout(() => {
-                      fuelTypeRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
-                    }, 100);
+                    if (formData.fuelType && model !== "Other") {
+                      setTimeout(() => nextStep(), 300);
+                    } else {
+                      setTimeout(() => {
+                        fuelTypeRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                      }, 100);
+                    }
                   }}
                   className={`flex flex-col items-center gap-3 p-4 rounded-2xl border-2 transition-all ${
                     formData.model === model
@@ -373,9 +375,13 @@ function QuotesForm() {
                   key={fuel}
                   onClick={() => {
                     updateForm("fuelType", fuel);
-                    setTimeout(() => {
-                      continueBtnRef.current?.scrollIntoView({ behavior: 'smooth', block: 'center' });
-                    }, 100);
+                    if (formData.model && (formData.model !== "Other" || formData.otherModelDetails)) {
+                      setTimeout(() => nextStep(), 300);
+                    } else {
+                      setTimeout(() => {
+                        continueBtnRef.current?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                      }, 100);
+                    }
                   }}
                   className={`flex flex-col items-center gap-2 p-3 rounded-xl border-2 transition-all ${
                     formData.fuelType === fuel
@@ -462,23 +468,23 @@ function QuotesForm() {
         return (
           <div className="animate-in fade-in slide-in-from-bottom-4 duration-500">
             <h2 className="font-heading font-black text-2xl text-neutral-text-dark mb-2">Your Details</h2>
-            <p className="font-body text-neutral-text-muted mb-6">Where should we send your custom quotation?</p>
-            <div className="flex flex-col gap-4 max-w-md">
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <p className="font-body text-neutral-text-muted mb-8">Where should we send your custom quotation?</p>
+            <div className="flex flex-col gap-6 max-w-3xl">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
                 <div>
-                  <label className="block font-heading font-semibold text-sm text-neutral-text-dark mb-1.5">Full Name</label>
+                  <label className="block font-heading font-semibold text-sm text-neutral-text-dark mb-2">Full Name</label>
                   <input 
                     type="text" 
                     value={formData.name}
                     onChange={(e) => updateForm("name", e.target.value)}
                     placeholder="John Doe"
-                    className="w-full px-4 py-3 rounded-xl border border-neutral-text-muted/20 bg-neutral-bg focus:bg-white focus:outline-none focus:ring-2 focus:ring-primary-blue/20 transition-all font-body text-sm"
+                    className="w-full px-4 py-3.5 rounded-xl border border-neutral-text-muted/20 bg-neutral-bg focus:bg-white focus:outline-none focus:ring-2 focus:ring-primary-blue/30 transition-all font-body text-base"
                   />
                 </div>
                 <div>
-                  <label className="block font-heading font-semibold text-sm text-neutral-text-dark mb-1.5">Phone Number</label>
+                  <label className="block font-heading font-semibold text-sm text-neutral-text-dark mb-2">Phone Number</label>
                   <div className="flex">
-                    <span className="flex items-center justify-center px-3 bg-neutral-text-muted/5 border border-r-0 border-neutral-text-muted/20 rounded-l-xl text-neutral-text-muted text-sm font-semibold">
+                    <span className="flex items-center justify-center px-4 bg-neutral-text-muted/5 border border-r-0 border-neutral-text-muted/20 rounded-l-xl text-neutral-text-muted text-base font-semibold">
                       +91
                     </span>
                     <input 
@@ -486,31 +492,31 @@ function QuotesForm() {
                       value={formData.phone}
                       onChange={(e) => updateForm("phone", e.target.value)}
                       placeholder="98765 43210"
-                      className="flex-1 px-4 py-3 min-w-0 rounded-r-xl border border-neutral-text-muted/20 bg-neutral-bg focus:bg-white focus:outline-none focus:ring-2 focus:ring-primary-blue/20 transition-all font-body text-sm"
+                      className="flex-1 px-4 py-3.5 min-w-0 rounded-r-xl border border-neutral-text-muted/20 bg-neutral-bg focus:bg-white focus:outline-none focus:ring-2 focus:ring-primary-blue/30 transition-all font-body text-base"
                     />
                   </div>
                 </div>
               </div>
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
                 <div>
-                  <label className="block font-heading font-semibold text-sm text-neutral-text-dark mb-1.5">Vehicle Number</label>
+                  <label className="block font-heading font-semibold text-sm text-neutral-text-dark mb-2">Vehicle Number</label>
                   <input 
                     type="text" 
                     value={formData.vehicleNumber}
                     onChange={(e) => updateForm("vehicleNumber", e.target.value)}
                     placeholder="DL 01 AB 1234"
-                    className="w-full px-4 py-3 rounded-xl border border-neutral-text-muted/20 bg-neutral-bg focus:bg-white focus:outline-none focus:ring-2 focus:ring-primary-blue/20 transition-all font-body text-sm"
+                    className="w-full px-4 py-3.5 rounded-xl border border-neutral-text-muted/20 bg-neutral-bg focus:bg-white focus:outline-none focus:ring-2 focus:ring-primary-blue/30 transition-all font-body text-base uppercase"
                   />
                 </div>
                 <div>
-                  <div className="flex items-center justify-between mb-1.5">
+                  <div className="flex items-center justify-between mb-2">
                     <label className="block font-heading font-semibold text-sm text-neutral-text-dark">Current Location</label>
                     <button 
                       type="button"
                       onClick={() => setShowMapModal(true)}
                       className="flex items-center gap-1.5 text-xs font-semibold text-primary-blue hover:text-primary-blue-dark transition-colors"
                     >
-                      <LocateFixed className="w-3.5 h-3.5" />
+                      <LocateFixed className="w-4 h-4" />
                       Select on Map
                     </button>
                   </div>
@@ -522,20 +528,20 @@ function QuotesForm() {
                       onClick={() => setShowMapModal(true)}
                       placeholder="e.g. Connaught Place, New Delhi"
                       readOnly
-                      className="w-full pl-10 pr-4 py-3 rounded-xl border border-neutral-text-muted/20 bg-neutral-bg focus:bg-white focus:outline-none focus:ring-2 focus:ring-primary-blue/20 transition-all font-body text-sm cursor-pointer"
+                      className="w-full pl-11 pr-4 py-3.5 rounded-xl border border-neutral-text-muted/20 bg-neutral-bg focus:bg-white focus:outline-none focus:ring-2 focus:ring-primary-blue/30 transition-all font-body text-base cursor-pointer"
                     />
-                    <MapPin className="w-4 h-4 text-neutral-text-muted absolute left-3.5 top-1/2 -translate-y-1/2" />
+                    <MapPin className="w-5 h-5 text-primary-blue absolute left-3.5 top-1/2 -translate-y-1/2" />
                   </div>
                 </div>
               </div>
               <div>
-                <label className="block font-heading font-semibold text-sm text-neutral-text-dark mb-1.5">Full Address</label>
+                <label className="block font-heading font-semibold text-sm text-neutral-text-dark mb-2">Full Address</label>
                 <textarea 
                   value={formData.address}
                   onChange={(e) => updateForm("address", e.target.value)}
                   placeholder="Flat No, Building, Street..."
-                  rows={2}
-                  className="w-full px-4 py-3 rounded-xl border border-neutral-text-muted/20 bg-neutral-bg focus:bg-white focus:outline-none focus:ring-2 focus:ring-primary-blue/20 transition-all font-body text-sm resize-none"
+                  rows={3}
+                  className="w-full px-4 py-3.5 rounded-xl border border-neutral-text-muted/20 bg-neutral-bg focus:bg-white focus:outline-none focus:ring-2 focus:ring-primary-blue/30 transition-all font-body text-base resize-none"
                 />
               </div>
             </div>

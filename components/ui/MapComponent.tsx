@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect, useRef } from "react";
-import { MapContainer, TileLayer, useMapEvents, useMap } from "react-leaflet";
+import { MapContainer, TileLayer, useMapEvents, useMap, ZoomControl } from "react-leaflet";
 import "leaflet/dist/leaflet.css";
 import L from "leaflet";
 import { Loader2, MapPin, LocateFixed } from "lucide-react";
@@ -137,6 +137,7 @@ export default function MapComponent({ onConfirm, onClose }: MapComponentProps) 
             url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
             attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'
           />
+          <ZoomControl position="bottomleft" />
           <MapCenterObserver />
           <MapUpdater />
         </MapContainer>
