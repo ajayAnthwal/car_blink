@@ -172,8 +172,17 @@ function QuotesForm() {
 
   const fuelTypeRef = useRef<HTMLHeadingElement>(null);
   const continueBtnRef = useRef<HTMLDivElement>(null);
+  const formTopRef = useRef<HTMLDivElement>(null);
 
   const [availableServices, setAvailableServices] = useState(ALL_SERVICES.map(s => s.name));
+
+  useEffect(() => {
+    // When step changes (e.g. from step 2 to 3), scroll to the top of the form
+    if (formTopRef.current && step > 1) {
+      const y = formTopRef.current.getBoundingClientRect().top + window.scrollY - 120; // 120px offset for sticky header
+      window.scrollTo({ top: y, behavior: 'smooth' });
+    }
+  }, [step]);
 
   useEffect(() => {
     if (user) {
@@ -341,7 +350,7 @@ function QuotesForm() {
                       setTimeout(() => nextStep(), 300);
                     } else {
                       setTimeout(() => {
-                        fuelTypeRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                        fuelTypeRef.current?.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
                       }, 100);
                     }
                   }}
@@ -677,7 +686,7 @@ function QuotesForm() {
               </div>
 
               {/* Step Content */}
-              <div className="flex-1">
+              <div className="flex-1" ref={formTopRef}>
                 {renderStep()}
               </div>
 

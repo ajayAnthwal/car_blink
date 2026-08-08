@@ -218,15 +218,26 @@ export default function LoginPage() {
               </Button>
             </form>
           )}
-          <p className="font-body mt-8 text-center lg:text-left text-sm text-neutral-text-muted">
-            Don't have an account?{" "}
-            <Link
-              href="/register"
-              className="font-heading font-semibold text-primary-blue hover:text-primary-blue-dark transition-colors"
-            >
-              Sign up here
-            </Link>
-          </p>
+          <div className="mt-8 space-y-3 text-center lg:text-left">
+            <p className="font-body text-sm text-neutral-text-muted">
+              Don't have an account?{" "}
+              <Link
+                href="/register"
+                className="font-heading font-semibold text-primary-blue hover:text-primary-blue-dark transition-colors"
+              >
+                Sign up here
+              </Link>
+            </p>
+            <p className="font-body text-sm text-neutral-text-muted">
+              Are you a workshop partner?{" "}
+              <Link
+                href="/partner-login"
+                className="font-heading font-semibold text-accent-orange hover:text-accent-orange/80 transition-colors"
+              >
+                Partner Login
+              </Link>
+            </p>
+          </div>
         </div>
       </section>
     </div>
