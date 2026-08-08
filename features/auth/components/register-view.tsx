@@ -67,15 +67,14 @@ export default function RegisterView() {
             <Logo />
           </div>
           <Badge variant="info" className="bg-white border border-primary-blue/20 !text-primary-blue shadow-sm mx-auto mt-6">
-            <Wrench className="w-3.5 h-3.5" />
-            Workshop Partners
+            <User className="w-3.5 h-3.5" />
+            Customer Registration
           </Badge>
           <h1 className="font-heading font-black text-3xl sm:text-4xl leading-tight tracking-tight mt-5 max-w-lg mx-auto">
-            Become a <span className="text-primary-blue">workshop partner</span>
+            Create an <span className="text-primary-blue">account</span>
           </h1>
           <p className="font-body text-sm sm:text-base text-neutral-text-muted leading-relaxed mt-3 max-w-sm mx-auto">
-            Join 300+ verified workshops and grow your business with
-            steady, qualified bookings.
+            Join Car Blink to easily book services, manage quotes, and keep track of your vehicle's health.
           </p>
         </Container>
       </section>

@@ -42,7 +42,7 @@ export default function WorkshopsHero() {
                 Become a Partner
               </Button>
               <Button
-                href="https://car-blink-dashboard.vercel.app/login"
+                href="/partner-login"
                 variant="ghost"
                 size="lg"
                 className="bg-white/5 text-white hover:bg-white/10 hover:text-white border border-white/15"

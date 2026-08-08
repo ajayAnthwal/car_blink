@@ -9,17 +9,17 @@ import Card from "@/components/ui/Card";
 import Container from "@/components/ui/Container";
 import Input from "@/components/ui/Input";
 import { Logo } from "@/components/layout/Navbar";
-import { useLogin, useSendOtp, useVerifyOtp } from "@/hooks/auth/use-auth";
+import { usePartnerLogin, useSendOtp, usePartnerVerifyOtp } from "@/hooks/auth/use-auth";
 
-export default function LoginPage() {
+export default function PartnerLoginPage() {
   const [loginMethod, setLoginMethod] = useState<"phone" | "email">("phone");
   const [form, setForm] = useState({ phone: "", otp: "", email: "", password: "" });
   const [step, setStep] = useState<1 | 2>(1);
   const [showPassword, setShowPassword] = useState(false);
 
-  const { mutate: login, isPending: isLoginPending } = useLogin();
+  const { mutate: login, isPending: isLoginPending } = usePartnerLogin();
   const { mutate: sendOtp, isPending: isSendOtpPending } = useSendOtp();
-  const { mutate: verifyOtp, isPending: isVerifyOtpPending } = useVerifyOtp();
+  const { mutate: verifyOtp, isPending: isVerifyOtpPending } = usePartnerVerifyOtp();
 
   function handleChange(e: React.ChangeEvent<HTMLInputElement>) {
     const { name, value } = e.target;
@@ -59,15 +59,15 @@ export default function LoginPage() {
           <div className="flex justify-center">
             <Logo />
           </div>
-          <Badge variant="info" className="bg-white border border-primary-blue/20 !text-primary-blue shadow-sm mx-auto mt-6">
+          <Badge variant="info" className="bg-white border border-accent-orange/20 !text-accent-orange shadow-sm mx-auto mt-6">
             <ShieldCheck className="w-3.5 h-3.5" />
-            Secure Login
+            Partner Portal
           </Badge>
           <h1 className="font-heading font-black text-3xl sm:text-4xl leading-tight tracking-tight mt-5 max-w-md mx-auto">
-            Welcome <span className="text-primary-blue">back</span>
+            Workshop <span className="text-accent-orange">Login</span>
           </h1>
           <p className="font-body text-sm sm:text-base text-neutral-text-muted leading-relaxed mt-3 max-w-sm mx-auto">
-            Log in to manage your bookings, quotes, and vehicle details.
+            Log in to manage your workshop, respond to quotes, and grow your business.
           </p>
         </Container>
       </section>
@@ -198,12 +198,12 @@ export default function LoginPage() {
               </form>
             )}
             <p className="font-body mt-6 text-center text-sm text-neutral-text-muted">
-              Don't have an account?{" "}
+              Not a partner yet?{" "}
               <Link
-                href="/register"
-                className="font-heading font-semibold text-primary-blue hover:text-primary-blue-dark"
+                href="https://car-blink-dashboard.vercel.app/register"
+                className="font-heading font-semibold text-accent-orange hover:text-accent-orange/80"
               >
-                Sign up here
+                Apply here
               </Link>
             </p>
           </Card>

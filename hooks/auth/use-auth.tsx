@@ -47,6 +47,31 @@ export const useLogin = (): UseMutationResult<
   });
 };
 
+export const usePartnerLogin = (): UseMutationResult<
+  { data: TUserProfile; message: string },
+  Error,
+  { identifier?: string; email?: string; password?: string }
+> => {
+  return useMutation({
+    mutationFn: postLogin,
+    onSuccess: ({ data, message }) => {
+      if (data.role !== 'PARTNER') {
+        toast.error('This login page is exclusively for Workshop Partners. Please use the Customer login.');
+        return;
+      }
+      data.token && storage.setToken(data.token);
+      toast.success('Partner login successful! Redirecting to Dashboard...');
+      setTimeout(() => {
+        const dashboardUrl = process.env.NEXT_PUBLIC_DASHBOARD_URL || 'https://car-blink-dashboard.vercel.app';
+        window.location.href = `${dashboardUrl}/login?token=${data.token}`;
+      }, 1500);
+    },
+    onError: (error) => {
+      toast.error(error.message);
+    }
+  });
+};
+
 export const useSendOtp = (): UseMutationResult<
   { message: string },
   Error,
@@ -85,6 +110,31 @@ export const useVerifyOtp = (): UseMutationResult<
       toast.success(message);
       setTimeout(() => {
         window.location.href = '/';
+      }, 1500);
+    },
+    onError: (error) => {
+      toast.error(error.message);
+    }
+  });
+};
+
+export const usePartnerVerifyOtp = (): UseMutationResult<
+  { data: TUserProfile; message: string },
+  Error,
+  { identifier: string; otp: string }
+> => {
+  return useMutation({
+    mutationFn: postVerifyOtp,
+    onSuccess: ({ data, message }) => {
+      if (data.role !== 'PARTNER') {
+        toast.error('This login page is exclusively for Workshop Partners. Please use the Customer login.');
+        return;
+      }
+      data.token && storage.setToken(data.token);
+      toast.success('Partner login successful! Redirecting to Dashboard...');
+      setTimeout(() => {
+        const dashboardUrl = process.env.NEXT_PUBLIC_DASHBOARD_URL || 'https://car-blink-dashboard.vercel.app';
+        window.location.href = `${dashboardUrl}/login?token=${data.token}`;
       }, 1500);
     },
     onError: (error) => {
