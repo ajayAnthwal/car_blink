@@ -338,42 +338,44 @@ function QuotesForm() {
         );
       case 2:
         return (
-          <div className="animate-in fade-in slide-in-from-bottom-4 duration-500">
-            <h2 className="font-heading font-black text-2xl text-neutral-text-dark mb-2">Select Car Model</h2>
-            <p className="font-body text-neutral-text-muted mb-6">What type of {formData.make} do you drive?</p>
-            
-            <div className="grid grid-cols-2 sm:grid-cols-3 gap-4 mb-4">
-              {(CAR_MODELS_MAP[formData.make] || ["Other"]).map((model) => (
-                <button
-                  key={model}
-                  onClick={() => {
-                    updateForm("model", model);
-                    if (model !== "Other") {
-                      setTimeout(() => nextStep(), 300);
-                    }
-                  }}
-                  className={`flex flex-col items-center gap-3 p-4 rounded-2xl border-2 transition-all ${
-                    formData.model === model
-                      ? "border-primary-blue bg-primary-blue/5 text-primary-blue"
-                      : "border-neutral-text-muted/10 bg-white text-neutral-text-dark hover:border-primary-blue/30 hover:bg-neutral-bg"
-                  }`}
-                >
-                  <span className="font-heading font-bold text-sm">{model}</span>
-                </button>
-              ))}
-            </div>
-
-            {formData.model === "Other" && (
-              <div className="mb-8 animate-in fade-in duration-300">
-                <input
-                  type="text"
-                  placeholder="Please specify your car model..."
-                  value={formData.otherModelDetails}
-                  onChange={(e) => updateForm("otherModelDetails", e.target.value)}
-                  className="w-full px-4 py-3 rounded-xl border border-primary-blue/30 bg-primary-blue/5 focus:bg-white focus:outline-none focus:ring-2 focus:ring-primary-blue/50 transition-all font-body text-sm"
-                />
+          <>
+            <div className="animate-in fade-in slide-in-from-bottom-4 duration-500">
+              <h2 className="font-heading font-black text-2xl text-neutral-text-dark mb-2">Select Car Model</h2>
+              <p className="font-body text-neutral-text-muted mb-6">What type of {formData.make} do you drive?</p>
+              
+              <div className="grid grid-cols-2 sm:grid-cols-3 gap-4 mb-4">
+                {(CAR_MODELS_MAP[formData.make] || ["Other"]).map((model) => (
+                  <button
+                    key={model}
+                    onClick={() => {
+                      updateForm("model", model);
+                      if (model !== "Other") {
+                        setTimeout(() => nextStep(), 300);
+                      }
+                    }}
+                    className={`flex flex-col items-center gap-3 p-4 rounded-2xl border-2 transition-all ${
+                      formData.model === model
+                        ? "border-primary-blue bg-primary-blue/5 text-primary-blue"
+                        : "border-neutral-text-muted/10 bg-white text-neutral-text-dark hover:border-primary-blue/30 hover:bg-neutral-bg"
+                    }`}
+                  >
+                    <span className="font-heading font-bold text-sm">{model}</span>
+                  </button>
+                ))}
               </div>
-            )}
+
+              {formData.model === "Other" && (
+                <div className="mb-8 animate-in fade-in duration-300">
+                  <input
+                    type="text"
+                    placeholder="Please specify your car model..."
+                    value={formData.otherModelDetails}
+                    onChange={(e) => updateForm("otherModelDetails", e.target.value)}
+                    className="w-full px-4 py-3 rounded-xl border border-primary-blue/30 bg-primary-blue/5 focus:bg-white focus:outline-none focus:ring-2 focus:ring-primary-blue/50 transition-all font-body text-sm"
+                  />
+                </div>
+              )}
+            </div>
 
             <div className="mt-8 md:mt-8 fixed md:static bottom-0 left-0 w-full p-4 md:p-0 bg-white md:bg-transparent border-t md:border-0 border-neutral-text-muted/10 z-50 flex justify-between gap-4 shadow-[0_-4px_10px_rgba(0,0,0,0.05)] md:shadow-none">
               <Button className="flex-1 md:flex-none" variant="ghost" onClick={prevStep}>Back</Button>
@@ -381,37 +383,39 @@ function QuotesForm() {
                 Continue
               </Button>
             </div>
-          </div>
+          </>
         );
       case 3:
         return (
-          <div className="animate-in fade-in slide-in-from-bottom-4 duration-500">
-            <h2 className="font-heading font-black text-2xl text-neutral-text-dark mb-2">Select Fuel Type</h2>
-            <p className="font-body text-neutral-text-muted mb-6">What fuel does your {formData.make} {formData.model === "Other" ? formData.otherModelDetails : formData.model} use?</p>
-            
-            <div className="grid grid-cols-2 gap-4">
-              {[
-                { name: "Petrol", icon: Fuel },
-                { name: "Diesel", icon: Fuel },
-                { name: "CNG", icon: Leaf },
-                { name: "EV", icon: Zap }
-              ].map((fuel) => (
-                <button
-                  key={fuel.name}
-                  onClick={() => {
-                    updateForm("fuelType", fuel.name);
-                    setTimeout(() => nextStep(), 300);
-                  }}
-                  className={`flex flex-col items-center justify-center gap-3 p-6 rounded-2xl border-2 transition-all ${
-                    formData.fuelType === fuel.name
-                      ? "border-primary-blue bg-primary-blue/5 text-primary-blue"
-                      : "border-neutral-text-muted/10 bg-white text-neutral-text-dark hover:border-primary-blue/30 hover:bg-neutral-bg"
-                  }`}
-                >
-                  <fuel.icon className={`w-8 h-8 ${formData.fuelType === fuel.name ? 'opacity-100' : 'opacity-70'}`} />
-                  <span className="font-heading font-bold text-base">{fuel.name}</span>
-                </button>
-              ))}
+          <>
+            <div className="animate-in fade-in slide-in-from-bottom-4 duration-500">
+              <h2 className="font-heading font-black text-2xl text-neutral-text-dark mb-2">Select Fuel Type</h2>
+              <p className="font-body text-neutral-text-muted mb-6">What fuel does your {formData.make} {formData.model === "Other" ? formData.otherModelDetails : formData.model} use?</p>
+              
+              <div className="grid grid-cols-2 gap-4">
+                {[
+                  { name: "Petrol", icon: Fuel },
+                  { name: "Diesel", icon: Fuel },
+                  { name: "CNG", icon: Leaf },
+                  { name: "EV", icon: Zap }
+                ].map((fuel) => (
+                  <button
+                    key={fuel.name}
+                    onClick={() => {
+                      updateForm("fuelType", fuel.name);
+                      setTimeout(() => nextStep(), 300);
+                    }}
+                    className={`flex flex-col items-center justify-center gap-3 p-6 rounded-2xl border-2 transition-all ${
+                      formData.fuelType === fuel.name
+                        ? "border-primary-blue bg-primary-blue/5 text-primary-blue"
+                        : "border-neutral-text-muted/10 bg-white text-neutral-text-dark hover:border-primary-blue/30 hover:bg-neutral-bg"
+                    }`}
+                  >
+                    <fuel.icon className={`w-8 h-8 ${formData.fuelType === fuel.name ? 'opacity-100' : 'opacity-70'}`} />
+                    <span className="font-heading font-bold text-base">{fuel.name}</span>
+                  </button>
+                ))}
+              </div>
             </div>
 
             <div className="mt-8 md:mt-8 fixed md:static bottom-0 left-0 w-full p-4 md:p-0 bg-white md:bg-transparent border-t md:border-0 border-neutral-text-muted/10 z-50 flex justify-between gap-4 shadow-[0_-4px_10px_rgba(0,0,0,0.05)] md:shadow-none">
@@ -420,61 +424,63 @@ function QuotesForm() {
                 Continue
               </Button>
             </div>
-          </div>
+          </>
         );
       case 4:
         return (
-          <div className="animate-in fade-in slide-in-from-bottom-4 duration-500">
-            <h2 className="font-heading font-black text-2xl text-neutral-text-dark mb-2">Select Services</h2>
-            <p className="font-body text-neutral-text-muted mb-6">What does your {formData.make} need? (Select multiple)</p>
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-              {availableServices.map((service) => {
-                const isSelected = formData.services.includes(service);
-                const serviceDef = ALL_SERVICES.find(s => s.name === service);
-                const ServiceIcon = serviceDef?.icon || Settings;
-                return (
-                  <button
-                    key={service}
-                    onClick={() => toggleService(service)}
-                    className={`flex items-center gap-3 p-4 rounded-2xl border-2 transition-all text-left ${
-                      isSelected
-                        ? "border-primary-blue bg-primary-blue/5 text-primary-blue"
-                        : "border-neutral-text-muted/10 bg-white text-neutral-text-dark hover:border-primary-blue/30 hover:bg-neutral-bg"
-                    }`}
-                  >
-                    <ServiceIcon className={`w-5 h-5 ${isSelected ? 'text-primary-blue' : 'text-neutral-text-muted'}`} />
-                    <span className="font-heading font-bold text-sm flex-1">{service}</span>
-                    {isSelected && <CheckCircle2 className="w-4 h-4 text-primary-blue" />}
-                  </button>
-                );
-              })}
-              
-              {/* Other Option */}
-              <button
-                onClick={() => toggleService("Other")}
-                className={`flex items-center gap-3 p-4 rounded-2xl border-2 transition-all text-left ${
-                  formData.services.includes("Other")
-                    ? "border-primary-blue bg-primary-blue/5 text-primary-blue"
-                    : "border-neutral-text-muted/10 bg-white text-neutral-text-dark hover:border-primary-blue/30 hover:bg-neutral-bg"
-                }`}
-              >
-                <Settings className={`w-5 h-5 ${formData.services.includes("Other") ? 'text-primary-blue' : 'text-neutral-text-muted'}`} />
-                <span className="font-heading font-bold text-sm flex-1">Other</span>
-                {formData.services.includes("Other") && <CheckCircle2 className="w-4 h-4 text-primary-blue" />}
-              </button>
-            </div>
-            
-            {formData.services.includes("Other") && (
-              <div className="mt-4 animate-in fade-in duration-300">
-                <input
-                  type="text"
-                  placeholder="Please specify what service you need..."
-                  value={formData.otherServiceDetails}
-                  onChange={(e) => updateForm("otherServiceDetails", e.target.value)}
-                  className="w-full px-4 py-3 rounded-xl border border-primary-blue/30 bg-primary-blue/5 focus:bg-white focus:outline-none focus:ring-2 focus:ring-primary-blue/50 transition-all font-body text-sm"
-                />
+          <>
+            <div className="animate-in fade-in slide-in-from-bottom-4 duration-500">
+              <h2 className="font-heading font-black text-2xl text-neutral-text-dark mb-2">Select Services</h2>
+              <p className="font-body text-neutral-text-muted mb-6">What does your {formData.make} need? (Select multiple)</p>
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                {availableServices.map((service) => {
+                  const isSelected = formData.services.includes(service);
+                  const serviceDef = ALL_SERVICES.find(s => s.name === service);
+                  const ServiceIcon = serviceDef?.icon || Settings;
+                  return (
+                    <button
+                      key={service}
+                      onClick={() => toggleService(service)}
+                      className={`flex items-center gap-3 p-4 rounded-2xl border-2 transition-all text-left ${
+                        isSelected
+                          ? "border-primary-blue bg-primary-blue/5 text-primary-blue"
+                          : "border-neutral-text-muted/10 bg-white text-neutral-text-dark hover:border-primary-blue/30 hover:bg-neutral-bg"
+                      }`}
+                    >
+                      <ServiceIcon className={`w-5 h-5 ${isSelected ? 'text-primary-blue' : 'text-neutral-text-muted'}`} />
+                      <span className="font-heading font-bold text-sm flex-1">{service}</span>
+                      {isSelected && <CheckCircle2 className="w-4 h-4 text-primary-blue" />}
+                    </button>
+                  );
+                })}
+                
+                {/* Other Option */}
+                <button
+                  onClick={() => toggleService("Other")}
+                  className={`flex items-center gap-3 p-4 rounded-2xl border-2 transition-all text-left ${
+                    formData.services.includes("Other")
+                      ? "border-primary-blue bg-primary-blue/5 text-primary-blue"
+                      : "border-neutral-text-muted/10 bg-white text-neutral-text-dark hover:border-primary-blue/30 hover:bg-neutral-bg"
+                  }`}
+                >
+                  <Settings className={`w-5 h-5 ${formData.services.includes("Other") ? 'text-primary-blue' : 'text-neutral-text-muted'}`} />
+                  <span className="font-heading font-bold text-sm flex-1">Other</span>
+                  {formData.services.includes("Other") && <CheckCircle2 className="w-4 h-4 text-primary-blue" />}
+                </button>
               </div>
-            )}
+              
+              {formData.services.includes("Other") && (
+                <div className="mt-4 animate-in fade-in duration-300">
+                  <input
+                    type="text"
+                    placeholder="Please specify what service you need..."
+                    value={formData.otherServiceDetails}
+                    onChange={(e) => updateForm("otherServiceDetails", e.target.value)}
+                    className="w-full px-4 py-3 rounded-xl border border-primary-blue/30 bg-primary-blue/5 focus:bg-white focus:outline-none focus:ring-2 focus:ring-primary-blue/50 transition-all font-body text-sm"
+                  />
+                </div>
+              )}
+            </div>
 
             <div className="mt-8 md:mt-8 fixed md:static bottom-0 left-0 w-full p-4 md:p-0 bg-white md:bg-transparent border-t md:border-0 border-neutral-text-muted/10 z-50 flex justify-between gap-4 shadow-[0_-4px_10px_rgba(0,0,0,0.05)] md:shadow-none">
               <Button className="flex-1 md:flex-none" variant="ghost" onClick={prevStep}>Back</Button>
@@ -482,89 +488,92 @@ function QuotesForm() {
                 Continue
               </Button>
             </div>
-          </div>
+          </>
         );
       case 5:
         return (
-          <div className="animate-in fade-in slide-in-from-bottom-4 duration-500">
-            <h2 className="font-heading font-black text-2xl text-neutral-text-dark mb-2">Your Details</h2>
-            <p className="font-body text-neutral-text-muted mb-8">Where should we send your custom quotation?</p>
-            <div className="flex flex-col gap-6 max-w-3xl">
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
-                <div>
-                  <label className="block font-heading font-semibold text-sm text-neutral-text-dark mb-2">Full Name</label>
-                  <input 
-                    type="text" 
-                    value={formData.name}
-                    onChange={(e) => updateForm("name", e.target.value)}
-                    placeholder="John Doe"
-                    className="w-full px-4 py-3.5 rounded-xl border border-neutral-text-muted/20 bg-neutral-bg focus:bg-white focus:outline-none focus:ring-2 focus:ring-primary-blue/30 transition-all font-body text-base"
-                  />
-                </div>
-                <div>
-                  <label className="block font-heading font-semibold text-sm text-neutral-text-dark mb-2">Phone Number</label>
-                  <div className="flex">
-                    <span className="flex items-center justify-center px-4 bg-neutral-text-muted/5 border border-r-0 border-neutral-text-muted/20 rounded-l-xl text-neutral-text-muted text-base font-semibold">
-                      +91
-                    </span>
-                    <input 
-                      type="tel" 
-                      value={formData.phone}
-                      onChange={(e) => updateForm("phone", e.target.value)}
-                      placeholder="98765 43210"
-                      className="flex-1 px-4 py-3.5 min-w-0 rounded-r-xl border border-neutral-text-muted/20 bg-neutral-bg focus:bg-white focus:outline-none focus:ring-2 focus:ring-primary-blue/30 transition-all font-body text-base"
-                    />
-                  </div>
-                </div>
-              </div>
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
-                <div>
-                  <label className="block font-heading font-semibold text-sm text-neutral-text-dark mb-2">Vehicle Number</label>
-                  <input 
-                    type="text" 
-                    value={formData.vehicleNumber}
-                    onChange={(e) => updateForm("vehicleNumber", e.target.value)}
-                    placeholder="DL 01 AB 1234"
-                    className="w-full px-4 py-3.5 rounded-xl border border-neutral-text-muted/20 bg-neutral-bg focus:bg-white focus:outline-none focus:ring-2 focus:ring-primary-blue/30 transition-all font-body text-base uppercase"
-                  />
-                </div>
-                <div>
-                  <div className="flex items-center justify-between mb-2">
-                    <label className="block font-heading font-semibold text-sm text-neutral-text-dark">Current Location</label>
-                    <button 
-                      type="button"
-                      onClick={() => setShowMapModal(true)}
-                      className="flex items-center gap-1.5 text-xs font-semibold text-primary-blue hover:text-primary-blue-dark transition-colors"
-                    >
-                      <LocateFixed className="w-4 h-4" />
-                      Select on Map
-                    </button>
-                  </div>
-                  <div className="relative">
+          <>
+            <div className="animate-in fade-in slide-in-from-bottom-4 duration-500">
+              <h2 className="font-heading font-black text-2xl text-neutral-text-dark mb-2">Your Details</h2>
+              <p className="font-body text-neutral-text-muted mb-8">Where should we send your custom quotation?</p>
+              <div className="flex flex-col gap-6 max-w-3xl">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+                  <div>
+                    <label className="block font-heading font-semibold text-sm text-neutral-text-dark mb-2">Full Name</label>
                     <input 
                       type="text" 
-                      value={formData.location}
-                      onChange={(e) => updateForm("location", e.target.value)}
-                      onClick={() => setShowMapModal(true)}
-                      placeholder="e.g. Connaught Place, New Delhi"
-                      readOnly
-                      className="w-full pl-11 pr-4 py-3.5 rounded-xl border border-neutral-text-muted/20 bg-neutral-bg focus:bg-white focus:outline-none focus:ring-2 focus:ring-primary-blue/30 transition-all font-body text-base cursor-pointer"
+                      value={formData.name}
+                      onChange={(e) => updateForm("name", e.target.value)}
+                      placeholder="John Doe"
+                      className="w-full px-4 py-3.5 rounded-xl border border-neutral-text-muted/20 bg-neutral-bg focus:bg-white focus:outline-none focus:ring-2 focus:ring-primary-blue/30 transition-all font-body text-base"
                     />
-                    <MapPin className="w-5 h-5 text-primary-blue absolute left-3.5 top-1/2 -translate-y-1/2" />
+                  </div>
+                  <div>
+                    <label className="block font-heading font-semibold text-sm text-neutral-text-dark mb-2">Phone Number</label>
+                    <div className="flex">
+                      <span className="flex items-center justify-center px-4 bg-neutral-text-muted/5 border border-r-0 border-neutral-text-muted/20 rounded-l-xl text-neutral-text-muted text-base font-semibold">
+                        +91
+                      </span>
+                      <input 
+                        type="tel" 
+                        value={formData.phone}
+                        onChange={(e) => updateForm("phone", e.target.value)}
+                        placeholder="98765 43210"
+                        className="flex-1 px-4 py-3.5 min-w-0 rounded-r-xl border border-neutral-text-muted/20 bg-neutral-bg focus:bg-white focus:outline-none focus:ring-2 focus:ring-primary-blue/30 transition-all font-body text-base"
+                      />
+                    </div>
                   </div>
                 </div>
-              </div>
-              <div>
-                <label className="block font-heading font-semibold text-sm text-neutral-text-dark mb-2">Full Address</label>
-                <textarea 
-                  value={formData.address}
-                  onChange={(e) => updateForm("address", e.target.value)}
-                  placeholder="Flat No, Building, Street..."
-                  rows={3}
-                  className="w-full px-4 py-3.5 rounded-xl border border-neutral-text-muted/20 bg-neutral-bg focus:bg-white focus:outline-none focus:ring-2 focus:ring-primary-blue/30 transition-all font-body text-base resize-none"
-                />
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+                  <div>
+                    <label className="block font-heading font-semibold text-sm text-neutral-text-dark mb-2">Vehicle Number</label>
+                    <input 
+                      type="text" 
+                      value={formData.vehicleNumber}
+                      onChange={(e) => updateForm("vehicleNumber", e.target.value)}
+                      placeholder="DL 01 AB 1234"
+                      className="w-full px-4 py-3.5 rounded-xl border border-neutral-text-muted/20 bg-neutral-bg focus:bg-white focus:outline-none focus:ring-2 focus:ring-primary-blue/30 transition-all font-body text-base uppercase"
+                    />
+                  </div>
+                  <div>
+                    <div className="flex items-center justify-between mb-2">
+                      <label className="block font-heading font-semibold text-sm text-neutral-text-dark">Current Location</label>
+                      <button 
+                        type="button"
+                        onClick={() => setShowMapModal(true)}
+                        className="flex items-center gap-1.5 text-xs font-semibold text-primary-blue hover:text-primary-blue-dark transition-colors"
+                      >
+                        <LocateFixed className="w-4 h-4" />
+                        Select on Map
+                      </button>
+                    </div>
+                    <div className="relative">
+                      <input 
+                        type="text" 
+                        value={formData.location}
+                        onChange={(e) => updateForm("location", e.target.value)}
+                        onClick={() => setShowMapModal(true)}
+                        placeholder="e.g. Connaught Place, New Delhi"
+                        readOnly
+                        className="w-full pl-11 pr-4 py-3.5 rounded-xl border border-neutral-text-muted/20 bg-neutral-bg focus:bg-white focus:outline-none focus:ring-2 focus:ring-primary-blue/30 transition-all font-body text-base cursor-pointer"
+                      />
+                      <MapPin className="w-5 h-5 text-primary-blue absolute left-3.5 top-1/2 -translate-y-1/2" />
+                    </div>
+                  </div>
+                </div>
+                <div>
+                  <label className="block font-heading font-semibold text-sm text-neutral-text-dark mb-2">Full Address</label>
+                  <textarea 
+                    value={formData.address}
+                    onChange={(e) => updateForm("address", e.target.value)}
+                    placeholder="Flat No, Building, Street..."
+                    rows={3}
+                    className="w-full px-4 py-3.5 rounded-xl border border-neutral-text-muted/20 bg-neutral-bg focus:bg-white focus:outline-none focus:ring-2 focus:ring-primary-blue/30 transition-all font-body text-base resize-none"
+                  />
+                </div>
               </div>
             </div>
+            
             <div className="mt-8 md:mt-8 fixed md:static bottom-0 left-0 w-full p-4 md:p-0 bg-white md:bg-transparent border-t md:border-0 border-neutral-text-muted/10 z-50 flex justify-between gap-4 shadow-[0_-4px_10px_rgba(0,0,0,0.05)] md:shadow-none">
               <Button className="flex-1 md:flex-none" variant="ghost" onClick={prevStep}>Back</Button>
               <Button 
@@ -626,7 +635,7 @@ function QuotesForm() {
                 {isSubmitting ? "Submitting..." : (isAuthenticated ? "Book Now" : "Get Quotes Now")}
               </Button>
             </div>
-          </div>
+          </>
         );
       case 6:
         return (
