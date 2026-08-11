@@ -148,7 +148,7 @@ export default function RegisterView() {
 
               <div>
                 <Input
-                  label="Email Address"
+                  label="Email Address (Optional)"
                   type="email"
                   placeholder="rahul@example.com"
                   icon={<Mail className="h-4 w-4" />}

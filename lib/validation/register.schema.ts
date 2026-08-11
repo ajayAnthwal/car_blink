@@ -9,8 +9,9 @@ export const registerSchema = z.object({
 
   email: z
     .string()
-    .trim()
-    .email("Please enter a valid email address"),
+    .email("Please enter a valid email address")
+    .optional()
+    .or(z.literal("")),
 
   phone: z
     .string()
