@@ -22,9 +22,9 @@ export const metadata: Metadata = {
   title: "CarBlink — India's Leading Car Service Comparison Platform",
   description: "Compare car service prices, book verified workshops near you, and save time and money with CarBlink.",
   icons: {
-    icon: "/logo.png",
-    shortcut: "/logo.png",
-    apple: "/logo.png",
+    icon: "/car_blink.jpg",
+    shortcut: "/car_blink.jpg",
+    apple: "/car_blink.jpg",
   }
 };
 

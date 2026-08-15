@@ -13,7 +13,7 @@ export function Logo() {
   return (
     <Link href="/" className="flex items-center gap-2 group">
       <Image
-        src="/logo.png"
+        src="/car_blink.jpg"
         alt="Car Blink — One Platform For Every Car Service"
         width={219}
         height={67}

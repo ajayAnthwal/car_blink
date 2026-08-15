@@ -89,7 +89,9 @@ export default function ContactPage() {
   const { mutateAsync: createLead, isPending: isSubmitting } = useCreateLead();
 
   function handleChange(
-    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>
+    e: React.ChangeEvent<
+      HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement
+    >,
   ) {
     const { name, value } = e.target;
     setForm((prev) => ({ ...prev, [name]: value }));
@@ -102,8 +104,8 @@ export default function ContactPage() {
         name: form.name,
         phone: form.phone,
         email: form.email,
-        source: 'WEBSITE_CONTACT',
-        message: `Topic: ${TOPICS.find(t => t.value === form.topic)?.label || form.topic} | Message: ${form.message}`,
+        source: "WEBSITE_CONTACT",
+        message: `Topic: ${TOPICS.find((t) => t.value === form.topic)?.label || form.topic} | Message: ${form.message}`,
       });
       setSubmitted(true);
       toast.success("Message sent successfully!");
@@ -121,7 +123,10 @@ export default function ContactPage() {
         <div className="pointer-events-none absolute -left-24 bottom-0 h-72 w-72 rounded-full bg-accent-orange/10 blur-3xl" />
 
         <Container className="relative z-10 text-center">
-          <Badge variant="info" className="bg-white border border-primary-blue/20 text-primary-blue shadow-sm mx-auto">
+          <Badge
+            variant="info"
+            className="bg-white border border-primary-blue/20 !text-primary-blue shadow-sm mx-auto"
+          >
             <MessageCircle className="w-3.5 h-3.5" />
             We&apos;re here to help
           </Badge>
@@ -129,8 +134,8 @@ export default function ContactPage() {
             Let&apos;s <span className="text-primary-blue">talk cars</span>
           </h1>
           <p className="font-body text-base sm:text-lg text-neutral-text-muted leading-relaxed mt-5 max-w-xl mx-auto">
-            Questions about a booking, a workshop partnership, or just
-            feedback — our team is one message away.
+            Questions about a booking, a workshop partnership, or just feedback
+            — our team is one message away.
           </p>
         </Container>
       </section>
@@ -149,7 +154,10 @@ export default function ContactPage() {
                 </h3>
                 <div className="mt-1.5 space-y-0.5">
                   {lines.map((l) => (
-                    <p key={l} className="font-body text-sm text-neutral-text-muted">
+                    <p
+                      key={l}
+                      className="font-body text-sm text-neutral-text-muted"
+                    >
                       {l}
                     </p>
                   ))}
@@ -170,8 +178,8 @@ export default function ContactPage() {
                 Send us a message
               </h2>
               <p className="font-body mt-1 text-sm text-neutral-text-muted">
-                Fill in the form and our team will get back to you within
-                24 hours.
+                Fill in the form and our team will get back to you within 24
+                hours.
               </p>
 
               {submitted ? (
@@ -183,8 +191,8 @@ export default function ContactPage() {
                     Message sent!
                   </h3>
                   <p className="font-body mt-1 max-w-sm text-sm text-neutral-text-muted">
-                    Thanks for reaching out — someone from our team will
-                    reply to {form.email || "your email"} shortly.
+                    Thanks for reaching out — someone from our team will reply
+                    to {form.email || "your email"} shortly.
                   </p>
                   <Button
                     variant="link"
@@ -263,9 +271,21 @@ export default function ContactPage() {
                     variant="primary"
                     size="lg"
                     fullWidth
-                    disabled={isSubmitting || !form.name || !form.phone || !form.email || !form.message}
+                    disabled={
+                      isSubmitting ||
+                      !form.name ||
+                      !form.phone ||
+                      !form.email ||
+                      !form.message
+                    }
                     className="sm:w-auto"
-                    rightIcon={isSubmitting ? <Loader2 className="w-4 h-4 animate-spin" /> : <Send className="h-4 w-4" />}
+                    rightIcon={
+                      isSubmitting ? (
+                        <Loader2 className="w-4 h-4 animate-spin" />
+                      ) : (
+                        <Send className="h-4 w-4" />
+                      )
+                    }
                   >
                     {isSubmitting ? "Sending..." : "Send Message"}
                   </Button>
@@ -275,27 +295,32 @@ export default function ContactPage() {
           </div>
 
           {/* map / office */}
-          <div className="lg:col-span-2">
-            <Card className="overflow-hidden p-0">
-              <div className="flex h-56 items-center justify-center bg-neutral-hero-bg">
-                <div className="text-center">
-                  <MapPin className="mx-auto h-8 w-8 text-primary-blue/60" />
-                  <p className="font-body mt-2 text-sm text-neutral-text-muted">
-                    Map preview
-                  </p>
-                </div>
-              </div>
-              <div className="p-6">
-                <h3 className="font-heading font-bold text-sm text-neutral-text-dark">
-                  Car Blink Head Office
-                </h3>
-                <p className="font-body mt-1 text-sm text-neutral-text-muted">
-                  3rd Floor, Mohabbewala, Dehradun, Uttarakhand – 248002.
-                </p>
+     {/* map / office */}
+<div className="lg:col-span-2 flex">
+  <Card className="overflow-hidden p-0 flex flex-col w-full">
+    <div className="flex-1 min-h-[260px] w-full bg-neutral-hero-bg">
+      <iframe
+        src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d11503.993282895488!2d77.96970279210474!3d30.27088322905431!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x39092b98a9eb6f21%3A0x723b78724473b1e3!2sMohabbewala%2C%20Dehradun%2C%20Uttarakhand%20248002!5e1!3m2!1sen!2sin!4v1786270126657!5m2!1sen!2sin"
+        width="100%"
+        height="100%"
+        style={{ border: 0 }}
+        allowFullScreen
+        loading="lazy"
+        referrerPolicy="strict-origin-when-cross-origin"
+      ></iframe>
+    </div>
+    <div className="p-6 shrink-0">
+      <h3 className="font-heading font-bold text-sm text-neutral-text-dark">
+        Car Blink Head Office
+      </h3>
+      <p className="font-body mt-1 text-sm text-neutral-text-muted">
+        3rd Floor, Mohabbewala, Dehradun, Uttarakhand – 248002.
+      </p>
+    </div>
+  </Card>
+</div>
 
-              </div>
-            </Card>
-          </div>
+
         </Container>
       </section>
 
@@ -322,8 +347,9 @@ export default function ContactPage() {
                       {item.q}
                     </span>
                     <ChevronDown
-                      className={`h-4 w-4 flex-shrink-0 text-primary-blue transition-transform ${isOpen ? "rotate-180" : ""
-                        }`}
+                      className={`h-4 w-4 flex-shrink-0 text-primary-blue transition-transform ${
+                        isOpen ? "rotate-180" : ""
+                      }`}
                     />
                   </button>
                   {isOpen && (
