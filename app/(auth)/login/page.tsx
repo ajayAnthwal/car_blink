@@ -188,7 +188,7 @@ export default function LoginPage() {
                 <div className="flex justify-between items-center mb-1">
                   <label className="text-xs font-bold font-heading text-neutral-text-muted">Password</label>
                   <Link
-                    href={`${process.env.NEXT_PUBLIC_DASHBOARD_URL || 'https://car-blink-dashboard.vercel.app'}/forgot-password`}
+                    href="/forgot-password"
                     className="text-xs font-bold text-primary-orange hover:text-primary-orange-dark transition-colors"
                   >
                     Forgot password?
