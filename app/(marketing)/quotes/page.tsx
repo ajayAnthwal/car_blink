@@ -164,6 +164,7 @@ function QuotesForm() {
     services: [] as string[],
     name: "",
     phone: "",
+    email: "",
     location: "",
     address: "",
     vehicleNumber: "",
@@ -497,9 +498,9 @@ function QuotesForm() {
               <h2 className="font-heading font-black text-2xl text-neutral-text-dark mb-2">Your Details</h2>
               <p className="font-body text-neutral-text-muted mb-8">Where should we send your custom quotation?</p>
               <div className="flex flex-col gap-6 max-w-3xl">
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+                <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 md:gap-6">
                   <div>
-                    <label className="block font-heading font-semibold text-sm text-neutral-text-dark mb-2">Full Name</label>
+                    <label className="block font-heading font-semibold text-sm text-neutral-text-dark mb-2">Full Name *</label>
                     <input 
                       type="text" 
                       value={formData.name}
@@ -509,9 +510,9 @@ function QuotesForm() {
                     />
                   </div>
                   <div>
-                    <label className="block font-heading font-semibold text-sm text-neutral-text-dark mb-2">Phone Number</label>
+                    <label className="block font-heading font-semibold text-sm text-neutral-text-dark mb-2">Phone Number *</label>
                     <div className="flex">
-                      <span className="flex items-center justify-center px-4 bg-neutral-text-muted/5 border border-r-0 border-neutral-text-muted/20 rounded-l-xl text-neutral-text-muted text-base font-semibold">
+                      <span className="flex items-center justify-center px-3.5 bg-neutral-text-muted/5 border border-r-0 border-neutral-text-muted/20 rounded-l-xl text-neutral-text-muted text-base font-semibold">
                         +91
                       </span>
                       <input 
@@ -522,6 +523,16 @@ function QuotesForm() {
                         className="flex-1 px-4 py-3.5 min-w-0 rounded-r-xl border border-neutral-text-muted/20 bg-neutral-bg focus:bg-white focus:outline-none focus:ring-2 focus:ring-primary-blue/30 transition-all font-body text-base"
                       />
                     </div>
+                  </div>
+                  <div>
+                    <label className="block font-heading font-semibold text-sm text-neutral-text-dark mb-2">Email Address</label>
+                    <input 
+                      type="email" 
+                      value={formData.email}
+                      onChange={(e) => updateForm("email", e.target.value)}
+                      placeholder="you@example.com"
+                      className="w-full px-4 py-3.5 rounded-xl border border-neutral-text-muted/20 bg-neutral-bg focus:bg-white focus:outline-none focus:ring-2 focus:ring-primary-blue/30 transition-all font-body text-base"
+                    />
                   </div>
                 </div>
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
@@ -615,6 +626,7 @@ function QuotesForm() {
                       await createLead({
                         name: formData.name,
                         phone: formData.phone,
+                        email: formData.email,
                         source: 'WEBSITE_QUOTE',
                         vehicleBrand: formData.make,
                         vehicleModel: formData.model === "Other" ? formData.otherModelDetails : formData.model,
