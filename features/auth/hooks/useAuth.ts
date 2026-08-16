@@ -46,6 +46,18 @@ export function useAuth() {
 
   const logout = () => {
     storage.clearToken();
+    if (typeof window !== "undefined") {
+      try {
+        window.localStorage.clear();
+        window.sessionStorage.clear();
+        const cookiesToClear = ["accessToken", "refreshToken", "role", "carBlink_token", "carBlink_user"];
+        cookiesToClear.forEach((name) => {
+          document.cookie = `${name}=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;`;
+        });
+      } catch (err) {
+        console.error("Storage clear error:", err);
+      }
+    }
     setUser(null);
   };
 
