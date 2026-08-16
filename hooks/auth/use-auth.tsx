@@ -1,4 +1,4 @@
-import {
+﻿import {
   useMutation,
   UseMutationResult,
   useQuery
@@ -14,7 +14,15 @@ import { toast } from 'sonner';
 import { useRouter } from 'next/navigation';
 import { TUserProfile } from '@/types/user';
 import { RegisterPayload, RegisterResponse, TLoginFormValues } from '@/types/auth';
-// import queryClient from '@/lib/react-query';
+
+const getDashboardUrl = (): string => {
+  const raw = process.env.NEXT_PUBLIC_DASHBOARD_URL || 'http://187.127.174.225:3001';
+  let clean = raw.trim().replace(/^["']|["']$/g, '');
+  if (clean && !clean.startsWith('http://') && !clean.startsWith('https://')) {
+    clean = `http://${clean}`;
+  }
+  return clean.replace(/\/$/, '');
+};
 
 export const useLogin = (): UseMutationResult<
   { data: TUserProfile; message: string },
@@ -26,20 +34,12 @@ export const useLogin = (): UseMutationResult<
   return useMutation({
     mutationFn: postLogin,
     onSuccess: ({ data, message }) => {
-      if (data.role === 'PARTNER') {
-        toast.error('Workshop Partners must login via the Partner Dashboard.');
-        setTimeout(() => {
-          const dashboardUrl = process.env.NEXT_PUBLIC_DASHBOARD_URL || 'https://car-blink-dashboard.vercel.app';
-          window.location.href = `${dashboardUrl}/login`;
-        }, 1500);
-        return;
-      }
       data.token && storage.setToken(data.token);
-      toast.success(message);
-      // Wait for toast to appear then redirect and hard reload to update auth context
+      toast.success(message || 'Login successful! Redirecting to Dashboard...');
       setTimeout(() => {
-        window.location.href = '/';
-      }, 1500);
+        const dashboardUrl = getDashboardUrl();
+        window.location.href = `${dashboardUrl}/login?token=${data.token}`;
+      }, 1000);
     },
     onError: (error) => {
       toast.error(error.message);
@@ -56,15 +56,15 @@ export const usePartnerLogin = (): UseMutationResult<
     mutationFn: postLogin,
     onSuccess: ({ data, message }) => {
       if (data.role !== 'PARTNER') {
-        toast.error('This login page is exclusively for Workshop Partners. Please use the Customer login.');
+        toast.error('This login page is exclusively for Workshop Partners. Please use Customer login.');
         return;
       }
       data.token && storage.setToken(data.token);
       toast.success('Partner login successful! Redirecting to Dashboard...');
       setTimeout(() => {
-        const dashboardUrl = process.env.NEXT_PUBLIC_DASHBOARD_URL || 'https://car-blink-dashboard.vercel.app';
+        const dashboardUrl = getDashboardUrl();
         window.location.href = `${dashboardUrl}/login?token=${data.token}`;
-      }, 1500);
+      }, 1000);
     },
     onError: (error) => {
       toast.error(error.message);
@@ -98,19 +98,12 @@ export const useVerifyOtp = (): UseMutationResult<
   return useMutation({
     mutationFn: postVerifyOtp,
     onSuccess: ({ data, message }) => {
-      if (data.role === 'PARTNER') {
-        toast.error('Workshop Partners must login via the Partner Dashboard.');
-        setTimeout(() => {
-          const dashboardUrl = process.env.NEXT_PUBLIC_DASHBOARD_URL || 'https://car-blink-dashboard.vercel.app';
-          window.location.href = `${dashboardUrl}/login`;
-        }, 1500);
-        return;
-      }
       data.token && storage.setToken(data.token);
-      toast.success(message);
+      toast.success(message || 'Verification successful! Redirecting to Dashboard...');
       setTimeout(() => {
-        window.location.href = '/';
-      }, 1500);
+        const dashboardUrl = getDashboardUrl();
+        window.location.href = `${dashboardUrl}/login?token=${data.token}`;
+      }, 1000);
     },
     onError: (error) => {
       toast.error(error.message);
@@ -127,15 +120,15 @@ export const usePartnerVerifyOtp = (): UseMutationResult<
     mutationFn: postVerifyOtp,
     onSuccess: ({ data, message }) => {
       if (data.role !== 'PARTNER') {
-        toast.error('This login page is exclusively for Workshop Partners. Please use the Customer login.');
+        toast.error('This login page is exclusively for Workshop Partners. Please use Customer login.');
         return;
       }
       data.token && storage.setToken(data.token);
       toast.success('Partner login successful! Redirecting to Dashboard...');
       setTimeout(() => {
-        const dashboardUrl = process.env.NEXT_PUBLIC_DASHBOARD_URL || 'https://car-blink-dashboard.vercel.app';
+        const dashboardUrl = getDashboardUrl();
         window.location.href = `${dashboardUrl}/login?token=${data.token}`;
-      }, 1500);
+      }, 1000);
     },
     onError: (error) => {
       toast.error(error.message);
@@ -154,24 +147,16 @@ export const useRegister = (): UseMutationResult<
     mutationFn: postRegister,
 
     onSuccess: ({ data, message }) => {
-      if (data.role === 'PARTNER') {
-        toast.error('Workshop Partners must login via the Partner Dashboard.');
-        setTimeout(() => {
-          const dashboardUrl = process.env.NEXT_PUBLIC_DASHBOARD_URL || 'https://car-blink-dashboard.vercel.app';
-          window.location.href = `${dashboardUrl}/login`;
-        }, 1500);
-        return;
-      }
-
       if (data?.token) {
         storage.setToken(data.token);
       }
 
-      toast.success(message);
+      toast.success(message || 'Registration successful! Redirecting to Dashboard...');
 
       setTimeout(() => {
-        window.location.href = '/';
-      }, 1500);
+        const dashboardUrl = getDashboardUrl();
+        window.location.href = `${dashboardUrl}/login?token=${data.token}`;
+      }, 1000);
     },
 
     onError: (error) => {
@@ -179,53 +164,3 @@ export const useRegister = (): UseMutationResult<
     }
   });
 };
-// export const useProfile = () => {
-//   return useQuery({
-//     queryKey: ['profile'],
-//     queryFn: getProfile,
-//     retry: false
-//   });
-// };
-
-// export const usePutProfile = (): UseMutationResult<
-//   { data: TUserProfile; message: string },
-//   Error,
-//   TUserProfile
-// > => {
-//   return useMutation({
-//     mutationFn: putProfile,
-//     onSuccess: ({ message }) => {
-//       toast.success(message);
-//       queryClient.invalidateQueries({ queryKey: ['profile'] });
-//     },
-//     onError: (error) => {
-//       toast.error(error.message);
-//     }
-//   });
-// };
-
-// export const useForgetPassword = () => {
-//   return useMutation({
-//     mutationFn: sendResetOtp,
-//     onSuccess: ({ message }) => {
-//       toast.success(message);
-//     },
-//     onError: (error) => {
-//       toast.error(error.message);
-//     }
-//   });
-// };
-
-// export const useResetPassword = () => {
-//   const router = useRouter();
-//   return useMutation({
-//     mutationFn: resetPassword,
-//     onSuccess: ({ message }) => {
-//       toast.success(message);
-//       router.push('/login');
-//     },
-//     onError: (error) => {
-//       toast.error(error.message);
-//     }
-//   });
-// };
