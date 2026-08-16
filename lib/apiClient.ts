@@ -1,6 +1,21 @@
 ﻿import storage from './storage';
 
-export const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || process.env.NEXT_PUBLIC_API_BASE_URL || 'http://localhost:8000/api';
+const formatApiUrl = (rawUrl?: string): string => {
+  if (!rawUrl) return '';
+  let cleanUrl = rawUrl.trim().replace(/^["']|["']$/g, '');
+  if (cleanUrl && !cleanUrl.startsWith('http://') && !cleanUrl.startsWith('https://')) {
+    cleanUrl = `http://${cleanUrl}`;
+  }
+  return cleanUrl;
+};
+
+export const API_BASE_URL = formatApiUrl(
+  process.env.NEXT_PUBLIC_API_URL || process.env.NEXT_PUBLIC_API_BASE_URL
+);
+
+if (!API_BASE_URL && typeof window !== 'undefined') {
+  console.warn("⚠️ NEXT_PUBLIC_API_URL environment variable is not set!");
+}
 
 /**
  * A simple fetch wrapper to hit the backend API.
