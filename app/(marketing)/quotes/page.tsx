@@ -495,24 +495,35 @@ function QuotesForm() {
         return (
           <>
             <div className="animate-in fade-in slide-in-from-bottom-4 duration-500">
-              <h2 className="font-heading font-black text-2xl text-neutral-text-dark mb-2">Your Details</h2>
-              <p className="font-body text-neutral-text-muted mb-8">Where should we send your custom quotation?</p>
+              <div className="flex items-center justify-between mb-2">
+                <h2 className="font-heading font-black text-2xl text-neutral-text-dark">Contact & Service Location</h2>
+                <span className="text-xs font-semibold text-primary-orange bg-primary-orange/10 px-3 py-1 rounded-full">
+                  Step 5 of 5
+                </span>
+              </div>
+              <p className="font-body text-neutral-text-muted text-sm mb-8">Enter your details to receive verified workshop quotes and service updates.</p>
+              
               <div className="flex flex-col gap-6 max-w-3xl">
+                {/* Personal Contact Row */}
                 <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 md:gap-6">
                   <div>
-                    <label className="block font-heading font-semibold text-sm text-neutral-text-dark mb-2">Full Name *</label>
+                    <label className="block font-heading font-semibold text-xs uppercase tracking-wider text-neutral-text-dark/70 mb-2">
+                      Full Name <span className="text-red-500">*</span>
+                    </label>
                     <input 
                       type="text" 
                       value={formData.name}
                       onChange={(e) => updateForm("name", e.target.value)}
-                      placeholder="John Doe"
-                      className="w-full px-4 py-3.5 rounded-xl border border-neutral-text-muted/20 bg-neutral-bg focus:bg-white focus:outline-none focus:ring-2 focus:ring-primary-blue/30 transition-all font-body text-base"
+                      placeholder="e.g. Rahul Sharma"
+                      className="w-full px-4 py-3 rounded-xl border border-neutral-text-muted/20 bg-neutral-bg/60 focus:bg-white focus:outline-none focus:border-primary-blue focus:ring-4 focus:ring-primary-blue/10 transition-all font-body text-sm font-medium"
                     />
                   </div>
                   <div>
-                    <label className="block font-heading font-semibold text-sm text-neutral-text-dark mb-2">Phone Number *</label>
+                    <label className="block font-heading font-semibold text-xs uppercase tracking-wider text-neutral-text-dark/70 mb-2">
+                      Phone Number <span className="text-red-500">*</span>
+                    </label>
                     <div className="flex">
-                      <span className="flex items-center justify-center px-3.5 bg-neutral-text-muted/5 border border-r-0 border-neutral-text-muted/20 rounded-l-xl text-neutral-text-muted text-base font-semibold">
+                      <span className="flex items-center justify-center px-3.5 bg-neutral-text-muted/10 border border-r-0 border-neutral-text-muted/20 rounded-l-xl text-neutral-text-dark text-sm font-bold">
                         +91
                       </span>
                       <input 
@@ -520,41 +531,50 @@ function QuotesForm() {
                         value={formData.phone}
                         onChange={(e) => updateForm("phone", e.target.value)}
                         placeholder="98765 43210"
-                        className="flex-1 px-4 py-3.5 min-w-0 rounded-r-xl border border-neutral-text-muted/20 bg-neutral-bg focus:bg-white focus:outline-none focus:ring-2 focus:ring-primary-blue/30 transition-all font-body text-base"
+                        className="flex-1 px-4 py-3 min-w-0 rounded-r-xl border border-neutral-text-muted/20 bg-neutral-bg/60 focus:bg-white focus:outline-none focus:border-primary-blue focus:ring-4 focus:ring-primary-blue/10 transition-all font-body text-sm font-medium"
                       />
                     </div>
                   </div>
                   <div>
-                    <label className="block font-heading font-semibold text-sm text-neutral-text-dark mb-2">Email Address</label>
+                    <label className="block font-heading font-semibold text-xs uppercase tracking-wider text-neutral-text-dark/70 mb-2">
+                      Email Address <span className="text-xs text-neutral-text-muted font-normal uppercase">(Optional)</span>
+                    </label>
                     <input 
                       type="email" 
                       value={formData.email}
                       onChange={(e) => updateForm("email", e.target.value)}
-                      placeholder="you@example.com"
-                      className="w-full px-4 py-3.5 rounded-xl border border-neutral-text-muted/20 bg-neutral-bg focus:bg-white focus:outline-none focus:ring-2 focus:ring-primary-blue/30 transition-all font-body text-base"
+                      placeholder="name@example.com"
+                      className="w-full px-4 py-3 rounded-xl border border-neutral-text-muted/20 bg-neutral-bg/60 focus:bg-white focus:outline-none focus:border-primary-blue focus:ring-4 focus:ring-primary-blue/10 transition-all font-body text-sm font-medium"
                     />
                   </div>
                 </div>
+
+                {/* Vehicle & City Row */}
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
                   <div>
-                    <label className="block font-heading font-semibold text-sm text-neutral-text-dark mb-2">Vehicle Number</label>
+                    <label className="block font-heading font-semibold text-xs uppercase tracking-wider text-neutral-text-dark/70 mb-2">
+                      Vehicle Number <span className="text-xs text-neutral-text-muted font-normal uppercase">(Optional)</span>
+                    </label>
                     <input 
                       type="text" 
                       value={formData.vehicleNumber}
                       onChange={(e) => updateForm("vehicleNumber", e.target.value)}
                       placeholder="DL 01 AB 1234"
-                      className="w-full px-4 py-3.5 rounded-xl border border-neutral-text-muted/20 bg-neutral-bg focus:bg-white focus:outline-none focus:ring-2 focus:ring-primary-blue/30 transition-all font-body text-base uppercase"
+                      className="w-full px-4 py-3 rounded-xl border border-neutral-text-muted/20 bg-neutral-bg/60 focus:bg-white focus:outline-none focus:border-primary-blue focus:ring-4 focus:ring-primary-blue/10 transition-all font-body text-sm font-bold uppercase tracking-wider"
                     />
                   </div>
+
                   <div>
                     <div className="flex items-center justify-between mb-2">
-                      <label className="block font-heading font-semibold text-sm text-neutral-text-dark">Current Location</label>
+                      <label className="block font-heading font-semibold text-xs uppercase tracking-wider text-neutral-text-dark/70">
+                        City / Area
+                      </label>
                       <button 
                         type="button"
                         onClick={() => setShowMapModal(true)}
-                        className="flex items-center gap-1.5 text-xs font-semibold text-primary-blue hover:text-primary-blue-dark transition-colors"
+                        className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-primary-blue/10 hover:bg-primary-blue/20 text-primary-blue text-xs font-bold transition-all border border-primary-blue/20 active:scale-95"
                       >
-                        <LocateFixed className="w-4 h-4" />
+                        <LocateFixed className="w-3.5 h-3.5" />
                         Select on Map
                       </button>
                     </div>
@@ -563,23 +583,28 @@ function QuotesForm() {
                         type="text" 
                         value={formData.location}
                         onChange={(e) => updateForm("location", e.target.value)}
-                        onClick={() => setShowMapModal(true)}
                         placeholder="e.g. Connaught Place, New Delhi"
-                        readOnly
-                        className="w-full pl-11 pr-4 py-3.5 rounded-xl border border-neutral-text-muted/20 bg-neutral-bg focus:bg-white focus:outline-none focus:ring-2 focus:ring-primary-blue/30 transition-all font-body text-base cursor-pointer"
+                        className="w-full pl-10 pr-4 py-3 rounded-xl border border-neutral-text-muted/20 bg-neutral-bg/60 focus:bg-white focus:outline-none focus:border-primary-blue focus:ring-4 focus:ring-primary-blue/10 transition-all font-body text-sm font-medium"
                       />
-                      <MapPin className="w-5 h-5 text-primary-blue absolute left-3.5 top-1/2 -translate-y-1/2" />
+                      <MapPin className="w-4 h-4 text-primary-blue absolute left-3.5 top-1/2 -translate-y-1/2" />
                     </div>
                   </div>
                 </div>
+
+                {/* Specific Service Address */}
                 <div>
-                  <label className="block font-heading font-semibold text-sm text-neutral-text-dark mb-2">Full Address</label>
+                  <div className="flex items-center justify-between mb-2">
+                    <label className="block font-heading font-semibold text-xs uppercase tracking-wider text-neutral-text-dark/70">
+                      Service Address / Specific Location
+                    </label>
+                    <span className="text-xs text-neutral-text-muted">House No, Building, Sector / Landmark</span>
+                  </div>
                   <textarea 
                     value={formData.address}
                     onChange={(e) => updateForm("address", e.target.value)}
-                    placeholder="Flat No, Building, Street..."
+                    placeholder="e.g. Flat 402, Royal Palms, Sector 62, Noida"
                     rows={3}
-                    className="w-full px-4 py-3.5 rounded-xl border border-neutral-text-muted/20 bg-neutral-bg focus:bg-white focus:outline-none focus:ring-2 focus:ring-primary-blue/30 transition-all font-body text-base resize-none"
+                    className="w-full px-4 py-3 rounded-xl border border-neutral-text-muted/20 bg-neutral-bg/60 focus:bg-white focus:outline-none focus:border-primary-blue focus:ring-4 focus:ring-primary-blue/10 transition-all font-body text-sm font-medium resize-none"
                   />
                 </div>
               </div>
@@ -591,38 +616,42 @@ function QuotesForm() {
                 className="flex-1 md:flex-none"
                 onClick={async () => {
                   try {
+                    const fullAddressStr = [
+                      formData.address ? `Custom Address: ${formData.address}` : '',
+                      formData.location ? `Location: ${formData.location}` : '',
+                      `Services: ${formData.services.join(", ")}`,
+                      `Fuel: ${formData.fuelType}`,
+                      formData.vehicleNumber ? `Vehicle No: ${formData.vehicleNumber}` : '',
+                      formData.otherServiceDetails ? `Other Details: ${formData.otherServiceDetails}` : ''
+                    ].filter(Boolean).join(" | ");
+
                     if (isAuthenticated) {
-                      // Authenticated Flow
-                      // 1. Create Garage Vehicle
                       const vehicleRes = await createGarageVehicle({
                         brand: formData.make,
                         model: formData.model === "Other" ? formData.otherModelDetails : formData.model,
-                        registrationNumber: formData.vehicleNumber,
+                        registrationNumber: formData.vehicleNumber || "NOT_PROVIDED",
                         fuelType: formData.fuelType,
-                        year: new Date().getFullYear(), // Default
+                        year: new Date().getFullYear(),
                       });
                       
                       const vehicleId = vehicleRes?.data?._id || vehicleRes?._id;
                       
-                      // Match service to get ID
                       const allMasterServices = servicesData?.services || [];
                       const firstServiceName = formData.services[0];
                       const matchedService = allMasterServices.find((s: any) => s.name === firstServiceName);
-                      const serviceId = matchedService?._id || "64f1a2b3c4d5e6f7a8b9c0d2"; // Dummy valid fallback
+                      const serviceId = matchedService?._id || "64f1a2b3c4d5e6f7a8b9c0d2";
 
-                      // 2. Create Booking
                       await createBooking({
                         vehicleId,
                         serviceId,
-                        cityId: "64f1a2b3c4d5e6f7a8b9c0d3", // Valid hex to bypass CastError
-                        description: `Location: ${formData.location} | Services: ${formData.services.join(", ")} | Other Details: ${formData.otherServiceDetails} | Fuel: ${formData.fuelType} | Address: ${formData.address}`,
+                        cityId: "64f1a2b3c4d5e6f7a8b9c0d3",
+                        description: fullAddressStr,
                         preferredDate: new Date().toISOString(),
                         latitude: formData.latitude,
                         longitude: formData.longitude,
                       });
                       setStep(6);
                     } else {
-                      // Guest Flow
                       await createLead({
                         name: formData.name,
                         phone: formData.phone,
@@ -630,8 +659,8 @@ function QuotesForm() {
                         source: 'WEBSITE_QUOTE',
                         vehicleBrand: formData.make,
                         vehicleModel: formData.model === "Other" ? formData.otherModelDetails : formData.model,
-                        city: formData.location,
-                        message: `Services: ${formData.services.join(", ")} | Fuel: ${formData.fuelType} | Vehicle No: ${formData.vehicleNumber} | Other: ${formData.otherServiceDetails} | Address: ${formData.address}`,
+                        city: formData.location || formData.address || 'Not specified',
+                        message: fullAddressStr,
                       });
                       setStep(6);
                     }
@@ -640,7 +669,7 @@ function QuotesForm() {
                     toast.error(err.message || "Failed to submit quote request. Please try again.");
                   }
                 }} 
-                disabled={!formData.name || !formData.phone || !formData.location || !formData.address || !formData.vehicleNumber || isSubmitting}
+                disabled={!formData.name.trim() || !formData.phone.trim() || (!formData.location.trim() && !formData.address.trim()) || isSubmitting}
                 variant="accent"
                 rightIcon={isSubmitting ? <Loader2 className="w-4 h-4 animate-spin" /> : <ArrowRight className="w-4 h-4" />}
               >

@@ -125,11 +125,9 @@ export default function HeroForm() {
               name="address"
               value={formData.address}
               onChange={handleChange}
-              onClick={() => setShowMapModal(true)}
               required
-              readOnly
-              className="w-full pl-10 pr-4 py-3 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-primary-blue focus:border-transparent transition-all cursor-pointer"
-              placeholder="e.g., Cyber City, Gurgaon"
+              className="w-full pl-10 pr-4 py-3 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-primary-blue focus:border-transparent transition-all"
+              placeholder="e.g., Cyber City, Gurgaon or House No, Sector..."
             />
             <MapPin className="w-4 h-4 text-neutral-text-muted absolute left-3.5 top-1/2 -translate-y-1/2" />
           </div>
