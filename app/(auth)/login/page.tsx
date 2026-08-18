@@ -120,17 +120,27 @@ export default function LoginPage() {
             <div>
               {step === 1 ? (
                 <form onSubmit={handleSendOtp} className="space-y-5">
-                  <Input
-                    label="Mobile Number"
-                    type="tel"
-                    name="phone"
-                    required
-                    value={form.phone}
-                    onChange={handleChange}
-                    placeholder="98765 43210"
-                    maxLength={10}
-                    icon={<Phone className="h-4 w-4" />}
-                  />
+                  <div>
+                    <div className="flex justify-between items-center mb-1">
+                      <label className="text-xs font-bold font-heading text-neutral-text-muted">Mobile Number</label>
+                      <Link
+                        href={`/forgot-password${form.phone ? `?identifier=${encodeURIComponent(form.phone)}` : ''}`}
+                        className="text-xs font-bold text-primary-orange hover:text-primary-orange-dark transition-colors"
+                      >
+                        Forgot password?
+                      </Link>
+                    </div>
+                    <Input
+                      type="tel"
+                      name="phone"
+                      required
+                      value={form.phone}
+                      onChange={handleChange}
+                      placeholder="98765 43210"
+                      maxLength={10}
+                      icon={<Phone className="h-4 w-4" />}
+                    />
+                  </div>
                   <Button
                     type="submit"
                     variant="primary"
@@ -188,7 +198,7 @@ export default function LoginPage() {
                 <div className="flex justify-between items-center mb-1">
                   <label className="text-xs font-bold font-heading text-neutral-text-muted">Password</label>
                   <Link
-                    href="/forgot-password"
+                    href={`/forgot-password${form.email ? `?identifier=${encodeURIComponent(form.email)}` : ''}`}
                     className="text-xs font-bold text-primary-orange hover:text-primary-orange-dark transition-colors"
                   >
                     Forgot password?
