@@ -30,7 +30,7 @@ export default function Navbar() {
 
   return (
     <>
-      <header className="sticky top-0 z-40 w-full bg-white shadow-sm backdrop-blur-md bg-white/95">
+      <header className="sticky top-0 z-40 w-full !bg-white shadow-sm backdrop-blur-md">
         <div className="border-b border-neutral-text-muted/10">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-20 flex items-center justify-between">
             {/* Logo */}
