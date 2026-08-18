@@ -1,4 +1,4 @@
-﻿import {
+import {
   useMutation,
   UseMutationResult,
   useQuery
@@ -24,6 +24,18 @@ const getDashboardUrl = (): string => {
   return clean.replace(/\/$/, '');
 };
 
+const setCrossPortAuth = (token: string, role?: string) => {
+  if (typeof window === 'undefined') return;
+  storage.setToken(token);
+  window.localStorage.setItem('car_blink_access_token', token);
+  const expires = new Date(Date.now() + 7 * 864e5).toUTCString();
+  document.cookie = `accessToken=${encodeURIComponent(token)}; expires=${expires}; path=/`;
+  document.cookie = `car_blink_access_token=${encodeURIComponent(token)}; expires=${expires}; path=/`;
+  if (role) {
+    document.cookie = `role=${encodeURIComponent(role)}; expires=${expires}; path=/`;
+  }
+};
+
 export const useLogin = (): UseMutationResult<
   { data: TUserProfile; message: string },
   Error,
@@ -34,7 +46,7 @@ export const useLogin = (): UseMutationResult<
   return useMutation({
     mutationFn: postLogin,
     onSuccess: ({ data, message }) => {
-      data.token && storage.setToken(data.token);
+      data.token && setCrossPortAuth(data.token, data.role);
       toast.success(message || 'Login successful! Redirecting to Dashboard...');
       setTimeout(() => {
         const dashboardUrl = getDashboardUrl();
@@ -59,7 +71,7 @@ export const usePartnerLogin = (): UseMutationResult<
         toast.error('This login page is exclusively for Workshop Partners. Please use Customer login.');
         return;
       }
-      data.token && storage.setToken(data.token);
+      data.token && setCrossPortAuth(data.token, data.role);
       toast.success('Partner login successful! Redirecting to Dashboard...');
       setTimeout(() => {
         const dashboardUrl = getDashboardUrl();
@@ -98,7 +110,7 @@ export const useVerifyOtp = (): UseMutationResult<
   return useMutation({
     mutationFn: postVerifyOtp,
     onSuccess: ({ data, message }) => {
-      data.token && storage.setToken(data.token);
+      data.token && setCrossPortAuth(data.token, data.role);
       toast.success(message || 'Verification successful! Redirecting to Dashboard...');
       setTimeout(() => {
         const dashboardUrl = getDashboardUrl();
@@ -123,7 +135,7 @@ export const usePartnerVerifyOtp = (): UseMutationResult<
         toast.error('This login page is exclusively for Workshop Partners. Please use Customer login.');
         return;
       }
-      data.token && storage.setToken(data.token);
+      data.token && setCrossPortAuth(data.token, data.role);
       toast.success('Partner login successful! Redirecting to Dashboard...');
       setTimeout(() => {
         const dashboardUrl = getDashboardUrl();
@@ -148,7 +160,7 @@ export const useRegister = (): UseMutationResult<
 
     onSuccess: ({ data, message }) => {
       if (data?.token) {
-        storage.setToken(data.token);
+        setCrossPortAuth(data.token, data.role);
       }
 
       toast.success(message || 'Registration successful! Redirecting to Dashboard...');
