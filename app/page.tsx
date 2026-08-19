@@ -1,4 +1,5 @@
 import HeroSection from "@/features/home/components/HeroSection";
+import PromotionalAdsBanner from "@/features/home/components/PromotionalAdsBanner";
 import StatsBar from "@/features/home/components/StatsBar";
 import HowItWorks from "@/features/home/components/HowItWorks";
 import ServicesGrid from "@/features/services/components/ServicesGrid";
@@ -17,10 +18,18 @@ export default function Home() {
   return (
     <>
       <HeroSection />
+      
+      {/* Live Executive Promotional Ads Slider */}
+      <PromotionalAdsBanner placement="HOME_HERO" />
+
       <WhyChooseUs />
       <HowItWorks />
       <StatsBar />
       <ServicesGrid />
+
+      {/* Middle Banner Placement */}
+      <PromotionalAdsBanner placement="HOME_MIDDLE" />
+
       <SavingsBanner />
 
       {/* Partner CTA */}
