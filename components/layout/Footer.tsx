@@ -100,32 +100,7 @@ export default function Footer() {
 
         </div>
 
-        {/* Bottom Section */}
-        <div className="pt-12 flex flex-col lg:flex-row items-center justify-between gap-6">
-          <div className="w-full lg:w-auto flex flex-col md:flex-row items-start md:items-center justify-between lg:justify-start gap-8 lg:gap-12 lg:col-span-6 w-full">
-            {/* Newsletter Subscription Card in Footer (matching mockup visually) */}
-            <div className="w-full bg-primary-navy-light border border-primary-navy-light rounded-xl p-6 md:p-8 flex flex-col md:flex-row items-start md:items-center justify-between gap-6">
-              <div className="flex flex-col gap-1">
-                <h4 className="font-heading font-bold text-lg text-white">Subscribe to Newsletter</h4>
-                <p className="font-body text-sm text-neutral-text-muted">Get the latest tips and offers.</p>
-              </div>
-              <form onSubmit={(e) => e.preventDefault()} className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2.5 w-full md:w-auto max-w-md">
-                <input
-                  type="email"
-                  placeholder="Enter your email"
-                  className="w-full md:w-64 px-4 py-2.5 bg-primary-navy border border-primary-navy-light rounded-lg text-white placeholder-neutral-text-muted/40 focus:outline-none focus:border-primary-blue transition-colors text-sm"
-                  required
-                />
-                <button
-                  type="submit"
-                  className="w-full sm:w-auto px-6 py-2.5 bg-primary-blue hover:bg-blue-600 transition-all font-heading font-bold text-sm text-white rounded-lg whitespace-nowrap shadow-md shadow-primary-blue/10"
-                >
-                  Subscribe
-                </button>
-              </form>
-            </div>
-          </div>
-        </div>
+
 
         {/* Copyright Notice */}
         <div className="mt-12 pt-8 border-t border-primary-navy-light text-center">

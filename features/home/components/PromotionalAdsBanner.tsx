@@ -142,16 +142,7 @@ export default function PromotionalAdsBanner({ placement = "HOME_HERO" }: { plac
               </p>
             )}
 
-            <div className="pt-2">
-              <a
-                href={targetLink}
-                target={isExternal ? "_blank" : "_self"}
-                rel="noopener noreferrer"
-                className="inline-flex items-center gap-2 px-7 py-3.5 rounded-2xl bg-gradient-to-r from-orange-500 to-amber-500 hover:from-orange-600 hover:to-amber-600 text-white font-extrabold text-sm transition-all shadow-xl shadow-orange-500/20 hover:shadow-orange-500/40 hover:-translate-y-0.5"
-              >
-                Explore Offer Now <ExternalLink className="w-4 h-4" />
-              </a>
-            </div>
+            
           </div>
 
           {ads.length > 1 && (
