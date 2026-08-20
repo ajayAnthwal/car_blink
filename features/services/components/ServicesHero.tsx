@@ -70,7 +70,7 @@ export default function ServicesHero() {
 
           <h1 className="font-heading font-black text-4xl md:text-6xl text-white leading-[1.1] mb-6 tracking-tight">
             All Car Services,<br />
-            <span className="text-transparent bg-clip-text bg-gradient-to-r from-white via-blue-100 to-primary-blue-light">
+            <span className="text-transparent bg-clip-text bg-gradient-to-r from-white via-amber-100 to-orange-400 font-extrabold">
               Compared & Verified
             </span>
           </h1>
