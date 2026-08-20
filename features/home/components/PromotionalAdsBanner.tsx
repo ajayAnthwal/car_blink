@@ -11,10 +11,13 @@ export default function PromotionalAdsBanner({ placement = "HOME_HERO" }: { plac
 
   useEffect(() => {
     async function fetchAds() {
+      const apiBase = (process.env.NEXT_PUBLIC_API_URL || "https://api.carblink.in/api").replace(/\/+$/, "");
       const urlsToTry = [
-        "http://localhost:8000/api/ads?placement=" + placement,
-        "http://localhost:8000/api/ads",
-        (process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000/api").replace(/\/+$/, "") + "/ads?placement=" + placement,
+        `${apiBase}/master-data/ads?placement=${placement}`,
+        `${apiBase}/ads?placement=${placement}`,
+        `${apiBase}/master-data/ads`,
+        `${apiBase}/ads`,
+        `http://localhost:8000/api/master-data/ads`,
       ];
 
       for (const url of urlsToTry) {
@@ -31,7 +34,7 @@ export default function PromotionalAdsBanner({ placement = "HOME_HERO" }: { plac
             }
           }
         } catch (err) {
-          // Continue to next URL
+          // Continue to next fallback URL
         }
       }
       setLoading(false);
@@ -52,6 +55,24 @@ export default function PromotionalAdsBanner({ placement = "HOME_HERO" }: { plac
   }
 
   const currentAd = ads[currentIndex];
+
+  // Helper to format redirect URL safely without causing 404s
+  const getSafeRedirectUrl = (url?: string) => {
+    if (!url || url.trim() === "" || url.trim() === "#") {
+      return "/quotes";
+    }
+    const trimmed = url.trim();
+    if (trimmed.startsWith("http://") || trimmed.startsWith("https://")) {
+      return trimmed;
+    }
+    if (trimmed.startsWith("/")) {
+      return trimmed;
+    }
+    return `/${trimmed}`;
+  };
+
+  const targetLink = getSafeRedirectUrl(currentAd.redirectUrl || currentAd.targetUrl);
+  const isExternal = targetLink.startsWith("http://") || targetLink.startsWith("https://");
 
   return (
     <section className="py-12 bg-slate-900 text-white relative overflow-hidden my-6 border-y border-slate-800">
@@ -108,7 +129,7 @@ export default function PromotionalAdsBanner({ placement = "HOME_HERO" }: { plac
 
           <div className="relative z-10 p-8 sm:p-12 md:p-16 max-w-2xl text-white space-y-5">
             <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-orange-500/20 border border-orange-500/30 text-orange-400 text-xs font-black uppercase tracking-wider backdrop-blur-md">
-              <Tag className="w-3.5 h-3.5" /> Special Website Offer
+              <Tag className="w-3.5 h-3.5 text-orange-400" /> Special Website Offer
             </div>
 
             <h3 className="font-heading font-black text-3xl sm:text-5xl text-white tracking-tight leading-[1.1] drop-shadow-md">
@@ -121,16 +142,16 @@ export default function PromotionalAdsBanner({ placement = "HOME_HERO" }: { plac
               </p>
             )}
 
-            {currentAd.redirectUrl && (
-              <div className="pt-2">
-                <a
-                  href={currentAd.redirectUrl}
-                  className="inline-flex items-center gap-2 px-7 py-3.5 rounded-2xl bg-gradient-to-r from-orange-500 to-amber-500 hover:from-orange-600 hover:to-amber-600 text-white font-extrabold text-sm transition-all shadow-xl shadow-orange-500/20 hover:shadow-orange-500/40 hover:-translate-y-0.5"
-                >
-                  Explore Offer Now <ExternalLink className="w-4 h-4" />
-                </a>
-              </div>
-            )}
+            <div className="pt-2">
+              <a
+                href={targetLink}
+                target={isExternal ? "_blank" : "_self"}
+                rel="noopener noreferrer"
+                className="inline-flex items-center gap-2 px-7 py-3.5 rounded-2xl bg-gradient-to-r from-orange-500 to-amber-500 hover:from-orange-600 hover:to-amber-600 text-white font-extrabold text-sm transition-all shadow-xl shadow-orange-500/20 hover:shadow-orange-500/40 hover:-translate-y-0.5"
+              >
+                Explore Offer Now <ExternalLink className="w-4 h-4" />
+              </a>
+            </div>
           </div>
 
           {ads.length > 1 && (
