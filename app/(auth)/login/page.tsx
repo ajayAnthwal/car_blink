@@ -10,6 +10,7 @@ import Container from "@/components/ui/Container";
 import Input from "@/components/ui/Input";
 import { Logo } from "@/components/layout/Navbar";
 import { useLogin, useSendOtp, useVerifyOtp } from "@/hooks/auth/use-auth";
+import { sendFirebasePhoneOtp, verifyFirebasePhoneOtp } from "@/lib/firebaseAuth";
 
 export default function LoginPage() {
   const [loginMethod, setLoginMethod] = useState<"phone" | "email">("phone");
@@ -26,20 +27,52 @@ export default function LoginPage() {
     setForm((prev) => ({ ...prev, [name]: value }));
   }
 
-  function handleSendOtp(e: React.FormEvent<HTMLFormElement>) {
+  const [otpLoading, setOtpLoading] = useState(false);
+  const [useFirebase, setUseFirebase] = useState(true);
+
+  async function handleSendOtp(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
-    if (form.phone.length >= 10) {
+    if (form.phone.length < 10) return;
+    setOtpLoading(true);
+
+    try {
+      if (useFirebase) {
+        await sendFirebasePhoneOtp(form.phone, "recaptcha-container");
+        setStep(2);
+      } else {
+        sendOtp({ identifier: form.phone }, { onSuccess: () => setStep(2) });
+      }
+    } catch (err: any) {
+      console.warn("Firebase OTP failed or not enabled yet, trying backend SMS fallback...", err);
       sendOtp(
         { identifier: form.phone },
-        { onSuccess: () => setStep(2) }
+        {
+          onSuccess: () => setStep(2),
+          onError: () => setUseFirebase(false)
+        }
       );
+    } finally {
+      setOtpLoading(false);
     }
   }
 
-  function handleVerifyOtp(e: React.FormEvent<HTMLFormElement>) {
+  async function handleVerifyOtp(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
-    if (form.otp.length === 6) {
+    if (form.otp.length < 6) return;
+    setOtpLoading(true);
+
+    try {
+      if (useFirebase) {
+        await verifyFirebasePhoneOtp(form.otp);
+        verifyOtp({ identifier: form.phone, otp: form.otp });
+      } else {
+        verifyOtp({ identifier: form.phone, otp: form.otp });
+      }
+    } catch (err: any) {
+      console.warn("Firebase verify OTP failed, falling back to backend verification...", err);
       verifyOtp({ identifier: form.phone, otp: form.otp });
+    } finally {
+      setOtpLoading(false);
     }
   }
 
@@ -248,6 +281,8 @@ export default function LoginPage() {
               </Link>
             </p>
           </div>
+          {/* Firebase Recaptcha Invisible Container */}
+          <div id="recaptcha-container"></div>
         </div>
       </section>
     </div>
