@@ -158,17 +158,25 @@ export const useRegister = (): UseMutationResult<
   return useMutation({
     mutationFn: postRegister,
 
-    onSuccess: ({ data, message }) => {
-      if (data?.token) {
-        setCrossPortAuth(data.token, data.role);
+    onSuccess: (res: any) => {
+      const payloadData = res?.data || res;
+      const tokenToUse = payloadData?.tokens?.accessToken || payloadData?.token;
+      const userRole = payloadData?.user?.role || payloadData?.role || 'CUSTOMER';
+
+      if (tokenToUse) {
+        setCrossPortAuth(tokenToUse, userRole);
       }
 
-      toast.success(message || 'Registration successful! Redirecting to Dashboard...');
+      toast.success(res?.message || 'Registration successful! Auto-logging in...');
 
       setTimeout(() => {
         const dashboardUrl = getDashboardUrl();
-        window.location.href = `${dashboardUrl}/login?token=${data.token}`;
-      }, 1000);
+        if (tokenToUse) {
+          window.location.href = `${dashboardUrl}/login?token=${tokenToUse}`;
+        } else {
+          window.location.href = `${dashboardUrl}/customer/dashboard`;
+        }
+      }, 800);
     },
 
     onError: (error) => {
