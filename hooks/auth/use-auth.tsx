@@ -28,11 +28,11 @@ const setCrossPortAuth = (token: string, role?: string) => {
   if (typeof window === 'undefined') return;
   storage.setToken(token);
   window.localStorage.setItem('car_blink_access_token', token);
-  const expires = new Date(Date.now() + 7 * 864e5).toUTCString();
-  document.cookie = `accessToken=${encodeURIComponent(token)}; expires=${expires}; path=/`;
-  document.cookie = `car_blink_access_token=${encodeURIComponent(token)}; expires=${expires}; path=/`;
+  const expires = new Date(Date.now() + 30 * 864e5).toUTCString();
+  document.cookie = `accessToken=${encodeURIComponent(token)}; expires=${expires}; path=/; SameSite=Lax`;
+  document.cookie = `car_blink_access_token=${encodeURIComponent(token)}; expires=${expires}; path=/; SameSite=Lax`;
   if (role) {
-    document.cookie = `role=${encodeURIComponent(role)}; expires=${expires}; path=/`;
+    document.cookie = `role=${encodeURIComponent(role)}; expires=${expires}; path=/; SameSite=Lax`;
   }
 };
 

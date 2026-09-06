@@ -1,7 +1,13 @@
-﻿import storage from './storage';
+import storage from './storage';
 
 const formatApiUrl = (rawUrl?: string): string => {
-  if (!rawUrl) return '';
+  if (typeof window !== 'undefined') {
+    const isLocalhost = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
+    if (isLocalhost) {
+      return 'http://localhost:8000/api';
+    }
+  }
+  if (!rawUrl) return 'http://localhost:8000/api';
   let cleanUrl = rawUrl.trim().replace(/^["']|["']$/g, '');
   if (cleanUrl && !cleanUrl.startsWith('http://') && !cleanUrl.startsWith('https://')) {
     cleanUrl = `http://${cleanUrl}`;

@@ -29,12 +29,14 @@ import {
   Disc,
   Fuel,
   Zap,
-  Leaf
+  Leaf,
+  KeyRound,
+  ArrowLeft
 } from "lucide-react";
 import Container from "@/components/ui/Container";
 import Button from "@/components/ui/Button";
 import LocationModal from "@/components/ui/LocationModal";
-import { useCreateLead, useCreateBooking, useCreateGarageVehicle, useGetServices } from "@/services/queries";
+import { useCreateLead, useSendLeadOtp, useCreateBooking, useCreateGarageVehicle, useGetServices } from "@/services/queries";
 import { toast } from "sonner";
 import { useAuth } from "@/features/auth/hooks/useAuth";
 const MAKES = [
@@ -150,12 +152,61 @@ function QuotesForm() {
   const [step, setStep] = useState(1);
   const [isLocating, setIsLocating] = useState(false);
   const [showMapModal, setShowMapModal] = useState(false);
+  
+  // OTP Verification States for Guest Quote Requests
+  const [isOtpStep, setIsOtpStep] = useState(false);
+  const [otp, setOtp] = useState("");
+  const [resendTimer, setResendTimer] = useState(30);
+  const [canResend, setCanResend] = useState(false);
+
+  const { mutateAsync: sendOtp, isPending: isSendingOtp } = useSendLeadOtp();
   const { mutateAsync: createLead, isPending: isSubmittingLead } = useCreateLead();
   const { mutateAsync: createBooking, isPending: isSubmittingBooking } = useCreateBooking();
   const { mutateAsync: createGarageVehicle } = useCreateGarageVehicle();
   const { data: servicesData } = useGetServices();
   
   const isSubmitting = isSubmittingLead || isSubmittingBooking;
+
+  useEffect(() => {
+    let timer: any;
+    if (isOtpStep && resendTimer > 0) {
+      timer = setInterval(() => {
+        setResendTimer((prev) => prev - 1);
+      }, 1000);
+    } else if (resendTimer === 0) {
+      setCanResend(true);
+    }
+    return () => clearInterval(timer);
+  }, [isOtpStep, resendTimer]);
+
+  const handleSendQuoteOtp = async () => {
+    const cleanPhone = formData.phone.replace(/[^0-9]/g, '');
+    if (cleanPhone.length < 10) {
+      toast.error("Please enter a valid 10-digit mobile number");
+      return;
+    }
+    try {
+      const res = await sendOtp({ phone: formData.phone });
+      toast.success(res?.message || "OTP sent successfully to your mobile number!");
+      setIsOtpStep(true);
+      setResendTimer(30);
+      setCanResend(false);
+    } catch (err: any) {
+      toast.error(err.message || "Failed to send OTP. Please check your phone number.");
+    }
+  };
+
+  const handleResendQuoteOtp = async () => {
+    if (!canResend) return;
+    try {
+      const res = await sendOtp({ phone: formData.phone });
+      toast.success("OTP re-sent successfully!");
+      setResendTimer(30);
+      setCanResend(false);
+    } catch (err: any) {
+      toast.error(err.message || "Failed to resend OTP.");
+    }
+  };
 
   const [formData, setFormData] = useState({
     make: "",
@@ -492,6 +543,112 @@ function QuotesForm() {
           </>
         );
       case 5:
+        if (isOtpStep && !isAuthenticated) {
+          return (
+            <div className="animate-in fade-in slide-in-from-bottom-4 duration-500 max-w-md mx-auto py-6">
+              <div className="bg-blue-50 border border-blue-100 rounded-2xl p-6 text-center mb-6">
+                <div className="w-14 h-14 bg-primary-blue/10 rounded-full flex items-center justify-center mx-auto mb-3 text-primary-blue">
+                  <KeyRound className="w-7 h-7 text-primary-blue" />
+                </div>
+                <h3 className="font-heading font-bold text-xl text-gray-900 mb-1">Verify Mobile Number</h3>
+                <p className="text-xs text-gray-500">
+                  OTP sent to <span className="font-semibold text-gray-900">+91 {formData.phone}</span>
+                </p>
+                <button
+                  type="button"
+                  onClick={() => setIsOtpStep(false)}
+                  className="text-xs font-semibold text-primary-blue hover:underline mt-3 inline-flex items-center gap-1"
+                >
+                  <ArrowLeft className="w-3.5 h-3.5" /> Edit Details / Phone
+                </button>
+              </div>
+
+              <div className="mb-6">
+                <label htmlFor="quote-otp" className="block text-sm font-medium text-neutral-text-dark mb-2 text-center">
+                  Enter 6-Digit OTP Code
+                </label>
+                <input
+                  type="text"
+                  id="quote-otp"
+                  maxLength={6}
+                  value={otp}
+                  onChange={(e) => setOtp(e.target.value.replace(/[^0-9]/g, ''))}
+                  autoFocus
+                  className="w-full text-center text-2xl font-bold tracking-widest px-4 py-3.5 rounded-xl border border-gray-300 focus:outline-none focus:ring-2 focus:ring-primary-blue focus:border-transparent transition-all"
+                  placeholder="• • • • • •"
+                />
+              </div>
+
+              <div className="flex items-center justify-between text-xs text-gray-500 mb-6">
+                <span>Didn't receive code?</span>
+                {canResend ? (
+                  <button
+                    type="button"
+                    onClick={handleResendQuoteOtp}
+                    className="font-semibold text-primary-blue hover:underline"
+                  >
+                    Resend OTP
+                  </button>
+                ) : (
+                  <span className="font-medium text-gray-400">Resend in {resendTimer}s</span>
+                )}
+              </div>
+
+              <div className="flex flex-col gap-3">
+                <Button
+                  onClick={async () => {
+                    if (otp.trim().length < 6) {
+                      toast.error("Please enter the 6-digit OTP code");
+                      return;
+                    }
+                    try {
+                      const fullAddressStr = [
+                        formData.address ? `Custom Address: ${formData.address}` : '',
+                        formData.location ? `Location: ${formData.location}` : '',
+                        `Services: ${formData.services.join(", ")}`,
+                        `Fuel: ${formData.fuelType}`,
+                        formData.vehicleNumber ? `Vehicle No: ${formData.vehicleNumber}` : '',
+                        formData.otherServiceDetails ? `Other Details: ${formData.otherServiceDetails}` : ''
+                      ].filter(Boolean).join(" | ");
+
+                      await createLead({
+                        name: formData.name,
+                        phone: formData.phone,
+                        email: formData.email,
+                        source: 'WEBSITE_QUOTE',
+                        vehicleBrand: formData.make,
+                        vehicleModel: formData.model === "Other" ? formData.otherModelDetails : formData.model,
+                        city: formData.location || formData.address || 'Not specified',
+                        message: fullAddressStr,
+                        otp: otp.trim(),
+                      });
+                      toast.success("Query Submitted Successfully! We will contact you soon.");
+                      setStep(6);
+                    } catch (err: any) {
+                      toast.error(err.message || "Invalid OTP code. Please try again.");
+                    }
+                  }}
+                  disabled={isSubmitting || otp.length < 6}
+                  variant="accent"
+                  size="lg"
+                  className="w-full"
+                  rightIcon={isSubmitting ? <Loader2 className="w-4 h-4 animate-spin" /> : <ArrowRight className="w-4 h-4" />}
+                >
+                  {isSubmitting ? "Verifying..." : "Verify & Submit Quote Request"}
+                </Button>
+
+                <button
+                  type="button"
+                  onClick={() => setIsOtpStep(false)}
+                  className="text-xs text-center text-gray-500 hover:text-gray-700 py-1"
+                >
+                  Cancel & Change Details
+                </button>
+              </div>
+            </div>
+          );
+        }
+
         return (
           <>
             <div className="animate-in fade-in slide-in-from-bottom-4 duration-500">
@@ -615,17 +772,17 @@ function QuotesForm() {
               <Button 
                 className="flex-1 md:flex-none"
                 onClick={async () => {
-                  try {
-                    const fullAddressStr = [
-                      formData.address ? `Custom Address: ${formData.address}` : '',
-                      formData.location ? `Location: ${formData.location}` : '',
-                      `Services: ${formData.services.join(", ")}`,
-                      `Fuel: ${formData.fuelType}`,
-                      formData.vehicleNumber ? `Vehicle No: ${formData.vehicleNumber}` : '',
-                      formData.otherServiceDetails ? `Other Details: ${formData.otherServiceDetails}` : ''
-                    ].filter(Boolean).join(" | ");
+                  if (isAuthenticated) {
+                    try {
+                      const fullAddressStr = [
+                        formData.address ? `Custom Address: ${formData.address}` : '',
+                        formData.location ? `Location: ${formData.location}` : '',
+                        `Services: ${formData.services.join(", ")}`,
+                        `Fuel: ${formData.fuelType}`,
+                        formData.vehicleNumber ? `Vehicle No: ${formData.vehicleNumber}` : '',
+                        formData.otherServiceDetails ? `Other Details: ${formData.otherServiceDetails}` : ''
+                      ].filter(Boolean).join(" | ");
 
-                    if (isAuthenticated) {
                       const vehicleRes = await createGarageVehicle({
                         brand: formData.make,
                         model: formData.model === "Other" ? formData.otherModelDetails : formData.model,
@@ -651,29 +808,20 @@ function QuotesForm() {
                         longitude: formData.longitude,
                       });
                       setStep(6);
-                    } else {
-                      await createLead({
-                        name: formData.name,
-                        phone: formData.phone,
-                        email: formData.email,
-                        source: 'WEBSITE_QUOTE',
-                        vehicleBrand: formData.make,
-                        vehicleModel: formData.model === "Other" ? formData.otherModelDetails : formData.model,
-                        city: formData.location || formData.address || 'Not specified',
-                        message: fullAddressStr,
-                      });
-                      setStep(6);
+                      toast.success("Booking Confirmed Successfully!");
+                    } catch (err: any) {
+                      toast.error(err.message || "Failed to submit booking request.");
                     }
-                    toast.success("Query Submitted Successfully! We will contact you soon.");
-                  } catch (err: any) {
-                    toast.error(err.message || "Failed to submit quote request. Please try again.");
+                  } else {
+                    // Send OTP to guest user phone number
+                    handleSendQuoteOtp();
                   }
                 }} 
-                disabled={!formData.name.trim() || !formData.phone.trim() || (!formData.location.trim() && !formData.address.trim()) || isSubmitting}
+                disabled={!formData.name.trim() || !formData.phone.trim() || (!formData.location.trim() && !formData.address.trim()) || isSubmitting || isSendingOtp}
                 variant="accent"
-                rightIcon={isSubmitting ? <Loader2 className="w-4 h-4 animate-spin" /> : <ArrowRight className="w-4 h-4" />}
+                rightIcon={(isSubmitting || isSendingOtp) ? <Loader2 className="w-4 h-4 animate-spin" /> : <ArrowRight className="w-4 h-4" />}
               >
-                {isSubmitting ? "Submitting..." : (isAuthenticated ? "Book Now" : "Get Quotes Now")}
+                {isSendingOtp ? "Sending OTP..." : (isSubmitting ? "Submitting..." : (isAuthenticated ? "Book Now" : "Get Quotes Now"))}
               </Button>
             </div>
           </>

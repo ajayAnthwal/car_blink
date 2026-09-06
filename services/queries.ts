@@ -85,9 +85,19 @@ export const useGetTopWorkshops = () => {
 };
 
 // --- Booking & Leads ---
+export const useSendLeadOtp = () => {
+  return useMutation({
+    mutationFn: (data: { phone: string }) =>
+      fetchApi<any>('/leads/send-otp', {
+        method: 'POST',
+        body: JSON.stringify(data),
+      }),
+  });
+};
+
 export const useCreateLead = () => {
   return useMutation({
-    mutationFn: (data: { name: string; phone: string; email?: string; vehicleBrand?: string; vehicleModel?: string; city?: string; message?: string; source?: string }) => 
+    mutationFn: (data: { name: string; phone: string; email?: string; vehicleBrand?: string; vehicleModel?: string; city?: string; message?: string; source?: string; otp?: string }) => 
       fetchApi<any>('/leads', {
         method: 'POST',
         body: JSON.stringify(data),
