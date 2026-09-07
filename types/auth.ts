@@ -25,6 +25,7 @@ export type RegisterPayload = {
   email?: string;
   phone: string;
   password?: string;
+  otp?: string;
   role: "CUSTOMER";
 };
 

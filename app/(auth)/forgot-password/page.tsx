@@ -1,4 +1,4 @@
-﻿"use client";
+"use client";
 
 import { useState } from "react";
 import Link from "next/link";
@@ -18,26 +18,72 @@ export default function ForgotPasswordPage() {
 
   const router = useRouter();
 
+  const handleInputChange = (val: string) => {
+    setError("");
+    const isEmail = val.includes("@");
+    if (!isEmail && /^\d+$/.test(val)) {
+      if (val.length > 10) {
+        val = val.slice(0, 10);
+      }
+    }
+    setIdentifier(val);
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (isLoading) return;
+
     setError("");
     setSuccess("");
+
+    const rawInput = identifier.trim();
+    if (!rawInput) {
+      setError("Please enter your registered mobile number or email address.");
+      return;
+    }
+
+    const isEmail = rawInput.includes('@');
+
+    if (isEmail) {
+      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+      if (!emailRegex.test(rawInput)) {
+        setError("Please enter a valid email address (e.g. name@example.com)");
+        return;
+      }
+    } else {
+      if (/[^\d]/.test(rawInput)) {
+        setError("Mobile number must contain 10 digits only. Letters are not allowed.");
+        return;
+      }
+      if (rawInput.length !== 10) {
+        setError("Mobile number must be exactly 10 digits (e.g. 9876543210)");
+        return;
+      }
+      const phoneRegex = /^[6-9]\d{9}$/;
+      if (!phoneRegex.test(rawInput)) {
+        setError("Please enter a valid 10-digit Indian mobile number (starting with 6, 7, 8, or 9)");
+        return;
+      }
+    }
+
+    const cleanInput = isEmail ? rawInput.toLowerCase() : rawInput;
+
     setIsLoading(true);
 
     try {
       const res: any = await fetchApi("/auth/forgot-password", {
         method: "POST",
-        body: JSON.stringify({ identifier }),
+        body: JSON.stringify({ identifier: cleanInput }),
       });
 
-      const serverMsg = res?.message || res?.data?.message || "Reset OTP code sent to your email/phone.";
+      const serverMsg = res?.message || res?.data?.message || "Reset OTP code sent successfully.";
       setSuccess(serverMsg);
 
       setTimeout(() => {
-        router.push(`/reset-password?identifier=${encodeURIComponent(identifier)}`);
-      }, 2500);
+        router.push(`/reset-password?identifier=${encodeURIComponent(cleanInput)}`);
+      }, 1200);
     } catch (err: any) {
-      setError(err?.message || "Failed to send reset code. Please check your input.");
+      setError(err?.message || "Failed to send reset code. Please check your mobile number or email.");
     } finally {
       setIsLoading(false);
     }
@@ -98,9 +144,10 @@ export default function ForgotPasswordPage() {
                 type="text"
                 required
                 value={identifier}
-                onChange={(e) => setIdentifier(e.target.value)}
+                onChange={(e) => handleInputChange(e.target.value)}
                 placeholder="e.g. name@example.com or 9876543210"
                 icon={<KeyRound className="h-4 w-4" />}
+                error={error}
               />
             </div>
 

@@ -1,14 +1,15 @@
-﻿"use client";
+"use client";
 
-import { useState, Suspense } from "react";
+import { useState, useEffect, Suspense } from "react";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
-import { LockKeyhole, ArrowRight, ShieldCheck, Lock } from "lucide-react";
+import { LockKeyhole, ArrowRight, ShieldCheck, Lock, RotateCcw, Eye, EyeOff } from "lucide-react";
 import Button from "@/components/ui/Button";
 import Input from "@/components/ui/Input";
 import Badge from "@/components/ui/Badge";
 import { Logo } from "@/components/layout/Navbar";
 import { fetchApi } from "@/lib/apiClient";
+import { toast } from "sonner";
 
 function ResetPasswordContent() {
   const searchParams = useSearchParams();
@@ -17,11 +18,47 @@ function ResetPasswordContent() {
   const [identifier, setIdentifier] = useState(initialIdentifier);
   const [otp, setOtp] = useState("");
   const [newPassword, setNewPassword] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
   const [isLoading, setIsLoading] = useState(false);
+  const [resendTimer, setResendTimer] = useState(30);
+  const [canResend, setCanResend] = useState(false);
+  const [isResending, setIsResending] = useState(false);
 
   const router = useRouter();
+
+  useEffect(() => {
+    let timer: any;
+    if (resendTimer > 0) {
+      timer = setInterval(() => {
+        setResendTimer((prev) => prev - 1);
+      }, 1000);
+    } else if (resendTimer === 0) {
+      setCanResend(true);
+    }
+    return () => clearInterval(timer);
+  }, [resendTimer]);
+
+  const handleResendOtp = async () => {
+    if (!canResend || isResending) return;
+    setIsResending(true);
+    setError("");
+    try {
+      const cleanInput = identifier.includes('@') ? identifier.trim().toLowerCase() : identifier.replace(/[^0-9]/g, '');
+      const res: any = await fetchApi("/auth/forgot-password", {
+        method: "POST",
+        body: JSON.stringify({ identifier: cleanInput }),
+      });
+      toast.success(res?.message || "OTP code re-sent successfully!");
+      setResendTimer(30);
+      setCanResend(false);
+    } catch (err: any) {
+      toast.error(err?.message || "Failed to resend OTP. Please try again.");
+    } finally {
+      setIsResending(false);
+    }
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -29,14 +66,17 @@ function ResetPasswordContent() {
     setSuccess("");
     setIsLoading(true);
 
+    const cleanInput = identifier.includes('@') ? identifier.trim().toLowerCase() : identifier.replace(/[^0-9]/g, '');
+
     try {
       const res: any = await fetchApi("/auth/reset-password", {
         method: "POST",
-        body: JSON.stringify({ identifier, token: otp, newPassword }),
+        body: JSON.stringify({ identifier: cleanInput, token: otp.trim(), newPassword }),
       });
 
       const serverMsg = res?.message || res?.data?.message || "Password has been reset successfully!";
       setSuccess(serverMsg + " Redirecting to login...");
+      toast.success("Password reset successfully!");
 
       setTimeout(() => {
         router.push("/login");
@@ -118,7 +158,7 @@ function ResetPasswordContent() {
                   placeholder="123456"
                   maxLength={6}
                   value={otp}
-                  onChange={(e) => setOtp(e.target.value)}
+                  onChange={(e) => setOtp(e.target.value.replace(/[^0-9]/g, ''))}
                   icon={<Lock className="h-4 w-4" />}
                 />
               </div>
@@ -126,14 +166,32 @@ function ResetPasswordContent() {
               <div>
                 <Input
                   label="New Password"
-                  type="password"
+                  type={showPassword ? "text" : "password"}
                   required
                   placeholder="••••••••"
                   value={newPassword}
                   onChange={(e) => setNewPassword(e.target.value)}
                   icon={<Lock className="h-4 w-4" />}
+                  rightIcon={showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                  onRightIconClick={() => setShowPassword(!showPassword)}
                 />
               </div>
+            </div>
+
+            <div className="flex items-center justify-between text-xs text-gray-500 pt-1">
+              <span>Didn't receive code?</span>
+              {canResend ? (
+                <button
+                  type="button"
+                  onClick={handleResendOtp}
+                  disabled={isResending}
+                  className="font-semibold text-primary-blue hover:underline inline-flex items-center gap-1"
+                >
+                  <RotateCcw className="w-3 h-3" /> Resend OTP
+                </button>
+              ) : (
+                <span className="font-medium text-gray-400">Resend in {resendTimer}s</span>
+              )}
             </div>
 
             <Button

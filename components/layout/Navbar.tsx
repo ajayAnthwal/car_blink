@@ -7,6 +7,8 @@ import { Menu, ArrowRight } from "lucide-react";
 import MobileMenu from "./MobileMenu";
 import { MAIN_NAV_LINKS } from "@/lib/constants";
 import { useAuth } from "@/features/auth/hooks/useAuth";
+import storage from "@/lib/storage";
+import { getDashboardUrl } from "@/hooks/auth/use-auth";
 
 
 export function Logo() {
@@ -68,9 +70,9 @@ export default function Navbar() {
                   <div className="p-2">
                     <button
                       onClick={() => {
-                        const dashboardUrl = process.env.NEXT_PUBLIC_DASHBOARD_URL || 'https://car-blink-dashboard.vercel.app';
-                        const token = typeof window !== 'undefined' ? window.localStorage.getItem('carBlink_token') : '';
-                        window.location.href = `${dashboardUrl}/login?token=${token}`;
+                        const dashboardUrl = getDashboardUrl();
+                        const token = storage.getToken() || (typeof window !== 'undefined' ? window.localStorage.getItem('car_blink_access_token') : '');
+                        window.location.href = `${dashboardUrl}/login?token=${encodeURIComponent(token || '')}`;
                       }}
                       className="flex w-full items-center gap-2 px-3 py-2 text-sm text-neutral-text-dark hover:bg-neutral-bg hover:text-primary-blue rounded-lg transition-colors text-left"
                     >

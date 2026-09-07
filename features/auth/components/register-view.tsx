@@ -1,14 +1,18 @@
 "use client";
 
+import { useState, useEffect } from "react";
 import Link from "next/link";
 import {
   Mail,
   Phone,
   CheckCircle2,
   ArrowRight,
-  Wrench,
   Lock,
-  User
+  User,
+  RotateCcw,
+  ShieldCheck,
+  Eye,
+  EyeOff
 } from "lucide-react";
 
 import { useForm } from "react-hook-form";
@@ -16,25 +20,32 @@ import { zodResolver } from "@hookform/resolvers/zod";
 
 import Button from "@/components/ui/Button";
 import Badge from "@/components/ui/Badge";
-import Card from "@/components/ui/Card";
-import Container from "@/components/ui/Container";
 import Input from "@/components/ui/Input";
+import GoogleButton from "@/components/ui/google-button";
 import { Logo } from "@/components/layout/Navbar";
-
-
+import { fetchApi } from "@/lib/apiClient";
+import { toast } from "sonner";
 
 import { useRegister } from "@/hooks/auth/use-auth";
 import { RegisterFormData, registerSchema } from "@/lib/validation/register.schema";
 
 export default function RegisterView() {
+  const [step, setStep] = useState<1 | 2>(1);
+  const [showPassword, setShowPassword] = useState(false);
+  const [otp, setOtp] = useState("");
+  const [resendTimer, setResendTimer] = useState(30);
+  const [canResend, setCanResend] = useState(false);
+  const [isSendingOtp, setIsSendingOtp] = useState(false);
+  const [isVerifyingOtp, setIsVerifyingOtp] = useState(false);
+  const [apiError, setApiError] = useState("");
+
   const {
     register,
     handleSubmit,
-    reset,
+    getValues,
     formState: { errors }
   } = useForm<RegisterFormData>({
     resolver: zodResolver(registerSchema),
-
     defaultValues: {
       fullName: "",
       email: "",
@@ -44,15 +55,98 @@ export default function RegisterView() {
     }
   });
 
-  const { mutate: registerUser, isPending, isSuccess } = useRegister();
+  const { mutate: registerUser, isPending: isRegisterPending } = useRegister();
 
-  const onSubmit = (data: RegisterFormData) => {
-    console.log("✅ Register Form Data:", data);
-    registerUser(data);
+  useEffect(() => {
+    let timer: any;
+    if (step === 2 && resendTimer > 0) {
+      timer = setInterval(() => {
+        setResendTimer((prev) => prev - 1);
+      }, 1000);
+    } else if (resendTimer === 0) {
+      setCanResend(true);
+    }
+    return () => clearInterval(timer);
+  }, [step, resendTimer]);
+
+  const handleSendOtp = async (data: RegisterFormData) => {
+    setApiError("");
+    const cleanPhone = data.phone.replace(/[^0-9]/g, '');
+
+    if (cleanPhone.length !== 10 || !/^[6-9]\d{9}$/.test(cleanPhone)) {
+      setApiError("Please enter a valid 10-digit Indian mobile number starting with 6, 7, 8, or 9");
+      return;
+    }
+
+    setIsSendingOtp(true);
+    try {
+      const res: any = await fetchApi("/auth/forgot-password", {
+        method: "POST",
+        body: JSON.stringify({ identifier: cleanPhone }),
+      });
+      toast.success(res?.message || `6-Digit OTP sent to +91 ${cleanPhone}`);
+      setStep(2);
+      setResendTimer(30);
+      setCanResend(false);
+    } catch (err: any) {
+      setApiError(err?.message || "Failed to send OTP to this mobile number. Please try again.");
+    } finally {
+      setIsSendingOtp(false);
+    }
   };
 
-  const handleAnotherRegistration = () => {
-    reset();
+  const handleResendOtp = async () => {
+    if (!canResend || isSendingOtp) return;
+    setApiError("");
+    setIsSendingOtp(true);
+    try {
+      const phoneVal = getValues("phone").replace(/[^0-9]/g, '');
+      const res: any = await fetchApi("/auth/forgot-password", {
+        method: "POST",
+        body: JSON.stringify({ identifier: phoneVal }),
+      });
+      toast.success(res?.message || "OTP code re-sent to mobile number!");
+      setResendTimer(30);
+      setCanResend(false);
+    } catch (err: any) {
+      toast.error(err?.message || "Failed to resend OTP. Please try again.");
+    } finally {
+      setIsSendingOtp(false);
+    }
+  };
+
+  const handleVerifyAndRegister = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setApiError("");
+    const cleanOtp = otp.trim();
+
+    if (cleanOtp.length !== 6) {
+      setApiError("Please enter the 6-digit OTP code received on your mobile number");
+      return;
+    }
+
+    setIsVerifyingOtp(true);
+
+    const formData = getValues();
+    const cleanPhone = formData.phone.replace(/[^0-9]/g, '');
+    const cleanEmail = formData.email && formData.email.trim() ? formData.email.trim() : undefined;
+
+    registerUser(
+      {
+        fullName: formData.fullName,
+        email: cleanEmail,
+        phone: cleanPhone,
+        password: formData.password,
+        role: "CUSTOMER",
+        otp: cleanOtp
+      },
+      {
+        onError: (err: any) => {
+          setApiError(err?.message || "Invalid OTP or Registration failed. Please try again.");
+          setIsVerifyingOtp(false);
+        }
+      }
+    );
   };
 
   return (
@@ -95,44 +189,28 @@ export default function RegisterView() {
 
           <div className="mb-10 text-center lg:text-left">
             <Badge variant="info" className="bg-primary-blue/5 border-none !text-primary-blue shadow-none mb-4 inline-flex">
-              <User className="w-3.5 h-3.5 mr-1.5" />
-              Customer Registration
+              {step === 1 ? <User className="w-3.5 h-3.5 mr-1.5" /> : <ShieldCheck className="w-3.5 h-3.5 mr-1.5" />}
+              {step === 1 ? "Customer Registration" : "Mobile OTP Verification"}
             </Badge>
             <h2 className="font-heading font-black text-3xl sm:text-4xl tracking-tight mb-3">
-              Create an account
+              {step === 1 ? "Create an account" : "Verify Phone Number"}
             </h2>
             <p className="font-body text-base text-neutral-text-muted">
-              Get started by filling out your details below.
+              {step === 1 
+                ? "Get started by filling out your details below." 
+                : `Enter the 6-digit OTP code sent via SMS to +91 ${getValues("phone")}`}
             </p>
           </div>
 
-          {isSuccess ? (
-            /* ================= SUCCESS ================= */
-            <div className="flex flex-col items-center lg:items-start rounded-2xl border border-primary-blue/15 bg-primary-blue/5 px-6 py-10 text-center lg:text-left">
-              <div className="flex h-14 w-14 items-center justify-center rounded-full bg-primary-blue/10">
-                <CheckCircle2 className="h-7 w-7 text-primary-blue" />
-              </div>
-
-              <h3 className="mt-5 font-heading text-xl font-black text-neutral-text-dark">
-                Registration successful!
-              </h3>
-
-              <p className="mt-2 max-w-sm font-body text-base text-neutral-text-muted">
-                Your account has been created successfully. Welcome to Car Blink!
-              </p>
-
-              <Button
-                type="button"
-                variant="outline"
-                className="mt-8 w-full"
-                onClick={handleAnotherRegistration}
-              >
-                Create another account
-              </Button>
+          {apiError && (
+            <div className="mb-6 bg-red-50 text-red-600 text-sm p-4 rounded-xl border border-red-200 font-medium">
+              {apiError}
             </div>
-          ) : (
-            /* ================= FORM ================= */
-            <form onSubmit={handleSubmit(onSubmit)} className="space-y-5">
+          )}
+
+          {step === 1 ? (
+            /* ================= STEP 1: REGISTRATION FORM ================= */
+            <form onSubmit={handleSubmit(handleSendOtp)} className="space-y-5">
               <div>
                 <Input
                   label="Full Name"
@@ -142,7 +220,7 @@ export default function RegisterView() {
                   {...register("fullName")}
                 />
                 {errors.fullName && (
-                  <p className="mt-1 text-sm text-red-500">{errors.fullName.message}</p>
+                  <p className="mt-1 text-xs text-red-500">{errors.fullName.message}</p>
                 )}
               </div>
 
@@ -155,7 +233,7 @@ export default function RegisterView() {
                   {...register("email")}
                 />
                 {errors.email && (
-                  <p className="mt-1 text-sm text-red-500">{errors.email.message}</p>
+                  <p className="mt-1 text-xs text-red-500">{errors.email.message}</p>
                 )}
               </div>
 
@@ -164,24 +242,27 @@ export default function RegisterView() {
                   label="Phone Number"
                   type="tel"
                   placeholder="9876543210"
+                  maxLength={10}
                   icon={<Phone className="h-4 w-4" />}
                   {...register("phone")}
                 />
                 {errors.phone && (
-                  <p className="mt-1 text-sm text-red-500">{errors.phone.message}</p>
+                  <p className="mt-1 text-xs text-red-500">{errors.phone.message}</p>
                 )}
               </div>
 
               <div>
                 <Input
                   label="Password"
-                  type="password"
-                  placeholder="StrongPassword123!"
+                  type={showPassword ? "text" : "password"}
+                  placeholder="••••••••"
                   icon={<Lock className="h-4 w-4" />}
+                  rightIcon={showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                  onRightIconClick={() => setShowPassword(!showPassword)}
                   {...register("password")}
                 />
                 {errors.password && (
-                  <p className="mt-1 text-sm text-red-500">{errors.password.message}</p>
+                  <p className="mt-1 text-xs text-red-500">{errors.password.message}</p>
                 )}
               </div>
 
@@ -192,12 +273,63 @@ export default function RegisterView() {
                 variant="primary"
                 size="lg"
                 fullWidth
-                disabled={isPending}
-                rightIcon={!isPending ? <ArrowRight className="h-4 w-4" /> : undefined}
+                disabled={isSendingOtp}
+                rightIcon={!isSendingOtp ? <ArrowRight className="h-4 w-4" /> : undefined}
                 className="mt-2"
               >
-                {isPending ? "Creating Account..." : "Create Account"}
+                {isSendingOtp ? "Sending OTP..." : "Continue & Send OTP"}
               </Button>
+            </form>
+          ) : (
+            /* ================= STEP 2: OTP VERIFICATION FORM ================= */
+            <form onSubmit={handleVerifyAndRegister} className="space-y-5">
+              <div>
+                <Input
+                  label="Enter 6-Digit SMS OTP"
+                  type="text"
+                  placeholder="123456"
+                  maxLength={6}
+                  value={otp}
+                  onChange={(e) => setOtp(e.target.value.replace(/[^0-9]/g, ''))}
+                  icon={<Lock className="h-4 w-4" />}
+                />
+              </div>
+
+              <div className="flex items-center justify-between text-xs text-gray-500 pt-1">
+                <span>Didn't receive code?</span>
+                {canResend ? (
+                  <button
+                    type="button"
+                    onClick={handleResendOtp}
+                    disabled={isSendingOtp}
+                    className="font-semibold text-primary-blue hover:underline inline-flex items-center gap-1"
+                  >
+                    <RotateCcw className="w-3 h-3" /> Resend OTP
+                  </button>
+                ) : (
+                  <span className="font-medium text-gray-400">Resend in {resendTimer}s</span>
+                )}
+              </div>
+
+              <Button
+                type="submit"
+                variant="primary"
+                size="lg"
+                fullWidth
+                disabled={otp.length < 6 || isRegisterPending || isVerifyingOtp}
+                rightIcon={!isVerifyingOtp && !isRegisterPending ? <ArrowRight className="h-4 w-4" /> : undefined}
+                className="mt-2"
+              >
+                {isVerifyingOtp || isRegisterPending ? "Verifying & Creating Account..." : "Verify OTP & Create Account"}
+              </Button>
+
+              <button
+                type="button"
+                onClick={() => setStep(1)}
+                className="w-full text-center text-xs font-semibold text-neutral-text-muted hover:text-neutral-text-dark transition-colors pt-2"
+              >
+                ← Edit Details / Change Phone Number
+              </button>
             </form>
           )}
 
