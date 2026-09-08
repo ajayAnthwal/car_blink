@@ -2,8 +2,9 @@ import storage from './storage';
 
 const formatApiUrl = (rawUrl?: string): string => {
   if (typeof window !== 'undefined') {
-    const isLocalhost = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
-    if (isLocalhost) {
+    const host = window.location.hostname;
+    const isLocal = host === 'localhost' || host === '127.0.0.1' || host.startsWith('192.168.') || host.startsWith('10.') || host.startsWith('172.') || /^(\d{1,3}\.){3}\d{1,3}$/.test(host);
+    if (isLocal) {
       return 'http://localhost:8000/api';
     }
   }
@@ -19,8 +20,31 @@ export const API_BASE_URL = formatApiUrl(
   process.env.NEXT_PUBLIC_API_URL || process.env.NEXT_PUBLIC_API_BASE_URL
 );
 
-if (!API_BASE_URL && typeof window !== 'undefined') {
-  console.warn("⚠️ NEXT_PUBLIC_API_URL environment variable is not set!");
+function sanitizeErrorMessage(msg: string): string {
+  if (!msg) return 'Something went wrong. Please try again.';
+  
+  let cleaned = msg.replace(/^Validation Error:\s*/i, '').trim();
+  const lower = cleaned.toLowerCase();
+  
+  if (lower.includes('failed to fetch') || lower.includes('networkerror') || lower.includes('network error') || lower.includes('econnrefused')) {
+    return 'Unable to connect right now. Please check your internet connection and try again.';
+  }
+  
+  if (lower.includes('api') || lower.includes('json') || lower.includes('doctype') || lower.includes('syntaxerror') || lower.includes('unexpected token')) {
+    return 'Unable to process request right now. Please try again.';
+  }
+
+  if (lower.includes('e11000') || lower.includes('duplicate key')) {
+    if (lower.includes('email')) {
+      return 'This email address is already registered. Please sign in or use a different email.';
+    }
+    if (lower.includes('phone') || lower.includes('mobile')) {
+      return 'This phone number is already registered. Please sign in or use a different phone number.';
+    }
+    return 'An account with these details already exists. Please check your input.';
+  }
+
+  return cleaned;
 }
 
 /**
@@ -49,15 +73,24 @@ export async function fetchApi<T>(endpoint: string, options?: RequestInit): Prom
       headers: defaultHeaders,
     });
 
-    const data = await response.json();
+    const text = await response.text();
+    let data: any = {};
+    try {
+      data = text ? JSON.parse(text) : {};
+    } catch (parseError) {
+      console.error(`[API Non-JSON Response] ${endpoint}:`, text.substring(0, 150));
+      throw new Error("Unable to process request right now. Please try again.");
+    }
 
     if (!response.ok) {
-      throw new Error(data?.message || 'API request failed');
+      const rawServerMessage = data?.message || data?.error || 'Something went wrong. Please check your details and try again.';
+      throw new Error(sanitizeErrorMessage(rawServerMessage));
     }
 
     return data as T;
   } catch (error: any) {
-    console.error(`[API Error] ${endpoint}:`, error.message);
-    throw error;
+    const sanitizedMsg = sanitizeErrorMessage(error?.message || '');
+    console.error(`[API Error] ${endpoint}:`, sanitizedMsg);
+    throw new Error(sanitizedMsg);
   }
 }

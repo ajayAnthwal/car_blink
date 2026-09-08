@@ -1,3 +1,4 @@
+import { toast } from "sonner";
 "use client";
 
 import { useState } from "react";
@@ -29,7 +30,11 @@ export default function LoginPage() {
 
   function handleSendOtp(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
-    if (form.phone.length < 10) return;
+    const cleanPhone = form.phone.replace(/[^0-9]/g, '');
+    if (cleanPhone.length < 10) {
+      toast.error("Please enter a valid 10-digit mobile number");
+      return;
+    }
     sendOtp(
       { identifier: form.phone },
       {
@@ -98,6 +103,18 @@ export default function LoginPage() {
             <p className="font-body text-base text-neutral-text-muted">
               Log in to manage your bookings, quotes, and vehicle details.
             </p>
+          </div>
+
+          <div className="mb-6">
+            <GoogleButton text="Continue with Google" role="CUSTOMER" />
+            <div className="relative my-6 text-center">
+              <div className="absolute inset-0 flex items-center">
+                <div className="w-full border-t border-neutral-200" />
+              </div>
+              <span className="relative bg-neutral-bg px-3 text-xs font-bold uppercase tracking-wider text-neutral-text-muted">
+                or sign in with
+              </span>
+            </div>
           </div>
 
           <div className="flex bg-neutral-200/50 rounded-xl p-1 mb-8">
