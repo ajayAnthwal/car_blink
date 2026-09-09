@@ -1,6 +1,6 @@
-import { toast } from "sonner";
 "use client";
 
+import { toast } from "sonner";
 import { useState } from "react";
 import Link from "next/link";
 import { Mail, Lock, LogOut, ArrowRight, ShieldCheck, Phone, Eye, EyeOff } from "lucide-react";

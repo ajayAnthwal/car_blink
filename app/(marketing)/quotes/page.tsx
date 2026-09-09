@@ -860,8 +860,8 @@ function QuotesForm() {
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12">
-          {/* Left Column: Form */}
-          <div className="lg:col-span-8 order-2 lg:order-1 mb-20 md:mb-0">
+          {/* Main Step Form: Mobile Top (order-1), Desktop Right (order-2) */}
+          <div className="lg:col-span-7 xl:col-span-8 order-1 lg:order-2 mb-20 md:mb-0">
             <div className="bg-white rounded-[2rem] p-6 pb-24 md:pb-10 sm:p-10 shadow-xl shadow-primary-blue/5 border border-neutral-text-muted/10">
               
               {/* Progress Steps */}
@@ -903,8 +903,8 @@ function QuotesForm() {
             </div>
           </div>
 
-          {/* Right Column: Summary / Trust */}
-          <div className="lg:col-span-5 xl:col-span-4">
+          {/* Sidebar Summary: Mobile Bottom (order-2), Desktop Left (order-1) */}
+          <div className="lg:col-span-5 xl:col-span-4 order-2 lg:order-1">
             <div className="sticky top-28 flex flex-col gap-6">
               
               {/* Dynamic Summary Card */}
