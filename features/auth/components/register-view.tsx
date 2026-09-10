@@ -80,9 +80,9 @@ export default function RegisterView() {
 
     setIsSendingOtp(true);
     try {
-      const res: any = await fetchApi("/auth/forgot-password", {
+      const res: any = await fetchApi("/auth/send-signup-otp", {
         method: "POST",
-        body: JSON.stringify({ identifier: cleanPhone }),
+        body: JSON.stringify({ phone: cleanPhone }),
       });
       toast.success(res?.message || `6-Digit OTP sent to +91 ${cleanPhone}`);
       setStep(2);
@@ -101,9 +101,9 @@ export default function RegisterView() {
     setIsSendingOtp(true);
     try {
       const phoneVal = getValues("phone").replace(/[^0-9]/g, '');
-      const res: any = await fetchApi("/auth/forgot-password", {
+      const res: any = await fetchApi("/auth/send-signup-otp", {
         method: "POST",
-        body: JSON.stringify({ identifier: phoneVal }),
+        body: JSON.stringify({ phone: phoneVal }),
       });
       toast.success(res?.message || "OTP code re-sent to mobile number!");
       setResendTimer(30);
