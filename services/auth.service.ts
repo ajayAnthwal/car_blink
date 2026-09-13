@@ -28,10 +28,22 @@ export const postLogin = async (payload: {
 
 export const postSendOtp = async (payload: { identifier: string }): Promise<{ message: string }> => {
   try {
-    const response = await apiClient.post(`${BASE_URLS}/forgot-password`, payload);
+    const response = await apiClient.post(`${BASE_URLS}/send-signup-otp`, {
+      phone: payload.identifier,
+      identifier: payload.identifier
+    });
     return { message: response.data.message || 'OTP sent successfully' };
   } catch (error: any) {
     throw new Error(error.response?.data?.message || error.message || 'Failed to send OTP');
+  }
+};
+
+export const postForgotPassword = async (payload: { identifier: string }): Promise<{ message: string }> => {
+  try {
+    const response = await apiClient.post(`${BASE_URLS}/forgot-password`, payload);
+    return { message: response.data.message || 'Reset OTP sent successfully' };
+  } catch (error: any) {
+    throw new Error(error.response?.data?.message || error.message || 'Failed to send reset OTP');
   }
 };
 
