@@ -203,8 +203,13 @@ export default function RegisterView() {
           </div>
 
           {apiError && (
-            <div className="mb-6 bg-red-50 text-red-600 text-sm p-4 rounded-xl border border-red-200 font-medium">
-              {apiError}
+            <div className="mb-6 bg-red-50 text-red-600 text-sm p-4 rounded-xl border border-red-200 font-medium flex flex-col gap-2">
+              <span>{apiError}</span>
+              {apiError.toLowerCase().includes('already registered') && (
+                <Link href="/login" className="text-primary-blue font-bold underline hover:text-blue-700 text-sm">
+                  → Click here to Sign In / Login instead
+                </Link>
+              )}
             </div>
           )}
 
@@ -213,6 +218,7 @@ export default function RegisterView() {
             <form onSubmit={handleSubmit(handleSendOtp)} className="space-y-5">
               <div>
                 <Input
+                  key="fullName"
                   label="Full Name"
                   type="text"
                   placeholder="Rahul Kumar"
@@ -226,6 +232,7 @@ export default function RegisterView() {
 
               <div>
                 <Input
+                  key="email"
                   label="Email Address (Optional)"
                   type="email"
                   placeholder="rahul@example.com"
@@ -239,6 +246,7 @@ export default function RegisterView() {
 
               <div>
                 <Input
+                  key="phone"
                   label="Phone Number"
                   type="tel"
                   placeholder="9876543210"
@@ -253,6 +261,7 @@ export default function RegisterView() {
 
               <div>
                 <Input
+                  key="password"
                   label="Password"
                   type={showPassword ? "text" : "password"}
                   placeholder="••••••••"
@@ -285,6 +294,8 @@ export default function RegisterView() {
             <form onSubmit={handleVerifyAndRegister} className="space-y-5">
               <div>
                 <Input
+                  key="otp"
+                  name="otp"
                   label="Enter 6-Digit SMS OTP"
                   type="text"
                   placeholder="123456"

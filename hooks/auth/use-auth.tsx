@@ -1,3 +1,5 @@
+"use client";
+
 import {
   useMutation,
   UseMutationResult,
@@ -32,33 +34,44 @@ export const getDashboardUrl = (): string => {
 
 const setCrossPortAuth = (token: string, role?: string) => {
   if (typeof window === 'undefined') return;
+  const userRole = role || 'CUSTOMER';
   storage.setToken(token);
   window.localStorage.setItem('car_blink_access_token', token);
   window.localStorage.setItem('carBlink_token', token);
+  window.localStorage.setItem('role', userRole);
   const expires = new Date(Date.now() + 30 * 864e5).toUTCString();
   document.cookie = `accessToken=${encodeURIComponent(token)}; expires=${expires}; path=/; SameSite=Lax`;
   document.cookie = `car_blink_access_token=${encodeURIComponent(token)}; expires=${expires}; path=/; SameSite=Lax`;
-  if (role) {
-    document.cookie = `role=${encodeURIComponent(role)}; expires=${expires}; path=/; SameSite=Lax`;
-  }
+  document.cookie = `role=${encodeURIComponent(userRole)}; expires=${expires}; path=/; SameSite=Lax`;
+};
+
+const extractTokenAndRole = (res: any) => {
+  const payload = res?.data || res;
+  const token = payload?.tokens?.accessToken || payload?.token || res?.tokens?.accessToken || res?.token;
+  const role = payload?.user?.role || payload?.role || res?.user?.role || res?.role || 'CUSTOMER';
+  return { token, role };
 };
 
 export const useLogin = (): UseMutationResult<
-  { data: TUserProfile; message: string },
+  any,
   Error,
   { identifier?: string; email?: string; password?: string }
 > => {
-  const router = useRouter();
-
   return useMutation({
     mutationFn: postLogin,
-    onSuccess: ({ data, message }) => {
-      data.token && setCrossPortAuth(data.token, data.role);
-      toast.success(message || 'Login successful! Redirecting to Dashboard...');
+    onSuccess: (res: any) => {
+      const { token, role } = extractTokenAndRole(res);
+      if (token) setCrossPortAuth(token, role);
+      toast.success(res?.message || 'Login successful! Redirecting to your Dashboard...');
       setTimeout(() => {
         const dashboardUrl = getDashboardUrl();
-        window.location.href = `${dashboardUrl}/login?token=${data.token}`;
-      }, 1000);
+        if (token) {
+          window.location.href = `${dashboardUrl}/login?token=${encodeURIComponent(token)}`;
+        } else {
+          const route = role === 'PARTNER' ? '/partner/dashboard' : '/customer/dashboard';
+          window.location.href = `${dashboardUrl}${route}`;
+        }
+      }, 800);
     },
     onError: (error) => {
       toast.error(error.message);
@@ -67,23 +80,28 @@ export const useLogin = (): UseMutationResult<
 };
 
 export const usePartnerLogin = (): UseMutationResult<
-  { data: TUserProfile; message: string },
+  any,
   Error,
   { identifier?: string; email?: string; password?: string }
 > => {
   return useMutation({
     mutationFn: postLogin,
-    onSuccess: ({ data, message }) => {
-      if (data.role !== 'PARTNER') {
+    onSuccess: (res: any) => {
+      const { token, role } = extractTokenAndRole(res);
+      if (role !== 'PARTNER') {
         toast.error('This login page is exclusively for Workshop Partners. Please use Customer login.');
         return;
       }
-      data.token && setCrossPortAuth(data.token, data.role);
-      toast.success('Partner login successful! Redirecting to Dashboard...');
+      if (token) setCrossPortAuth(token, role);
+      toast.success('Partner login successful! Redirecting to Workshop Dashboard...');
       setTimeout(() => {
         const dashboardUrl = getDashboardUrl();
-        window.location.href = `${dashboardUrl}/login?token=${data.token}`;
-      }, 1000);
+        if (token) {
+          window.location.href = `${dashboardUrl}/login?token=${encodeURIComponent(token)}`;
+        } else {
+          window.location.href = `${dashboardUrl}/partner/dashboard`;
+        }
+      }, 800);
     },
     onError: (error) => {
       toast.error(error.message);
@@ -108,21 +126,25 @@ export const useSendOtp = (): UseMutationResult<
 };
 
 export const useVerifyOtp = (): UseMutationResult<
-  { data: TUserProfile; message: string },
+  any,
   Error,
   { identifier: string; otp: string }
 > => {
-  const router = useRouter();
-
   return useMutation({
     mutationFn: postVerifyOtp,
-    onSuccess: ({ data, message }) => {
-      data.token && setCrossPortAuth(data.token, data.role);
-      toast.success(message || 'Verification successful! Redirecting to Dashboard...');
+    onSuccess: (res: any) => {
+      const { token, role } = extractTokenAndRole(res);
+      if (token) setCrossPortAuth(token, role);
+      toast.success(res?.message || 'Verification successful! Redirecting to Dashboard...');
       setTimeout(() => {
         const dashboardUrl = getDashboardUrl();
-        window.location.href = `${dashboardUrl}/login?token=${data.token}`;
-      }, 1000);
+        if (token) {
+          window.location.href = `${dashboardUrl}/login?token=${encodeURIComponent(token)}`;
+        } else {
+          const route = role === 'PARTNER' ? '/partner/dashboard' : '/customer/dashboard';
+          window.location.href = `${dashboardUrl}${route}`;
+        }
+      }, 800);
     },
     onError: (error) => {
       toast.error(error.message);
@@ -131,23 +153,28 @@ export const useVerifyOtp = (): UseMutationResult<
 };
 
 export const usePartnerVerifyOtp = (): UseMutationResult<
-  { data: TUserProfile; message: string },
+  any,
   Error,
   { identifier: string; otp: string }
 > => {
   return useMutation({
     mutationFn: postVerifyOtp,
-    onSuccess: ({ data, message }) => {
-      if (data.role !== 'PARTNER') {
+    onSuccess: (res: any) => {
+      const { token, role } = extractTokenAndRole(res);
+      if (role !== 'PARTNER') {
         toast.error('This login page is exclusively for Workshop Partners. Please use Customer login.');
         return;
       }
-      data.token && setCrossPortAuth(data.token, data.role);
-      toast.success('Partner login successful! Redirecting to Dashboard...');
+      if (token) setCrossPortAuth(token, role);
+      toast.success('Partner login successful! Redirecting to Workshop Dashboard...');
       setTimeout(() => {
         const dashboardUrl = getDashboardUrl();
-        window.location.href = `${dashboardUrl}/login?token=${data.token}`;
-      }, 1000);
+        if (token) {
+          window.location.href = `${dashboardUrl}/login?token=${encodeURIComponent(token)}`;
+        } else {
+          window.location.href = `${dashboardUrl}/partner/dashboard`;
+        }
+      }, 800);
     },
     onError: (error) => {
       toast.error(error.message);
@@ -160,32 +187,22 @@ export const useRegister = (): UseMutationResult<
   Error,
   RegisterPayload
 > => {
-  const router = useRouter();
-
   return useMutation({
     mutationFn: postRegister,
-
     onSuccess: (res: any) => {
-      const payloadData = res?.data || res;
-      const tokenToUse = payloadData?.tokens?.accessToken || payloadData?.token;
-      const userRole = payloadData?.user?.role || payloadData?.role || 'CUSTOMER';
-
-      if (tokenToUse) {
-        setCrossPortAuth(tokenToUse, userRole);
-      }
-
-      toast.success(res?.message || 'Registration successful! Auto-logging in...');
-
+      const { token, role } = extractTokenAndRole(res);
+      if (token) setCrossPortAuth(token, role);
+      toast.success(res?.message || 'Registration successful! Opening your Dashboard...');
       setTimeout(() => {
         const dashboardUrl = getDashboardUrl();
-        if (tokenToUse) {
-          window.location.href = `${dashboardUrl}/login?token=${tokenToUse}`;
+        if (token) {
+          window.location.href = `${dashboardUrl}/login?token=${encodeURIComponent(token)}`;
         } else {
-          window.location.href = `${dashboardUrl}/customer/dashboard`;
+          const route = role === 'PARTNER' ? '/partner/dashboard' : '/customer/dashboard';
+          window.location.href = `${dashboardUrl}${route}`;
         }
       }, 800);
     },
-
     onError: (error) => {
       toast.error(error.message);
     }

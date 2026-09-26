@@ -38,6 +38,7 @@ export default function HeroForm() {
 
   const handleSendOtp = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (isSendingOtp) return;
     const cleanPhone = formData.number.replace(/[^0-9]/g, '');
     if (cleanPhone.length < 10) {
       toast.error("Please enter a valid 10-digit mobile number");

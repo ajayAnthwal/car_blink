@@ -74,17 +74,12 @@ export function GoogleButton({
       }
 
       const dashboardBase = process.env.NEXT_PUBLIC_DASHBOARD_URL || "http://localhost:3000";
-      const roleRoutes: Record<string, string> = {
-        CUSTOMER: `${dashboardBase}/customer`,
-        PARTNER: `${dashboardBase}/partner`,
-        SUPER_ADMIN: `${dashboardBase}/admin`,
-        ADMIN: `${dashboardBase}/admin`,
-        STAFF: `${dashboardBase}/admin`,
-        ACCOUNTS: `${dashboardBase}/accounts`,
-      };
-      const targetUrl = roleRoutes[userRole] || `${dashboardBase}/customer`;
       if (typeof window !== "undefined") {
-        window.location.href = targetUrl;
+        if (tokens?.accessToken) {
+          window.location.href = `${dashboardBase}/login?token=${encodeURIComponent(tokens.accessToken)}`;
+        } else {
+          window.location.href = `${dashboardBase}/customer/dashboard`;
+        }
       }
     } catch (err: any) {
       toast.error(err?.message || "Failed to authenticate with Google");

@@ -82,6 +82,11 @@ export async function fetchApi<T>(endpoint: string, options?: RequestInit): Prom
       throw new Error("Unable to process request right now. Please try again.");
     }
 
+    if (response.status === 401 && typeof window !== 'undefined') {
+      storage.clearToken();
+      document.cookie = 'carblink_logged_out=1; path=/; max-age=10;';
+    }
+
     if (!response.ok) {
       const rawServerMessage = data?.message || data?.error || 'Something went wrong. Please check your details and try again.';
       throw new Error(sanitizeErrorMessage(rawServerMessage));
