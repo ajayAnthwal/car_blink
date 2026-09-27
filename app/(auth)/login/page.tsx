@@ -1,7 +1,7 @@
 "use client";
 
 import { toast } from "sonner";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Link from "next/link";
 import { Mail, Lock, LogOut, ArrowRight, ShieldCheck, Phone, Eye, EyeOff } from "lucide-react";
 import Button from "@/components/ui/Button";
@@ -18,6 +18,34 @@ export default function LoginPage() {
   const [form, setForm] = useState({ phone: "", otp: "", email: "", password: "" });
   const [step, setStep] = useState<1 | 2>(1);
   const [showPassword, setShowPassword] = useState(false);
+  const [resendTimer, setResendTimer] = useState(30);
+  const [canResend, setCanResend] = useState(false);
+
+  useEffect(() => {
+    let timer: any;
+    if (step === 2 && resendTimer > 0) {
+      timer = setInterval(() => {
+        setResendTimer((prev) => prev - 1);
+      }, 1000);
+    } else if (resendTimer === 0) {
+      setCanResend(true);
+    }
+    return () => clearInterval(timer);
+  }, [step, resendTimer]);
+
+  const handleResendOtp = () => {
+    if (!canResend) return;
+    sendOtp(
+      { identifier: form.phone },
+      {
+        onSuccess: () => {
+          toast.success("OTP re-sent successfully!");
+          setResendTimer(30);
+          setCanResend(false);
+        },
+      }
+    );
+  };
 
   const { mutate: login, isPending: isLoginPending } = useLogin();
   const { mutate: sendOtp, isPending: isSendOtpPending } = useSendOtp();
@@ -38,7 +66,11 @@ export default function LoginPage() {
     sendOtp(
       { identifier: form.phone },
       {
-        onSuccess: () => setStep(2),
+        onSuccess: () => {
+          setStep(2);
+          setResendTimer(30);
+          setCanResend(false);
+        },
       }
     );
   }
@@ -187,6 +219,21 @@ export default function LoginPage() {
                     maxLength={6}
                     icon={<Lock className="h-4 w-4" />}
                   />
+                  <div className="flex items-center justify-between text-xs text-neutral-text-muted mt-2">
+                    <span>Didn't receive OTP?</span>
+                    {canResend ? (
+                      <button
+                        type="button"
+                        onClick={handleResendOtp}
+                        disabled={isSendOtpPending}
+                        className="font-bold text-primary-blue hover:underline cursor-pointer disabled:opacity-50"
+                      >
+                        {isSendOtpPending ? "Resending..." : "Resend OTP"}
+                      </button>
+                    ) : (
+                      <span className="font-semibold text-neutral-text-muted">Resend OTP in {resendTimer}s</span>
+                    )}
+                  </div>
                   <Button
                     type="submit"
                     variant="primary"

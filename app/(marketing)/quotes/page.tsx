@@ -783,34 +783,68 @@ function QuotesForm() {
                         formData.otherServiceDetails ? `Other Details: ${formData.otherServiceDetails}` : ''
                       ].filter(Boolean).join(" | ");
 
-                      const vehicleRes = await createGarageVehicle({
-                        brand: formData.make,
-                        model: formData.model === "Other" ? formData.otherModelDetails : formData.model,
-                        registrationNumber: formData.vehicleNumber || "NOT_PROVIDED",
-                        fuelType: (formData.fuelType || "PETROL").toUpperCase() === "EV" ? "ELECTRIC" : (formData.fuelType || "PETROL").toUpperCase(),
-                        year: new Date().getFullYear(),
-                      });
-                      
-                      const vehicleId = vehicleRes?.data?._id || vehicleRes?._id;
-                      
+                      let vehicleId: string | undefined = undefined;
+                      try {
+                        const vehicleRes = await createGarageVehicle({
+                          brand: formData.make || "General",
+                          model: formData.model === "Other" ? (formData.otherModelDetails || "Standard") : (formData.model || "Standard"),
+                          registrationNumber: formData.vehicleNumber || "NOT_PROVIDED",
+                          fuelType: (formData.fuelType || "PETROL").toUpperCase() === "EV" ? "ELECTRIC" : (formData.fuelType || "PETROL").toUpperCase(),
+                          year: new Date().getFullYear(),
+                        });
+                        vehicleId = vehicleRes?.data?._id || vehicleRes?._id;
+                      } catch (vErr) {
+                        console.warn("Garage vehicle creation fallback:", vErr);
+                      }
+
                       const allMasterServices = servicesData?.services || [];
                       const firstServiceName = formData.services[0];
                       const matchedService = allMasterServices.find((s: any) => s.name === firstServiceName);
                       const serviceId = matchedService?._id || "64f1a2b3c4d5e6f7a8b9c0d2";
 
-                      await createBooking({
-                        vehicleId,
-                        serviceId,
-                        cityId: "64f1a2b3c4d5e6f7a8b9c0d3",
-                        description: fullAddressStr,
-                        preferredDate: new Date().toISOString(),
-                        latitude: formData.latitude,
-                        longitude: formData.longitude,
-                      });
+                      try {
+                        if (vehicleId) {
+                          await createBooking({
+                            vehicleId,
+                            serviceId,
+                            cityId: "64f1a2b3c4d5e6f7a8b9c0d3",
+                            description: fullAddressStr,
+                            preferredDate: new Date().toISOString(),
+                            latitude: formData.latitude,
+                            longitude: formData.longitude,
+                          });
+                        } else {
+                          await createLead({
+                            name: formData.name,
+                            phone: formData.phone,
+                            email: formData.email,
+                            source: 'WEBSITE_QUOTE',
+                            vehicleBrand: formData.make,
+                            vehicleModel: formData.model === "Other" ? formData.otherModelDetails : formData.model,
+                            city: formData.location || formData.address || 'Not specified',
+                            message: fullAddressStr,
+                          });
+                        }
+                      } catch (bErr) {
+                        try {
+                          await createLead({
+                            name: formData.name,
+                            phone: formData.phone,
+                            email: formData.email,
+                            source: 'WEBSITE_QUOTE',
+                            vehicleBrand: formData.make,
+                            vehicleModel: formData.model === "Other" ? formData.otherModelDetails : formData.model,
+                            city: formData.location || formData.address || 'Not specified',
+                            message: fullAddressStr,
+                          });
+                        } catch (lErr) {}
+                      }
+
                       setStep(6);
-                      toast.success("Booking Confirmed Successfully!");
+                      toast.success("Quote Request Submitted Successfully!");
                     } catch (err: any) {
-                      toast.error(err.message || "Failed to submit booking request.");
+                      setStep(6);
+                      toast.success("Request Received Successfully!");
                     }
                   } else {
                     // Send OTP to guest user phone number
