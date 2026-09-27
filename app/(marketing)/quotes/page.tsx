@@ -787,7 +787,7 @@ function QuotesForm() {
                         brand: formData.make,
                         model: formData.model === "Other" ? formData.otherModelDetails : formData.model,
                         registrationNumber: formData.vehicleNumber || "NOT_PROVIDED",
-                        fuelType: formData.fuelType,
+                        fuelType: (formData.fuelType || "PETROL").toUpperCase() === "EV" ? "ELECTRIC" : (formData.fuelType || "PETROL").toUpperCase(),
                         year: new Date().getFullYear(),
                       });
                       
