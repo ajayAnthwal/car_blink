@@ -543,7 +543,7 @@ function QuotesForm() {
           </>
         );
       case 5:
-        if (isOtpStep && !isAuthenticated) {
+        if (isOtpStep) {
           return (
             <div className="animate-in fade-in slide-in-from-bottom-4 duration-500 max-w-md mx-auto py-6">
               <div className="bg-blue-50 border border-blue-100 rounded-2xl p-6 text-center mb-6">
@@ -771,91 +771,14 @@ function QuotesForm() {
               <Button className="flex-1 md:flex-none" variant="ghost" onClick={prevStep}>Back</Button>
               <Button 
                 className="flex-1 md:flex-none"
-                onClick={async () => {
-                  if (isAuthenticated) {
-                    try {
-                      const fullAddressStr = [
-                        formData.address ? `Custom Address: ${formData.address}` : '',
-                        formData.location ? `Location: ${formData.location}` : '',
-                        `Services: ${formData.services.join(", ")}`,
-                        `Fuel: ${formData.fuelType}`,
-                        formData.vehicleNumber ? `Vehicle No: ${formData.vehicleNumber}` : '',
-                        formData.otherServiceDetails ? `Other Details: ${formData.otherServiceDetails}` : ''
-                      ].filter(Boolean).join(" | ");
-
-                      let vehicleId: string | undefined = undefined;
-                      try {
-                        const vehicleRes = await createGarageVehicle({
-                          brand: formData.make || "General",
-                          model: formData.model === "Other" ? (formData.otherModelDetails || "Standard") : (formData.model || "Standard"),
-                          registrationNumber: formData.vehicleNumber || "NOT_PROVIDED",
-                          fuelType: (formData.fuelType || "PETROL").toUpperCase() === "EV" ? "ELECTRIC" : (formData.fuelType || "PETROL").toUpperCase(),
-                          year: new Date().getFullYear(),
-                        });
-                        vehicleId = vehicleRes?.data?._id || vehicleRes?._id;
-                      } catch (vErr) {
-                        console.warn("Garage vehicle creation fallback:", vErr);
-                      }
-
-                      const allMasterServices = servicesData?.services || [];
-                      const firstServiceName = formData.services[0];
-                      const matchedService = allMasterServices.find((s: any) => s.name === firstServiceName);
-                      const serviceId = matchedService?._id || "64f1a2b3c4d5e6f7a8b9c0d2";
-
-                      try {
-                        if (vehicleId) {
-                          await createBooking({
-                            vehicleId,
-                            serviceId,
-                            cityId: "64f1a2b3c4d5e6f7a8b9c0d3",
-                            description: fullAddressStr,
-                            preferredDate: new Date().toISOString(),
-                            latitude: formData.latitude,
-                            longitude: formData.longitude,
-                          });
-                        } else {
-                          await createLead({
-                            name: formData.name,
-                            phone: formData.phone,
-                            email: formData.email,
-                            source: 'WEBSITE_QUOTE',
-                            vehicleBrand: formData.make,
-                            vehicleModel: formData.model === "Other" ? formData.otherModelDetails : formData.model,
-                            city: formData.location || formData.address || 'Not specified',
-                            message: fullAddressStr,
-                          });
-                        }
-                      } catch (bErr) {
-                        try {
-                          await createLead({
-                            name: formData.name,
-                            phone: formData.phone,
-                            email: formData.email,
-                            source: 'WEBSITE_QUOTE',
-                            vehicleBrand: formData.make,
-                            vehicleModel: formData.model === "Other" ? formData.otherModelDetails : formData.model,
-                            city: formData.location || formData.address || 'Not specified',
-                            message: fullAddressStr,
-                          });
-                        } catch (lErr) {}
-                      }
-
-                      setStep(6);
-                      toast.success("Quote Request Submitted Successfully!");
-                    } catch (err: any) {
-                      setStep(6);
-                      toast.success("Request Received Successfully!");
-                    }
-                  } else {
-                    // Send OTP to guest user phone number
-                    handleSendQuoteOtp();
-                  }
+                onClick={() => {
+                  handleSendQuoteOtp();
                 }} 
                 disabled={!formData.name.trim() || !formData.phone.trim() || (!formData.location.trim() && !formData.address.trim()) || isSubmitting || isSendingOtp}
                 variant="accent"
                 rightIcon={(isSubmitting || isSendingOtp) ? <Loader2 className="w-4 h-4 animate-spin" /> : <ArrowRight className="w-4 h-4" />}
               >
-                {isSendingOtp ? "Sending OTP..." : (isSubmitting ? "Submitting..." : (isAuthenticated ? "Book Now" : "Get Quotes Now"))}
+                {isSendingOtp ? "Sending OTP..." : (isSubmitting ? "Submitting..." : "Get Quotes Now")}
               </Button>
             </div>
           </>
