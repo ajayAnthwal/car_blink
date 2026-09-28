@@ -3,12 +3,12 @@
 import { useState, useEffect } from "react";
 import Button from "@/components/ui/Button";
 import LocationModal from "@/components/ui/LocationModal";
-import { LocateFixed, MapPin, Loader2, ArrowLeft, KeyRound } from "lucide-react";
+import { LocateFixed, MapPin, Loader2, ArrowLeft, KeyRound, CheckCircle2, Phone, ExternalLink } from "lucide-react";
 import { useCreateLead, useSendLeadOtp } from "@/services/queries";
 import { toast } from "sonner";
 
 export default function HeroForm() {
-  const [step, setStep] = useState<'FORM' | 'OTP'>('FORM');
+  const [step, setStep] = useState<'FORM' | 'OTP' | 'SUCCESS'>('FORM');
   const [formData, setFormData] = useState({
     name: "",
     number: "",
@@ -84,9 +84,7 @@ export default function HeroForm() {
         otp: otp.trim(),
       });
       toast.success("Query Submitted Successfully! We will contact you soon.");
-      setFormData({ name: "", number: "", carDetails: "", address: "", query: "" });
-      setOtp("");
-      setStep('FORM');
+      setStep('SUCCESS');
     } catch (err: any) {
       toast.error(err.message || "Invalid OTP code. Please try again.");
     }
@@ -103,16 +101,89 @@ export default function HeroForm() {
     <div className="bg-white rounded-2xl p-6 md:p-8 shadow-2xl border border-neutral-text-muted/10 w-full max-w-md mx-auto relative z-20">
       <div className="mb-6">
         <h3 className="font-heading font-bold text-2xl text-neutral-text-dark">
-          Get a Quick Callback
+          {step === 'FORM'
+            ? "Get a Quick Callback"
+            : step === 'OTP'
+            ? "Verify Mobile Number"
+            : "Request Submitted"}
         </h3>
         <p className="text-sm text-neutral-text-muted mt-1">
           {step === 'FORM'
             ? "Provide your details and we'll fetch the best prices for you."
-            : `Enter the 6-digit OTP sent to +91 ${formData.number.replace(/[^0-9]/g, '').slice(-10)}`}
+            : step === 'OTP'
+            ? `Enter the 6-digit OTP sent to +91 ${formData.number.replace(/[^0-9]/g, '').slice(-10)}`
+            : "Your request has been logged. Our service advisor will call you shortly."}
         </p>
       </div>
 
-      {step === 'FORM' ? (
+      {step === 'SUCCESS' ? (
+        <div className="flex flex-col items-center justify-center text-center py-2 space-y-4 animate-in fade-in zoom-in-95 duration-300">
+          <div className="w-16 h-16 bg-emerald-100 rounded-full flex items-center justify-center text-emerald-600 shadow-md shadow-emerald-500/20">
+            <CheckCircle2 className="w-9 h-9 text-emerald-600" />
+          </div>
+
+          <div>
+            <span className="bg-emerald-50 text-emerald-700 text-xs font-bold px-3 py-1 rounded-full border border-emerald-200 uppercase tracking-wide">
+              ✓ Callback Request Received
+            </span>
+            <h4 className="font-heading font-bold text-xl text-neutral-text-dark mt-2.5">
+              Thank You, {formData.name || 'Valued Customer'}!
+            </h4>
+            <p className="text-xs text-neutral-text-muted mt-1.5 leading-relaxed">
+              We have received your callback request for <span className="font-semibold text-neutral-text-dark">{formData.carDetails || 'your vehicle'}</span>. Our service team is matching top workshops in <span className="font-semibold text-neutral-text-dark">{formData.address || 'your city'}</span>.
+            </p>
+          </div>
+
+          <div className="w-full bg-blue-50/80 border border-blue-100 rounded-xl p-4 text-left space-y-2.5">
+            <div className="flex items-start gap-3">
+              <div className="w-7 h-7 bg-primary-blue/10 rounded-lg flex items-center justify-center text-primary-blue shrink-0 mt-0.5">
+                <Phone className="w-4 h-4 text-primary-blue" />
+              </div>
+              <div>
+                <h5 className="text-xs font-bold text-gray-900 uppercase tracking-wide">Callback Details</h5>
+                <p className="text-xs text-gray-600 mt-0.5">
+                  Our advisor will call <span className="font-semibold text-gray-900">+91 {formData.number}</span> within 15–30 mins.
+                </p>
+              </div>
+            </div>
+
+            {formData.address && (
+              <div className="flex items-start gap-3 pt-2 border-t border-blue-100/80">
+                <div className="w-7 h-7 bg-primary-blue/10 rounded-lg flex items-center justify-center text-primary-blue shrink-0 mt-0.5">
+                  <MapPin className="w-4 h-4 text-primary-blue" />
+                </div>
+                <div>
+                  <h5 className="text-xs font-bold text-gray-900 uppercase tracking-wide">Location</h5>
+                  <p className="text-xs text-gray-600 mt-0.5 truncate max-w-[240px]">
+                    {formData.address}
+                  </p>
+                </div>
+              </div>
+            )}
+          </div>
+
+          <div className="w-full space-y-2 pt-1">
+            <a
+              href={`${process.env.NEXT_PUBLIC_DASHBOARD_URL || 'https://dashboard.carblink.in'}/login`}
+              className="w-full inline-flex items-center justify-center gap-2 px-5 py-3 rounded-xl bg-primary-blue text-white font-bold text-sm hover:bg-primary-blue-dark transition-all shadow-md shadow-primary-blue/20"
+            >
+              Track Status in Customer Portal <ExternalLink className="w-4 h-4" />
+            </a>
+
+            <button
+              type="button"
+              onClick={() => {
+                setFormData({ name: "", number: "", carDetails: "", address: "", query: "" });
+                setOtp("");
+                setStep('FORM');
+              }}
+              className="w-full text-xs font-semibold text-gray-500 hover:text-gray-800 py-2 transition-colors"
+            >
+              + Submit Another Request
+            </button>
+          </div>
+        </div>
+      ) : step === 'FORM' ? (
         <form onSubmit={handleSendOtp} className="flex flex-col gap-4">
           <div>
             <label htmlFor="name" className="block text-sm font-medium text-neutral-text-dark mb-1">
