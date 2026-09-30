@@ -7,11 +7,13 @@ const BASE_URLS = `/auth`;
 export const postLogin = async (payload: {
   identifier?: string;
   email?: string;
+  phone?: string;
   password?: string;
 }): Promise<{ data: TUserProfile; message: string }> => {
   try {
+    const rawTarget = payload.identifier || payload.email || payload.phone || '';
     const loginPayload = {
-      identifier: (payload.identifier || payload.email)?.toLowerCase(),
+      identifier: rawTarget.trim().toLowerCase(),
       password: payload.password
     };
     const response = await apiClient.post(`${BASE_URLS}/login`, loginPayload);
@@ -157,19 +159,15 @@ export const getProfile = async (): Promise<{
 //   }
 // };
 
-// // Reset password
-// export const resetPassword = async (payload: {
-//   email: string;
-//   tempOtp: string;
-//   password: string;
-// }): Promise<{ message: string }> => {
-//   try {
-//     const response = await apiClient.patch(`${BASE_URLS}/password`, payload);
-//     const {
-//       result: { message }
-//     } = response.data;
-//     return { message };
-//   } catch (error: any) {
-//     throw new Error(error?.message || 'Password reset failed.');
-//   }
-// };
+export const postResetPassword = async (payload: {
+  identifier: string;
+  token: string;
+  newPassword: string;
+}): Promise<{ message: string }> => {
+  try {
+    const response = await apiClient.post(`${BASE_URLS}/reset-password`, payload);
+    return { message: response.data?.message || 'Password reset successfully' };
+  } catch (error: any) {
+    throw new Error(error.response?.data?.message || error.message || 'Password reset failed');
+  }
+};

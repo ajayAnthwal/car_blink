@@ -155,14 +155,14 @@ export default function LoginPage() {
                 }`}
               onClick={() => { setLoginMethod("phone"); setStep(1); }}
             >
-              Mobile Number
+              Mobile OTP
             </button>
             <button
               className={`flex-1 py-2.5 text-sm font-semibold rounded-lg transition-all duration-200 ${loginMethod === "email" ? "bg-white text-primary-blue shadow-sm" : "text-neutral-text-muted hover:text-neutral-text-dark"
                 }`}
               onClick={() => setLoginMethod("email")}
             >
-              Email
+              Password Login
             </button>
           </div>
 
@@ -250,13 +250,13 @@ export default function LoginPage() {
           ) : (
             <form onSubmit={handleEmailLogin} className="space-y-5">
               <Input
-                label="Email Address"
-                type="email"
+                label="Email or Mobile Number"
+                type="text"
                 name="email"
                 required
                 value={form.email}
                 onChange={handleChange}
-                placeholder="name@example.com"
+                placeholder="name@example.com or 10-digit mobile"
                 icon={<Mail className="h-4 w-4" />}
               />
               <div>

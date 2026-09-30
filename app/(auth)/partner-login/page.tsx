@@ -222,8 +222,8 @@ export default function PartnerLoginPage() {
           ) : (
             <form onSubmit={handleEmailLogin} className="space-y-5">
               <Input
-                label="Email Address"
-                type="email"
+                label="Email or Mobile Number"
+                type="text"
                 name="email"
                 required
                 value={form.email}
@@ -235,7 +235,7 @@ export default function PartnerLoginPage() {
                 <div className="flex justify-between items-center mb-1">
                   <label className="text-xs font-bold font-heading text-neutral-text-muted">Password</label>
                   <Link
-                    href={`${process.env.NEXT_PUBLIC_DASHBOARD_URL || 'https://car-blink-dashboard.vercel.app'}/forgot-password`}
+                    href="/forgot-password"
                     className="text-xs font-bold text-accent-orange hover:text-accent-orange/80 transition-colors"
                   >
                     Forgot password?
@@ -268,7 +268,7 @@ export default function PartnerLoginPage() {
           <p className="font-body mt-8 text-center lg:text-left text-sm text-neutral-text-muted">
             Not a partner yet?{" "}
             <Link
-              href="https://car-blink-dashboard.vercel.app/register"
+              href={`${process.env.NEXT_PUBLIC_DASHBOARD_URL || 'https://car-blink-dashboard.vercel.app'}/register`}
               className="font-heading font-semibold text-accent-orange hover:text-accent-orange/80 transition-colors"
             >
               Apply here

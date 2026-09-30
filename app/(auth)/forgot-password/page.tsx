@@ -51,22 +51,20 @@ export default function ForgotPasswordPage() {
         return;
       }
     } else {
-      if (/[^\d]/.test(rawInput)) {
-        setError("Mobile number must contain 10 digits only. Letters are not allowed.");
-        return;
-      }
-      if (rawInput.length !== 10) {
-        setError("Mobile number must be exactly 10 digits (e.g. 9876543210)");
+      const digitsOnly = rawInput.replace(/[^0-9]/g, '');
+      const cleanPhone = digitsOnly.length >= 10 ? digitsOnly.slice(-10) : digitsOnly;
+      if (cleanPhone.length !== 10) {
+        setError("Mobile number must be a valid 10-digit number (e.g. 9876543210)");
         return;
       }
       const phoneRegex = /^[6-9]\d{9}$/;
-      if (!phoneRegex.test(rawInput)) {
+      if (!phoneRegex.test(cleanPhone)) {
         setError("Please enter a valid 10-digit Indian mobile number (starting with 6, 7, 8, or 9)");
         return;
       }
     }
 
-    const cleanInput = isEmail ? rawInput.toLowerCase() : rawInput;
+    const cleanInput = isEmail ? rawInput.toLowerCase() : rawInput.replace(/[^0-9]/g, '').slice(-10);
 
     setIsLoading(true);
 
