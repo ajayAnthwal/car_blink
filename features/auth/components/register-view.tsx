@@ -2,18 +2,17 @@
 
 import { useState, useEffect } from "react";
 import Link from "next/link";
-import { useSearchParams } from "next/navigation";
 import {
   Mail,
   Phone,
   ArrowRight,
   Lock,
   User,
-  Wrench,
   RotateCcw,
   ShieldCheck,
   Eye,
-  EyeOff
+  EyeOff,
+  Wrench
 } from "lucide-react";
 
 import { useForm } from "react-hook-form";
@@ -28,13 +27,8 @@ import { toast } from "sonner";
 
 import { useRegister } from "@/hooks/auth/use-auth";
 import { RegisterFormData, registerSchema } from "@/lib/validation/register.schema";
-import PartnerRegisterForm from "./PartnerRegisterForm";
 
 export default function RegisterView() {
-  const searchParams = useSearchParams();
-  const initialRole = searchParams.get("role") === "PARTNER" ? "PARTNER" : "CUSTOMER";
-
-  const [role, setRole] = useState<"CUSTOMER" | "PARTNER">(initialRole);
   const [step, setStep] = useState<1 | 2>(1);
   const [showPassword, setShowPassword] = useState(false);
   const [otp, setOtp] = useState("");
@@ -61,15 +55,6 @@ export default function RegisterView() {
   });
 
   const { mutate: registerUser, isPending: isRegisterPending } = useRegister();
-
-  useEffect(() => {
-    const roleParam = searchParams.get("role");
-    if (roleParam === "PARTNER") {
-      setRole("PARTNER");
-    } else if (roleParam === "CUSTOMER") {
-      setRole("CUSTOMER");
-    }
-  }, [searchParams]);
 
   useEffect(() => {
     let timer: any;
@@ -173,22 +158,11 @@ export default function RegisterView() {
         <div className="relative z-10 max-w-lg">
           <Logo />
           <h1 className="mt-12 font-heading font-black text-4xl leading-[1.1] sm:text-5xl tracking-tight">
-            {role === "PARTNER" ? (
-              <>
-                Grow your workshop <br />
-                <span className="text-accent-orange">with Car Blink.</span>
-              </>
-            ) : (
-              <>
-                Join the future of <br />
-                <span className="text-primary-blue">car maintenance.</span>
-              </>
-            )}
+            Join the future of <br />
+            <span className="text-primary-blue">car maintenance.</span>
           </h1>
           <p className="mt-6 text-lg text-white/70 leading-relaxed">
-            {role === "PARTNER"
-              ? "Join 2,500+ verified workshop garages. Receive genuine service leads, manage quotes, and get reliable payouts."
-              : "Create your account today to easily book services, manage quotes, and keep track of your vehicle's health in one place."}
+            Create your account today to easily book services, manage quotes, and keep track of your vehicle's health in one place.
           </p>
 
           <div className="mt-12 grid grid-cols-2 gap-8 border-t border-white/10 pt-8">
@@ -205,234 +179,200 @@ export default function RegisterView() {
       </section>
 
       {/* ---------------- RIGHT SIDE: FORM ---------------- */}
-      <section className="flex flex-col justify-center p-6 sm:p-12 lg:p-16 max-h-screen overflow-y-auto">
+      <section className="flex flex-col justify-center p-6 sm:p-12 lg:p-16 min-h-screen">
         <div className="w-full max-w-md mx-auto py-8">
           {/* Mobile Logo */}
           <div className="mb-8 flex justify-center lg:hidden">
             <Logo />
           </div>
 
-          <div className="mb-6 text-center lg:text-left">
+          <div className="mb-8 text-center lg:text-left">
             <Badge variant="info" className="bg-primary-blue/5 border-none !text-primary-blue shadow-none mb-3 inline-flex">
               {step === 1 ? <User className="w-3.5 h-3.5 mr-1.5" /> : <ShieldCheck className="w-3.5 h-3.5 mr-1.5" />}
-              {role === "PARTNER" ? "Partner Registration" : (step === 1 ? "Customer Registration" : "Mobile OTP Verification")}
+              {step === 1 ? "Customer Registration" : "Mobile OTP Verification"}
             </Badge>
             <h2 className="font-heading font-black text-2xl sm:text-3xl tracking-tight mb-2">
-              Create an account
+              {step === 1 ? "Create an account" : "Verify Phone Number"}
             </h2>
             <p className="font-body text-xs sm:text-sm text-neutral-text-muted">
-              Get started by filling out your details below.
+              {step === 1 
+                ? "Get started by filling out your details below." 
+                : `Enter the 6-digit OTP code sent via SMS to +91 ${getValues("phone")}`}
             </p>
           </div>
 
-          {/* I am joining as a - Role Selector (Exact match to Dashboard) */}
-          <div className="mb-6">
-            <label className="block text-xs font-bold text-neutral-text-muted uppercase tracking-wider mb-2.5">
-              I am joining as a
-            </label>
-            <div className="grid grid-cols-2 gap-3 sm:gap-4">
-              <button
-                type="button"
-                onClick={() => setRole("CUSTOMER")}
-                className={`flex flex-col items-center justify-center p-3.5 sm:p-4 rounded-2xl border-2 transition-all cursor-pointer ${
-                  role === "CUSTOMER"
-                    ? "border-primary-orange bg-orange-50/50 shadow-xs"
-                    : "border-gray-100 bg-white hover:border-gray-200"
-                }`}
-              >
-                <div className={`p-2 rounded-full mb-1.5 ${role === "CUSTOMER" ? "bg-accent-orange text-white shadow-xs" : "bg-gray-100 text-gray-400"}`}>
-                  <User className="w-5 h-5" />
-                </div>
-                <span className={`font-bold text-xs sm:text-sm ${role === "CUSTOMER" ? "text-neutral-text-dark" : "text-gray-500"}`}>
-                  Customer
-                </span>
-              </button>
-
-              <button
-                type="button"
-                onClick={() => setRole("PARTNER")}
-                className={`flex flex-col items-center justify-center p-3.5 sm:p-4 rounded-2xl border-2 transition-all cursor-pointer ${
-                  role === "PARTNER"
-                    ? "border-primary-navy bg-primary-navy/5 shadow-xs"
-                    : "border-gray-100 bg-white hover:border-gray-200"
-                }`}
-              >
-                <div className={`p-2 rounded-full mb-1.5 ${role === "PARTNER" ? "bg-primary-navy text-white shadow-xs" : "bg-gray-100 text-gray-400"}`}>
-                  <Wrench className="w-5 h-5 text-accent-orange" />
-                </div>
-                <span className={`font-bold text-xs sm:text-sm ${role === "PARTNER" ? "text-neutral-text-dark" : "text-gray-500"}`}>
-                  Partner (Garage)
-                </span>
-              </button>
-            </div>
-          </div>
-
-          {/* DYNAMIC FORM: If PARTNER, render PartnerRegisterForm */}
-          {role === "PARTNER" ? (
-            <PartnerRegisterForm
-              showRoleToggle={false}
-              onRoleSelectCustomer={() => setRole("CUSTOMER")}
-              onSwitchToLogin={() => window.location.href = "/partner-login"}
-            />
-          ) : (
-            /* CUSTOMER FORM */
-            <div>
-              {apiError && (
-                <div className="mb-6 bg-red-50 text-red-600 text-sm p-4 rounded-xl border border-red-200 font-medium flex flex-col gap-2">
-                  <span>{apiError}</span>
-                  {apiError.toLowerCase().includes('already registered') && (
-                    <Link href="/login" className="text-primary-blue font-bold underline hover:text-blue-700 text-sm">
-                      → Click here to Sign In / Login instead
-                    </Link>
-                  )}
-                </div>
-              )}
-
-              {step === 1 ? (
-                /* STEP 1: CUSTOMER FORM */
-                <form onSubmit={handleSubmit(handleSendOtp)} className="space-y-4" autoComplete="off">
-                  <input type="text" style={{ display: "none" }} tabIndex={-1} autoComplete="off" readOnly />
-                  <input type="password" style={{ display: "none" }} tabIndex={-1} autoComplete="off" readOnly />
-                  <div>
-                    <Input
-                      key="fullName"
-                      label="Full Name"
-                      type="text"
-                      placeholder="Rahul Kumar"
-                      icon={<User className="h-4 w-4" />}
-                      {...register("fullName")}
-                    />
-                    {errors.fullName && (
-                      <p className="mt-1 text-xs text-red-500">{errors.fullName.message}</p>
-                    )}
-                  </div>
-
-                  <div>
-                    <Input
-                      key="email"
-                      label="Email Address (Optional)"
-                      type="email"
-                      placeholder="rahul@example.com"
-                      icon={<Mail className="h-4 w-4" />}
-                      {...register("email")}
-                    />
-                    {errors.email && (
-                      <p className="mt-1 text-xs text-red-500">{errors.email.message}</p>
-                    )}
-                  </div>
-
-                  <div>
-                    <Input
-                      key="phone"
-                      label="Phone Number"
-                      type="tel"
-                      placeholder="9876543210"
-                      maxLength={10}
-                      icon={<Phone className="h-4 w-4" />}
-                      {...register("phone")}
-                    />
-                    {errors.phone && (
-                      <p className="mt-1 text-xs text-red-500">{errors.phone.message}</p>
-                    )}
-                  </div>
-
-                  <div>
-                    <Input
-                      key="password"
-                      label="Password"
-                      type={showPassword ? "text" : "password"}
-                      placeholder="••••••••"
-                      autoComplete="new-password"
-                      icon={<Lock className="h-4 w-4" />}
-                      rightIcon={showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
-                      onRightIconClick={() => setShowPassword(!showPassword)}
-                      {...register("password")}
-                    />
-                    {errors.password && (
-                      <p className="mt-1 text-xs text-red-500">{errors.password.message}</p>
-                    )}
-                  </div>
-
-                  <input type="hidden" value="CUSTOMER" {...register("role")} />
-
-                  <Button
-                    type="submit"
-                    variant="accent"
-                    size="lg"
-                    fullWidth
-                    disabled={isSendingOtp}
-                    rightIcon={!isSendingOtp ? <ArrowRight className="h-4 w-4" /> : undefined}
-                    className="w-full h-12 mt-2 text-base font-bold bg-accent-orange hover:bg-accent-orange/90 text-white rounded-xl shadow-lg shadow-accent-orange/20"
-                  >
-                    {isSendingOtp ? "Sending OTP..." : "Continue & Send OTP"}
-                  </Button>
-                </form>
-              ) : (
-                /* STEP 2: OTP VERIFICATION */
-                <form onSubmit={handleVerifyAndRegister} className="space-y-4">
-                  <div>
-                    <Input
-                      key="otp"
-                      name="otp"
-                      label="Enter 6-Digit SMS OTP"
-                      type="text"
-                      placeholder="123456"
-                      maxLength={6}
-                      value={otp}
-                      onChange={(e) => setOtp(e.target.value.replace(/[^0-9]/g, ''))}
-                      icon={<Lock className="h-4 w-4" />}
-                    />
-                  </div>
-
-                  <div className="flex items-center justify-between text-xs text-gray-500 pt-1">
-                    <span>Didn't receive code?</span>
-                    {canResend ? (
-                      <button
-                        type="button"
-                        onClick={handleResendOtp}
-                        disabled={isSendingOtp}
-                        className="font-semibold text-primary-blue hover:underline inline-flex items-center gap-1 cursor-pointer"
-                      >
-                        <RotateCcw className="w-3 h-3" /> Resend OTP
-                      </button>
-                    ) : (
-                      <span className="font-medium text-gray-400">Resend in {resendTimer}s</span>
-                    )}
-                  </div>
-
-                  <Button
-                    type="submit"
-                    variant="accent"
-                    size="lg"
-                    fullWidth
-                    disabled={otp.length < 6 || isRegisterPending || isVerifyingOtp}
-                    rightIcon={!isVerifyingOtp && !isRegisterPending ? <ArrowRight className="h-4 w-4" /> : undefined}
-                    className="w-full h-12 mt-2 text-base font-bold bg-accent-orange hover:bg-accent-orange/90 text-white rounded-xl shadow-lg shadow-accent-orange/20"
-                  >
-                    {isVerifyingOtp || isRegisterPending ? "Verifying & Creating Account..." : "Verify OTP & Create Account"}
-                  </Button>
-
-                  <button
-                    type="button"
-                    onClick={() => setStep(1)}
-                    className="w-full text-center text-xs font-semibold text-neutral-text-muted hover:text-neutral-text-dark transition-colors pt-2 cursor-pointer"
-                  >
-                    ← Edit Details / Change Phone Number
-                  </button>
-                </form>
-              )}
-
-              <p className="mt-8 text-center lg:text-left font-body text-sm text-neutral-text-muted">
-                Already have an account?{" "}
-                <Link
-                  href="/login"
-                  className="font-heading font-semibold text-primary-blue hover:text-primary-blue-dark transition-colors"
-                >
-                  Log in
+          {apiError && (
+            <div className="mb-6 bg-red-50 text-red-600 text-sm p-4 rounded-xl border border-red-200 font-medium flex flex-col gap-2">
+              <span>{apiError}</span>
+              {apiError.toLowerCase().includes('already registered') && (
+                <Link href="/login" className="text-primary-blue font-bold underline hover:text-blue-700 text-sm">
+                  → Click here to Sign In / Login instead
                 </Link>
-              </p>
+              )}
             </div>
           )}
+
+          {step === 1 ? (
+            /* ================= STEP 1: REGISTRATION FORM ================= */
+            <form onSubmit={handleSubmit(handleSendOtp)} className="space-y-4" autoComplete="off">
+              {/* Prevent browser aggressive autofill */}
+              <input type="text" style={{ display: "none" }} tabIndex={-1} autoComplete="off" readOnly />
+              <input type="password" style={{ display: "none" }} tabIndex={-1} autoComplete="off" readOnly />
+
+              <div>
+                <Input
+                  key="fullName"
+                  label="Full Name"
+                  type="text"
+                  placeholder="Rahul Kumar"
+                  autoComplete="off"
+                  icon={<User className="h-4 w-4" />}
+                  {...register("fullName")}
+                />
+                {errors.fullName && (
+                  <p className="mt-1 text-xs text-red-500">{errors.fullName.message}</p>
+                )}
+              </div>
+
+              <div>
+                <Input
+                  key="email"
+                  label="Email Address (Optional)"
+                  type="email"
+                  placeholder="rahul@example.com"
+                  autoComplete="off"
+                  icon={<Mail className="h-4 w-4" />}
+                  {...register("email")}
+                />
+                {errors.email && (
+                  <p className="mt-1 text-xs text-red-500">{errors.email.message}</p>
+                )}
+              </div>
+
+              <div>
+                <Input
+                  key="phone"
+                  label="Phone Number"
+                  type="tel"
+                  placeholder="9876543210"
+                  maxLength={10}
+                  autoComplete="off"
+                  icon={<Phone className="h-4 w-4" />}
+                  {...register("phone")}
+                />
+                {errors.phone && (
+                  <p className="mt-1 text-xs text-red-500">{errors.phone.message}</p>
+                )}
+              </div>
+
+              <div>
+                <Input
+                  key="password"
+                  label="Password"
+                  type={showPassword ? "text" : "password"}
+                  placeholder="••••••••"
+                  autoComplete="new-password"
+                  icon={<Lock className="h-4 w-4" />}
+                  rightIcon={showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                  onRightIconClick={() => setShowPassword(!showPassword)}
+                  {...register("password")}
+                />
+                {errors.password && (
+                  <p className="mt-1 text-xs text-red-500">{errors.password.message}</p>
+                )}
+              </div>
+
+              <input type="hidden" value="CUSTOMER" {...register("role")} />
+
+              <Button
+                type="submit"
+                variant="accent"
+                size="lg"
+                fullWidth
+                disabled={isSendingOtp}
+                rightIcon={!isSendingOtp ? <ArrowRight className="h-4 w-4" /> : undefined}
+                className="w-full h-12 mt-2 text-base font-bold bg-accent-orange hover:bg-accent-orange/90 text-white rounded-xl shadow-lg shadow-accent-orange/20"
+              >
+                {isSendingOtp ? "Sending OTP..." : "Continue & Send OTP"}
+              </Button>
+            </form>
+          ) : (
+            /* ================= STEP 2: OTP VERIFICATION FORM ================= */
+            <form onSubmit={handleVerifyAndRegister} className="space-y-4">
+              <div>
+                <Input
+                  key="otp"
+                  name="otp"
+                  label="Enter 6-Digit SMS OTP"
+                  type="text"
+                  placeholder="123456"
+                  maxLength={6}
+                  value={otp}
+                  onChange={(e) => setOtp(e.target.value.replace(/[^0-9]/g, ''))}
+                  icon={<Lock className="h-4 w-4" />}
+                />
+              </div>
+
+              <div className="flex items-center justify-between text-xs text-gray-500 pt-1">
+                <span>Didn't receive code?</span>
+                {canResend ? (
+                  <button
+                    type="button"
+                    onClick={handleResendOtp}
+                    disabled={isSendingOtp}
+                    className="font-semibold text-primary-blue hover:underline inline-flex items-center gap-1 cursor-pointer"
+                  >
+                    <RotateCcw className="w-3 h-3" /> Resend OTP
+                  </button>
+                ) : (
+                  <span className="font-medium text-gray-400">Resend in {resendTimer}s</span>
+                )}
+              </div>
+
+              <Button
+                type="submit"
+                variant="accent"
+                size="lg"
+                fullWidth
+                disabled={otp.length < 6 || isRegisterPending || isVerifyingOtp}
+                rightIcon={!isVerifyingOtp && !isRegisterPending ? <ArrowRight className="h-4 w-4" /> : undefined}
+                className="w-full h-12 mt-2 text-base font-bold bg-accent-orange hover:bg-accent-orange/90 text-white rounded-xl shadow-lg shadow-accent-orange/20"
+              >
+                {isVerifyingOtp || isRegisterPending ? "Verifying & Creating Account..." : "Verify OTP & Create Account"}
+              </Button>
+
+              <button
+                type="button"
+                onClick={() => setStep(1)}
+                className="w-full text-center text-xs font-semibold text-neutral-text-muted hover:text-neutral-text-dark transition-colors pt-2 cursor-pointer"
+              >
+                ← Edit Details / Change Phone Number
+              </button>
+            </form>
+          )}
+
+          <p className="mt-8 text-center lg:text-left font-body text-sm text-neutral-text-muted">
+            Already have an account?{" "}
+            <Link
+              href="/login"
+              className="font-heading font-semibold text-primary-blue hover:text-primary-blue-dark transition-colors"
+            >
+              Log in
+            </Link>
+          </p>
+
+          <div className="mt-6 pt-5 border-t border-gray-100 text-center lg:text-left">
+            <p className="text-xs text-neutral-text-muted flex items-center justify-center lg:justify-start gap-1.5">
+              <Wrench className="w-3.5 h-3.5 text-accent-orange" />
+              <span>Are you a workshop or garage owner?</span>
+              <Link
+                href="/partner-login?mode=register"
+                className="font-bold text-accent-orange hover:underline ml-1"
+              >
+                Partner Portal →
+              </Link>
+            </p>
+          </div>
         </div>
       </section>
     </div>

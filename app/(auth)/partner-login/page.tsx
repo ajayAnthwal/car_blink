@@ -123,7 +123,7 @@ function PartnerLoginPageContent() {
       </section>
 
       {/* ---------------- RIGHT SIDE: PORTAL ---------------- */}
-      <section className="flex flex-col justify-center p-6 sm:p-12 lg:p-16 max-h-screen overflow-y-auto">
+      <section className="flex flex-col justify-center p-6 sm:p-12 lg:p-16 min-h-screen">
         <div className="w-full max-w-md mx-auto py-6">
           {/* Mobile Logo */}
           <div className="mb-6 flex justify-center lg:hidden">
