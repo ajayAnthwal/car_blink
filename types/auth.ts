@@ -26,7 +26,12 @@ export type RegisterPayload = {
   phone: string;
   password?: string;
   otp?: string;
-  role: "CUSTOMER";
+  role: "CUSTOMER" | "PARTNER";
+  businessName?: string;
+  ownerName?: string;
+  address?: string;
+  gstNumber?: string;
+  msmeNumber?: string;
 };
 
 export type RegisterResponse = {

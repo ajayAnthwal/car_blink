@@ -38,7 +38,7 @@ export default function WorkshopsHero() {
             </p>
 
             <div className="mt-8 flex flex-wrap items-center gap-4">
-              <Button href="/register" variant="accent" size="lg" rightIcon={<ArrowRight className="w-5 h-5" />}>
+              <Button href="#become-partner-form" variant="accent" size="lg" rightIcon={<ArrowRight className="w-5 h-5" />}>
                 Become a Partner
               </Button>
               <Button

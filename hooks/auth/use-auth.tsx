@@ -189,19 +189,25 @@ export const useRegister = (): UseMutationResult<
 > => {
   return useMutation({
     mutationFn: postRegister,
-    onSuccess: (res: any) => {
+    onSuccess: (res: any, variables: any) => {
       const { token, role } = extractTokenAndRole(res);
       if (token) setCrossPortAuth(token, role);
-      toast.success(res?.message || 'Registration successful! Opening your Dashboard...');
-      setTimeout(() => {
-        const dashboardUrl = getDashboardUrl();
-        if (token) {
-          window.location.href = `${dashboardUrl}/login?token=${encodeURIComponent(token)}`;
-        } else {
-          const route = role === 'PARTNER' ? '/partner/dashboard' : '/customer/dashboard';
-          window.location.href = `${dashboardUrl}${route}`;
-        }
-      }, 800);
+      
+      const userRole = variables?.role || role;
+      if (userRole === 'PARTNER') {
+        toast.success(res?.message || 'Partner registration submitted successfully!');
+        // Do not auto-redirect; let partner review Step 3 verification notice
+      } else {
+        toast.success(res?.message || 'Registration successful! Opening your Dashboard...');
+        setTimeout(() => {
+          const dashboardUrl = getDashboardUrl();
+          if (token) {
+            window.location.href = `${dashboardUrl}/login?token=${encodeURIComponent(token)}`;
+          } else {
+            window.location.href = `${dashboardUrl}/customer/dashboard`;
+          }
+        }, 800);
+      }
     },
     onError: (error) => {
       toast.error(error.message);
