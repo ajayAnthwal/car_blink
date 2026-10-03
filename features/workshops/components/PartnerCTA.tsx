@@ -75,7 +75,7 @@ export default function PartnerCTA() {
         {/* CTA Buttons */}
         <div className="w-full flex flex-col sm:flex-row items-center gap-3.5 pt-2">
           <Link
-            href="/partner-login?mode=register"
+            href="/partner-login"
             className="w-full sm:w-auto inline-flex items-center justify-center gap-2 py-3.5 px-7 rounded-xl bg-accent-orange hover:bg-accent-orange/90 text-white font-bold text-sm sm:text-base shadow-lg shadow-accent-orange/25 transition-all hover:scale-[1.02]"
           >
             <Wrench className="w-4 h-4" />
@@ -84,7 +84,7 @@ export default function PartnerCTA() {
           </Link>
 
           <Link
-            href="/partner-login?mode=login"
+            href="/partner-login"
             className="w-full sm:w-auto inline-flex items-center justify-center gap-2 py-3.5 px-6 rounded-xl bg-white hover:bg-neutral-50 text-primary-navy border-2 border-primary-navy/15 hover:border-primary-navy font-bold text-sm sm:text-base transition-all"
           >
             <Building2 className="w-4 h-4 text-primary-navy" />

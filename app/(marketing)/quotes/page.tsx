@@ -39,95 +39,8 @@ import LocationModal from "@/components/ui/LocationModal";
 import { useCreateLead, useSendLeadOtp, useCreateBooking, useCreateGarageVehicle, useGetServices } from "@/services/queries";
 import { toast } from "sonner";
 import { useAuth } from "@/features/auth/hooks/useAuth";
-const MAKES = [
-  "Maruti Suzuki", "Hyundai", "Tata", "Mahindra", "Kia", 
-  "Toyota", "Honda", "MG", "Skoda", "Volkswagen", 
-  "Renault", "Nissan", "Ford", "Jeep", "Citroen", 
-  "BMW", "Mercedes", "Land Rover", "Audi"
-];
-const CAR_MODELS_MAP: Record<string, string[]> = {
-  "Maruti Suzuki": [
-    "Alto", "Alto 800", "Alto K10", "S-Presso", "Celerio", "WagonR", "Swift", 
-    "Dzire", "Ignis", "Baleno", "Fronx", "Brezza", "Grand Vitara", "Invicto", 
-    "Ertiga", "XL6", "Eeco", "Omni", "Zen", "Ritz", "Ciaz", "S-Cross", "Gypsy", 
-    "Esteem", "Jimny", "Other"
-  ],
-  "Hyundai": [
-    "Eon", "Santro", "Grand i10", "Grand i10 Nios", "i10", "i20", "i20 N Line", 
-    "Aura", "Xcent", "Accent", "Verna", "Elantra", "Sonata", "Venue", 
-    "Venue N Line", "Creta", "Creta N Line", "Alcazar", "Tucson", "Santa Fe", 
-    "Ioniq 5", "Kona Electric", "Other"
-  ],
-  "Tata": [
-    "Tiago", "Tiago EV", "Tigor", "Altroz", "Punch", "Punch EV", 
-    "Nexon", "Nexon EV", "Curvv", "Curvv EV", "Harrier", "Harrier EV", 
-    "Safari", "Nano", "Indica", "Indica Vista", "Indigo", "Indigo CS", 
-    "Manza", "Zest", "Bolt", "Sumo", "Sumo Gold", "Safari Storme", 
-    "Hexa", "Aria", "Venture", "Winger (passenger/commercial)", 
-    "Magic", "Nano GenX", "Other"
-  ],
-  "Mahindra": [
-    "XUV700", "XUV300", "XUV400", "Scorpio", "Scorpio-N", "Scorpio Classic", 
-    "Thar", "Thar Roxx", "Bolero", "Bolero Neo", "Bolero Neo+", "Marazzo", 
-    "Alturas G4", "KUV100", "TUV300", "Xylo", "Quanto", "NuvoSport", "Verito", 
-    "Verito Vibe", "Logan", "Armada", "Commander", "Marshal", "Other"
-  ],
-  "Kia": [
-    "Seltos", "Sonet", "Carens", "Carnival", "EV6", "EV9", "Other"
-  ],
-  "Toyota": [
-    "Glanza", "Urban Cruiser", "Urban Cruiser Hyryder", "Innova", 
-    "Innova Crysta", "Innova Hycross", "Fortuner", "Fortuner Legender", 
-    "Hilux", "Camry", "Vellfire", "Land Cruiser", "Yaris", "Etios", 
-    "Etios Liva", "Corolla Altis", "Qualis", "Other"
-  ],
-  "Honda": [
-    "Brio", "Amaze", "Jazz", "WR-V", "City", "City e:HEV", "Elevate", 
-    "BR-V", "CR-V", "Civic", "Accord", "Mobilio", "Other"
-  ],
-  "MG": [
-    "Astor", "Hector", "Hector Plus", "Gloster", "ZS EV", "Comet EV", 
-    "Windsor EV", "Other"
-  ],
-  "Skoda": [
-    "Slavia", "Kushaq", "Kodiaq", "Superb", "Octavia", "Rapid", 
-    "Fabia", "Yeti", "Laura", "Other"
-  ],
-  "Volkswagen": [
-    "Taigun", "Virtus", "Tiguan", "Polo", "Vento", "Ameo", 
-    "Jetta", "Passat", "T-Roc", "Touareg", "Other"
-  ],
-  "Renault": [
-    "Kwid", "Kiger", "Triber", "Duster", "Captur", "Lodgy", 
-    "Scala", "Pulse", "Fluence", "Other"
-  ],
-  "Nissan": [
-    "Magnite", "Kicks", "Terrano", "Micra", "Sunny", "Evalia", 
-    "Teana", "X-Trail", "Other"
-  ],
-  "Ford": [
-    "Figo", "Aspire", "Freestyle", "EcoSport", "Endeavour", 
-    "Mustang", "Fiesta", "Ikon", "Escort", "Fusion", "Other"
-  ],
-  "Jeep": [
-    "Compass", "Meridian", "Wrangler", "Grand Cherokee", "Other"
-  ],
-  "Citroen": [
-    "C3", "eC3", "C3 Aircross", "C5 Aircross", "Basalt", "Other"
-  ],
-  "BMW": [
-    "X1", "X3", "X5", "X7", "3 Series", "5 Series", "7 Series", "Z4", "Other"
-  ],
-  "Mercedes": [
-    "A-Class", "C-Class", "E-Class", "S-Class", "GLA", "GLC", "GLE", "GLS", "Other"
-  ],
-  "Land Rover": [
-    "Range Rover", "Range Rover Sport", "Range Rover Evoque", "Discovery", "Discovery Sport", "Defender", "Other"
-  ],
-  "Audi": [
-    "A3", "A4", "A6", "A8", "Q3", "Q5", "Q7", "Q8", "e-tron", "Other"
-  ]
-};
+import { getDashboardUrl } from "@/hooks/auth/use-auth";
+import { MAKES, CAR_MODELS_MAP } from "@/config/vehicles.config";
 
 const ALL_SERVICES = [
   { name: "Periodic Service", price: "₹2,499 - ₹4,999", icon: Wrench },
@@ -148,7 +61,7 @@ const ALL_SERVICES = [
 
 function QuotesForm() {
   const searchParams = useSearchParams();
-  const { user, isAuthenticated } = useAuth();
+  const { user, isAuthenticated, login: authLogin } = useAuth();
   const [step, setStep] = useState(1);
   const [isLocating, setIsLocating] = useState(false);
   const [showMapModal, setShowMapModal] = useState(false);
@@ -611,7 +524,7 @@ function QuotesForm() {
                         formData.otherServiceDetails ? `Other Details: ${formData.otherServiceDetails}` : ''
                       ].filter(Boolean).join(" | ");
 
-                      await createLead({
+                      const res: any = await createLead({
                         name: formData.name,
                         phone: formData.phone,
                         email: formData.email,
@@ -621,7 +534,45 @@ function QuotesForm() {
                         city: formData.location || formData.address || 'Not specified',
                         message: fullAddressStr,
                         otp: otp.trim(),
+                        fuelType: formData.fuelType,
+                        vehicleNumber: formData.vehicleNumber,
+                        services: formData.services,
                       });
+
+                      const tokens = res?.tokens || res?.data?.tokens;
+                      const user = res?.user || res?.data?.user;
+
+                      if (tokens?.accessToken) {
+                        try {
+                          localStorage.setItem('accessToken', tokens.accessToken);
+                          localStorage.setItem('token', tokens.accessToken);
+                          localStorage.setItem('car_blink_access_token', tokens.accessToken);
+                          if (tokens.refreshToken) localStorage.setItem('refreshToken', tokens.refreshToken);
+                          if (user) localStorage.setItem('user', JSON.stringify(user));
+                          localStorage.setItem('role', 'CUSTOMER');
+                          localStorage.setItem('user_role', 'CUSTOMER');
+
+                          const isProd = typeof window !== 'undefined' && window.location.hostname.endsWith('carblink.in');
+                          const domain = isProd ? '; domain=.carblink.in' : '';
+                          document.cookie = `accessToken=${tokens.accessToken}; path=/${domain}; max-age=31536000`;
+                          document.cookie = `car_blink_access_token=${tokens.accessToken}; path=/${domain}; max-age=31536000`;
+                          document.cookie = `role=CUSTOMER; path=/${domain}; max-age=31536000`;
+                          document.cookie = `user_role=CUSTOMER; path=/${domain}; max-age=31536000`;
+                          if (user && typeof authLogin === 'function') {
+                            authLogin(tokens.accessToken, user);
+                          }
+                        } catch (e) {
+                          console.error('Auth storage sync warning:', e);
+                        }
+
+                        toast.success("Quote Verified! Redirecting to your Customer Dashboard...");
+                        setStep(6);
+
+                        const dashboardUrl = getDashboardUrl();
+                        window.location.href = `${dashboardUrl}/login?token=${encodeURIComponent(tokens.accessToken)}`;
+                        return;
+                      }
+
                       toast.success("Query Submitted Successfully! We will contact you soon.");
                       setStep(6);
                     } catch (err: any) {
@@ -634,7 +585,7 @@ function QuotesForm() {
                   className="w-full"
                   rightIcon={isSubmitting ? <Loader2 className="w-4 h-4 animate-spin" /> : <ArrowRight className="w-4 h-4" />}
                 >
-                  {isSubmitting ? "Verifying..." : "Verify & Submit Quote Request"}
+                  {isSubmitting ? "Verifying & Creating Account..." : "Verify & Submit Quote Request"}
                 </Button>
 
                 <button
@@ -784,23 +735,36 @@ function QuotesForm() {
           </>
         );
       case 6:
+        const dashboardUrl = getDashboardUrl();
+        const storedToken = (typeof window !== 'undefined' ? (localStorage.getItem('accessToken') || localStorage.getItem('car_blink_access_token')) : '');
+        const targetDashboardHref = storedToken 
+          ? `${dashboardUrl}/login?token=${encodeURIComponent(storedToken)}`
+          : `${dashboardUrl}/customer/dashboard`;
+
         return (
           <div className="animate-in fade-in zoom-in-95 duration-500 flex flex-col items-center justify-center text-center py-10">
             <div className="w-20 h-20 bg-success/10 rounded-full flex items-center justify-center mb-6 shadow-inner shadow-success/20">
               <CheckCircle2 className="w-10 h-10 text-success" />
             </div>
-            <h2 className="font-heading font-black text-3xl text-neutral-text-dark mb-4">{isAuthenticated ? "Booking Confirmed!" : "Request Sent Successfully!"}</h2>
-            <p className="font-body text-neutral-text-muted text-lg max-w-md leading-relaxed mb-8">
-              {isAuthenticated ? (
-                <>Thank you, <span className="font-bold text-neutral-text-dark">{formData.name}</span>. Your booking for <span className="font-bold text-neutral-text-dark">{formData.services.join(", ")}</span> has been created. Partners are now bidding on your request.</>
-              ) : (
-                <>Thank you, <span className="font-bold text-neutral-text-dark">{formData.name}</span>. We've received your request for <span className="font-bold text-neutral-text-dark">{formData.services.join(", ")}</span>. Our top-rated workshops are calculating your exact quote and we will contact you on <span className="font-bold text-neutral-text-dark">+91 {formData.phone}</span> shortly.</>
-              )}
+            <h2 className="font-heading font-black text-3xl text-neutral-text-dark mb-4">
+              Quote Request Submitted!
+            </h2>
+            <p className="font-body text-neutral-text-muted text-base max-w-md leading-relaxed mb-6">
+              Thank you, <span className="font-bold text-neutral-text-dark">{formData.name}</span>. Your account has been registered and verified. We are redirecting you to your Customer Dashboard...
             </p>
-            <div className="max-w-md mx-auto">
-              <Button variant="primary" size="lg" href={isAuthenticated ? `${process.env.NEXT_PUBLIC_DASHBOARD_URL}/customer/dashboard` : "/"}>
-                {isAuthenticated ? "Go to Dashboard" : "Return to Home"}
-              </Button>
+            <div className="flex flex-col sm:flex-row gap-3 max-w-md mx-auto w-full">
+              <a
+                href={targetDashboardHref}
+                className="flex-1 inline-flex items-center justify-center gap-2 px-6 py-3.5 font-heading font-bold text-sm text-white bg-primary-blue rounded-xl hover:bg-primary-blue-dark transition-all shadow-md shadow-primary-blue/20"
+              >
+                Go to Dashboard Now <ArrowRight className="w-4 h-4" />
+              </a>
+              <Link
+                href="/"
+                className="inline-flex items-center justify-center px-5 py-3.5 font-heading font-semibold text-sm text-neutral-text-dark border border-neutral-text-muted/20 rounded-xl hover:bg-neutral-bg transition-colors"
+              >
+                Return to Home
+              </Link>
             </div>
           </div>
         );

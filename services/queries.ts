@@ -97,7 +97,7 @@ export const useSendLeadOtp = () => {
 
 export const useCreateLead = () => {
   return useMutation({
-    mutationFn: (data: { name: string; phone: string; email?: string; vehicleBrand?: string; vehicleModel?: string; city?: string; message?: string; source?: string; otp?: string }) => 
+    mutationFn: (data: { name: string; phone: string; email?: string; vehicleBrand?: string; vehicleModel?: string; city?: string; message?: string; source?: string; otp?: string; fuelType?: string; vehicleNumber?: string; services?: string[]; [key: string]: any }) => 
       fetchApi<any>('/leads', {
         method: 'POST',
         body: JSON.stringify(data),

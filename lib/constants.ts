@@ -20,7 +20,7 @@ export const FOOTER_SERVICES_LINKS: NavLink[] = [
 ];
 
 export const FOOTER_WORKSHOPS_LINKS: NavLink[] = [
-  { name: "Become a Partner", href: "/for-workshops" },
+  { name: "Become a Partner", href: "/partner-login" },
   { name: "How It Works", href: "/how-it-works" },
   { name: "Pricing", href: "/pricing" },
   { name: "Partner Policy", href: "/partner-policy" },

@@ -6,6 +6,8 @@ import LocationModal from "@/components/ui/LocationModal";
 import { LocateFixed, MapPin, Loader2, ArrowLeft, KeyRound, CheckCircle2, Phone, ExternalLink, Car, MessageSquare, RefreshCw } from "lucide-react";
 import { useCreateLead, useSendLeadOtp } from "@/services/queries";
 import { toast } from "sonner";
+import { getDashboardUrl } from "@/hooks/auth/use-auth";
+import { MAKES, CAR_MODELS_MAP } from "@/config/vehicles.config";
 
 export default function HeroForm() {
   const [step, setStep] = useState<'FORM' | 'OTP' | 'SUCCESS'>('FORM');
@@ -13,7 +15,9 @@ export default function HeroForm() {
   const [formData, setFormData] = useState({
     name: "",
     number: "",
-    carDetails: "",
+    carMake: "",
+    carModel: "",
+    otherModel: "",
     address: "",
     query: "",
   });
@@ -40,11 +44,28 @@ export default function HeroForm() {
   const handleSendOtp = async (e: React.FormEvent) => {
     e.preventDefault();
     if (isSendingOtp) return;
+
+    if (!formData.name.trim()) {
+      toast.error("Please enter your name");
+      return;
+    }
+
     const cleanPhone = formData.number.replace(/[^0-9]/g, '');
     if (cleanPhone.length < 10) {
       toast.error("Please enter a valid 10-digit mobile number");
       return;
     }
+
+    if (!formData.carMake) {
+      toast.error("Please select your car make / brand");
+      return;
+    }
+
+    if (!formData.carModel || (formData.carModel === "Other" && !formData.otherModel.trim())) {
+      toast.error("Please select or specify your car model");
+      return;
+    }
+
     try {
       const res = await sendOtp({ phone: formData.number });
       toast.success(res?.message || "OTP sent successfully to your mobile number!");
@@ -68,6 +89,9 @@ export default function HeroForm() {
     }
   };
 
+  const resolvedModel = formData.carModel === "Other" ? formData.otherModel.trim() : formData.carModel;
+  const displayCar = [formData.carMake, resolvedModel].filter(Boolean).join(" ");
+
   const handleVerifyAndSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (otp.trim().length < 6) {
@@ -79,9 +103,10 @@ export default function HeroForm() {
         name: formData.name,
         phone: formData.number,
         source: 'QUICK_CALLBACK',
-        vehicleBrand: formData.carDetails,
+        vehicleBrand: formData.carMake,
+        vehicleModel: resolvedModel,
         city: formData.address,
-        message: formData.query,
+        message: formData.query ? `${formData.query} | Car: ${displayCar}` : `Quick Callback Request for ${displayCar}`,
         otp: otp.trim(),
       });
 
@@ -96,12 +121,15 @@ export default function HeroForm() {
           localStorage.setItem('car_blink_access_token', tokens.accessToken);
           if (tokens.refreshToken) localStorage.setItem('refreshToken', tokens.refreshToken);
           if (user) localStorage.setItem('user', JSON.stringify(user));
+          localStorage.setItem('role', 'CUSTOMER');
+          localStorage.setItem('user_role', 'CUSTOMER');
           
           const isProd = process.env.NODE_ENV === 'production';
           const domain = isProd ? '; domain=.carblink.in' : '';
           document.cookie = `accessToken=${tokens.accessToken}; path=/${domain}; max-age=31536000`;
           document.cookie = `car_blink_access_token=${tokens.accessToken}; path=/${domain}; max-age=31536000`;
           document.cookie = `role=CUSTOMER; path=/${domain}; max-age=31536000`;
+          document.cookie = `user_role=CUSTOMER; path=/${domain}; max-age=31536000`;
         } catch (e) {}
       }
 
@@ -114,7 +142,7 @@ export default function HeroForm() {
     }
   };
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
     setFormData((prev) => ({
       ...prev,
       [e.target.name]: e.target.value,
@@ -154,7 +182,7 @@ export default function HeroForm() {
               Thank You, {formData.name || 'Valued Customer'}!
             </h4>
             <p className="text-xs text-neutral-text-muted mt-1.5 leading-relaxed">
-              We have received your callback request{formData.carDetails ? <> for <span className="font-semibold text-neutral-text-dark">{formData.carDetails}</span></> : ''}. Our service team is matching top workshops in <span className="font-semibold text-neutral-text-dark">{formData.address || 'your area'}</span>.
+              We have received your callback request{displayCar ? <> for <span className="font-semibold text-neutral-text-dark">{displayCar}</span></> : ''}. Our service team is matching top workshops in <span className="font-semibold text-neutral-text-dark">{formData.address || 'your area'}</span>.
             </p>
           </div>
 
@@ -171,7 +199,7 @@ export default function HeroForm() {
               </div>
             </div>
 
-            {formData.carDetails && (
+            {displayCar && (
               <div className="flex items-start gap-3 pt-2.5 border-t border-blue-100/80">
                 <div className="w-7 h-7 bg-primary-blue/10 rounded-lg flex items-center justify-center text-primary-blue shrink-0 mt-0.5">
                   <Car className="w-4 h-4 text-primary-blue" />
@@ -179,7 +207,7 @@ export default function HeroForm() {
                 <div>
                   <h5 className="text-xs font-bold text-gray-900 uppercase tracking-wide">Car Details</h5>
                   <p className="text-xs text-gray-600 mt-0.5 truncate max-w-[240px]">
-                    {formData.carDetails}
+                    {displayCar}
                   </p>
                 </div>
               </div>
@@ -217,8 +245,8 @@ export default function HeroForm() {
           <div className="w-full space-y-2 pt-1">
             <a
               href={userToken 
-                ? `${process.env.NEXT_PUBLIC_DASHBOARD_URL || 'http://localhost:3000'}/customer/dashboard?token=${userToken}`
-                : `${process.env.NEXT_PUBLIC_DASHBOARD_URL || 'http://localhost:3000'}/customer/dashboard`}
+                ? `${getDashboardUrl()}/login?token=${encodeURIComponent(userToken)}`
+                : `${getDashboardUrl()}/customer/dashboard`}
               className="w-full inline-flex items-center justify-center gap-2 px-5 py-3 rounded-xl bg-primary-blue text-white font-bold text-sm hover:bg-primary-blue-dark transition-all shadow-md shadow-primary-blue/20"
             >
               Track Status in Customer Portal <ExternalLink className="w-4 h-4" />
@@ -227,7 +255,7 @@ export default function HeroForm() {
             <button
               type="button"
               onClick={() => {
-                setFormData({ name: "", number: "", carDetails: "", address: "", query: "" });
+                setFormData({ name: "", number: "", carMake: "", carModel: "", otherModel: "", address: "", query: "" });
                 setOtp("");
                 setStep('FORM');
               }}
@@ -238,10 +266,10 @@ export default function HeroForm() {
           </div>
         </div>
       ) : step === 'FORM' ? (
-        <form onSubmit={handleSendOtp} className="flex flex-col gap-4">
+        <form onSubmit={handleSendOtp} className="flex flex-col gap-3.5">
           <div>
             <label htmlFor="name" className="block text-sm font-medium text-neutral-text-dark mb-1">
-              Full Name
+              Full Name <span className="text-red-500">*</span>
             </label>
             <input
               type="text"
@@ -250,14 +278,14 @@ export default function HeroForm() {
               value={formData.name}
               onChange={handleChange}
               required
-              className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-primary-blue focus:border-transparent transition-all text-sm"
+              className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-primary-blue focus:border-transparent transition-all text-sm font-medium"
               placeholder="John Doe"
             />
           </div>
 
           <div>
             <label htmlFor="number" className="block text-sm font-medium text-neutral-text-dark mb-1">
-              Phone Number
+              Phone Number <span className="text-red-500">*</span>
             </label>
             <input
               type="tel"
@@ -266,26 +294,88 @@ export default function HeroForm() {
               value={formData.number}
               onChange={handleChange}
               required
-              className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-primary-blue focus:border-transparent transition-all text-sm"
+              className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-primary-blue focus:border-transparent transition-all text-sm font-medium"
               placeholder="+91 XXXXX XXXXX"
             />
           </div>
 
-          <div>
-            <label htmlFor="carDetails" className="block text-sm font-medium text-neutral-text-dark mb-1">
-              Car Details
-            </label>
-            <input
-              type="text"
-              id="carDetails"
-              name="carDetails"
-              value={formData.carDetails}
-              onChange={handleChange}
-              required
-              className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-primary-blue focus:border-transparent transition-all text-sm"
-              placeholder="e.g., Hyundai Creta 2022"
-            />
+          {/* Car Make & Model 2 Fields */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+            <div>
+              <label htmlFor="carMake" className="block text-sm font-medium text-neutral-text-dark mb-1">
+                Car Make <span className="text-red-500">*</span>
+              </label>
+              <select
+                id="carMake"
+                name="carMake"
+                value={formData.carMake}
+                onChange={(e) => {
+                  const make = e.target.value;
+                  setFormData((prev) => ({
+                    ...prev,
+                    carMake: make,
+                    carModel: "",
+                    otherModel: "",
+                  }));
+                }}
+                required
+                className="w-full px-3.5 py-3 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-primary-blue focus:border-transparent transition-all text-sm bg-white text-gray-800 font-medium"
+              >
+                <option value="">Select Make</option>
+                {MAKES.map((make) => (
+                  <option key={make} value={make}>
+                    {make}
+                  </option>
+                ))}
+              </select>
+            </div>
+
+            <div>
+              <label htmlFor="carModel" className="block text-sm font-medium text-neutral-text-dark mb-1">
+                Car Model <span className="text-red-500">*</span>
+              </label>
+              <select
+                id="carModel"
+                name="carModel"
+                value={formData.carModel}
+                onChange={(e) => {
+                  const model = e.target.value;
+                  setFormData((prev) => ({
+                    ...prev,
+                    carModel: model,
+                  }));
+                }}
+                required
+                disabled={!formData.carMake}
+                className="w-full px-3.5 py-3 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-primary-blue focus:border-transparent transition-all text-sm bg-white text-gray-800 font-medium disabled:bg-gray-100 disabled:text-gray-400"
+              >
+                <option value="">{formData.carMake ? "Select Model" : "Select Make first"}</option>
+                {formData.carMake && (CAR_MODELS_MAP[formData.carMake] || ["Other"]).map((model) => (
+                  <option key={model} value={model}>
+                    {model}
+                  </option>
+                ))}
+              </select>
+            </div>
           </div>
+
+          {formData.carModel === "Other" && (
+            <div className="animate-in fade-in duration-200">
+              <label htmlFor="otherModel" className="block text-xs font-medium text-neutral-text-dark mb-1">
+                Specify Car Model <span className="text-red-500">*</span>
+              </label>
+              <input
+                type="text"
+                id="otherModel"
+                name="otherModel"
+                value={formData.otherModel}
+                onChange={handleChange}
+                required
+                placeholder="e.g. Baleno 2018 or Santro Xing"
+                className="w-full px-4 py-2.5 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-primary-blue focus:border-transparent transition-all text-sm font-medium"
+              />
+            </div>
+          )}
 
           <div>
             <div className="flex items-center justify-between mb-1">
@@ -309,7 +399,7 @@ export default function HeroForm() {
                 value={formData.address}
                 onChange={handleChange}
                 required
-                className="w-full pl-10 pr-4 py-3 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-primary-blue focus:border-transparent transition-all text-sm"
+                className="w-full pl-10 pr-4 py-3 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-primary-blue focus:border-transparent transition-all text-sm font-medium"
                 placeholder="e.g., Cyber City, Gurgaon or House No, Sector..."
               />
               <MapPin className="w-4 h-4 text-neutral-text-muted absolute left-3.5 top-1/2 -translate-y-1/2" />
@@ -318,15 +408,15 @@ export default function HeroForm() {
 
           <div>
             <label htmlFor="query" className="block text-sm font-medium text-neutral-text-dark mb-1">
-              Query / Message
+              Query / Message <span className="text-xs text-neutral-text-muted font-normal">(Optional)</span>
             </label>
             <textarea
               id="query"
               name="query"
               value={formData.query}
               onChange={handleChange}
-              rows={3}
-              className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-primary-blue focus:border-transparent transition-all resize-none text-sm"
+              rows={2}
+              className="w-full px-4 py-2.5 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-primary-blue focus:border-transparent transition-all resize-none text-sm font-medium"
               placeholder="Type your query here..."
             ></textarea>
           </div>
@@ -335,7 +425,7 @@ export default function HeroForm() {
             type="submit"
             variant="primary"
             size="lg"
-            className="w-full mt-2"
+            className="w-full mt-1"
             disabled={isSendingOtp}
           >
             {isSendingOtp ? (
@@ -435,4 +525,3 @@ export default function HeroForm() {
     </div>
   );
 }
-

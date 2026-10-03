@@ -21,7 +21,7 @@ export const getDashboardUrl = (): string => {
   if (typeof window !== 'undefined') {
     const isLocalhost = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
     if (isLocalhost) {
-      return 'http://localhost:3000';
+      return 'http://localhost:3001';
     }
   }
   const raw = process.env.NEXT_PUBLIC_DASHBOARD_URL || 'https://dashboard.carblink.in';
