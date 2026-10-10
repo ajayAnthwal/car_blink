@@ -510,6 +510,7 @@ function QuotesForm() {
               <div className="flex flex-col gap-3">
                 <Button
                   onClick={async () => {
+                    if (isSubmitting) return;
                     if (otp.trim().length < 6) {
                       toast.error("Please enter the 6-digit OTP code");
                       return;

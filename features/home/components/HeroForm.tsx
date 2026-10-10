@@ -94,6 +94,7 @@ export default function HeroForm() {
 
   const handleVerifyAndSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (isSubmitting) return;
     if (otp.trim().length < 6) {
       toast.error("Please enter the 6-digit OTP code");
       return;

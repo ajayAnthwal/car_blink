@@ -28,7 +28,16 @@ export type RegisterPayload = {
   otp?: string;
   role: "CUSTOMER" | "PARTNER";
   businessName?: string;
+  workshopName?: string;
   ownerName?: string;
+  businessType?: "Proprietorship" | "Partnership" | "LLP" | "Company" | "Other" | string;
+  addressLine?: string;
+  city?: string;
+  state?: string;
+  pincode?: string;
+  latitude?: number;
+  longitude?: number;
+  businessAddress?: string;
   address?: string;
   gstNumber?: string;
   msmeNumber?: string;

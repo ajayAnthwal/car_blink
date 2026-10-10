@@ -16,12 +16,15 @@ import {
   ShieldCheck, 
   Building2, 
   FileText,
-  Loader2 
+  Loader2,
+  MapPin,
+  Compass,
+  AlertCircle
 } from "lucide-react";
 import Button from "@/components/ui/Button";
 import Input from "@/components/ui/Input";
 import { postSendOtp } from "@/services/auth.service";
-import { useRegister } from "@/hooks/auth/use-auth";
+import { useRegister, getDashboardUrl } from "@/hooks/auth/use-auth";
 import { toast } from "sonner";
 
 interface PartnerRegisterFormProps {
@@ -46,16 +49,26 @@ export default function PartnerRegisterForm({
     email: "",
     phone: "",
     password: "",
+    // Partner Specific Structured Fields (Matching Dashboard & Backend)
     businessName: "",
+    workshopName: "",
     ownerName: "",
+    businessType: "Proprietorship",
+    addressLine: "",
+    city: "",
+    state: "",
+    pincode: "",
+    latitude: "",
+    longitude: "",
     gstNumber: "",
     msmeNumber: "",
-    address: "",
   });
 
   const [otp, setOtp] = useState("");
   const [resendTimer, setResendTimer] = useState(30);
   const [canResend, setCanResend] = useState(false);
+  const [resendCount, setResendCount] = useState(0);
+  const [isLocating, setIsLocating] = useState(false);
   const [error, setError] = useState("");
   const [isLoading, setIsLoading] = useState(false);
 
@@ -73,17 +86,48 @@ export default function PartnerRegisterForm({
     return () => clearInterval(timer);
   }, [step, resendTimer]);
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
     if (name === "phone") {
       const clean = value.replace(/[^0-9]/g, "");
       setFormData((prev) => ({ ...prev, [name]: clean.slice(0, 10) }));
+    } else if (name === "pincode") {
+      const clean = value.replace(/[^0-9]/g, "");
+      setFormData((prev) => ({ ...prev, [name]: clean.slice(0, 6) }));
     } else if (name === "gstNumber" || name === "msmeNumber") {
       setFormData((prev) => ({ ...prev, [name]: value.toUpperCase() }));
     } else {
       setFormData((prev) => ({ ...prev, [name]: value }));
     }
     setError("");
+  };
+
+  // Browser Geolocation map pin picker (HTML5 Web API)
+  const handleDetectLocation = () => {
+    if (!navigator.geolocation) {
+      setError("Geolocation is not supported by your browser. Please enter coordinates manually.");
+      return;
+    }
+    setIsLocating(true);
+    navigator.geolocation.getCurrentPosition(
+      (position) => {
+        const lat = position.coords.latitude.toFixed(6);
+        const lng = position.coords.longitude.toFixed(6);
+        setFormData((prev) => ({
+          ...prev,
+          latitude: lat,
+          longitude: lng,
+        }));
+        setIsLocating(false);
+        setError("");
+        toast.success(`GPS Location pinned: ${lat}, ${lng}`);
+      },
+      (geoError) => {
+        setIsLocating(false);
+        setError("Could not retrieve your exact GPS location. Please enter latitude and longitude manually.");
+      },
+      { enableHighAccuracy: true, timeout: 10000 }
+    );
   };
 
   const handleSendOtp = async (e: React.FormEvent) => {
@@ -97,22 +141,55 @@ export default function PartnerRegisterForm({
     }
 
     if (!formData.fullName.trim()) {
-      setError("Please enter your full name / contact person name");
+      setError("Please enter Contact Person / Owner Full Name");
       return;
     }
 
-    if (!formData.businessName.trim()) {
+    if (!formData.email.trim() || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email.trim())) {
+      setError("Partner Requirement: Please enter a valid Email Address.");
+      return;
+    }
+
+    if (!formData.password || formData.password.length < 8) {
+      setError("Partner Requirement: Password must be at least 8 characters long.");
+      return;
+    }
+
+    const wName = (formData.workshopName || formData.businessName).trim();
+    if (!wName) {
       setError("Partner Requirement: Please enter your Workshop / Garage Name.");
       return;
     }
 
-    if (!formData.address.trim()) {
-      setError("Partner Requirement: Please enter your Workshop Address.");
+    if (!formData.businessType) {
+      setError("Partner Requirement: Please select your Business Type.");
       return;
     }
 
-    if (!formData.password || formData.password.length < 6) {
-      setError("Password must be at least 6 characters long");
+    if (!formData.addressLine.trim()) {
+      setError("Partner Requirement: Please enter your Workshop Street Address.");
+      return;
+    }
+
+    if (!formData.city.trim()) {
+      setError("Partner Requirement: Please enter your City.");
+      return;
+    }
+
+    if (!formData.state.trim()) {
+      setError("Partner Requirement: Please enter your State.");
+      return;
+    }
+
+    if (!formData.pincode.trim() || !/^[1-9][0-9]{5}$/.test(formData.pincode.trim())) {
+      setError("Partner Requirement: Please enter a valid 6-digit PIN code.");
+      return;
+    }
+
+    const lat = parseFloat(formData.latitude);
+    const lng = parseFloat(formData.longitude);
+    if (isNaN(lat) || lat < -90 || lat > 90 || isNaN(lng) || lng < -180 || lng > 180) {
+      setError("Partner Requirement: Please set an exact Google Maps location pin (valid Lat -90..90 and Lng -180..180). Click 'Pin Current GPS Location' button.");
       return;
     }
 
@@ -132,12 +209,17 @@ export default function PartnerRegisterForm({
 
   const handleResendOtp = async () => {
     if (!canResend || isLoading) return;
+    if (resendCount >= 3) {
+      setError("Maximum OTP resend limit reached. Please wait before requesting another OTP.");
+      return;
+    }
     setError("");
     setIsLoading(true);
     try {
       await postSendOtp({ identifier: formData.phone.trim() });
       setResendTimer(30);
       setCanResend(false);
+      setResendCount((prev) => prev + 1);
       toast.success("OTP re-sent to mobile number!");
     } catch (err: any) {
       setError(err?.message || "Failed to resend OTP. Please try again.");
@@ -158,17 +240,28 @@ export default function PartnerRegisterForm({
 
     setIsLoading(true);
     try {
-      const cleanEmail = formData.email && formData.email.trim() ? formData.email.trim() : undefined;
+      const wName = (formData.workshopName || formData.businessName || formData.fullName).trim();
+      const fullAddr = `${formData.addressLine.trim()}, ${formData.city.trim()}, ${formData.state.trim()} - ${formData.pincode.trim()}`;
+      
       const payload: any = {
         fullName: formData.fullName.trim(),
-        email: cleanEmail,
+        email: formData.email.trim(),
         phone: formData.phone.trim(),
         password: formData.password,
         role: "PARTNER",
         otp: cleanOtp,
-        businessName: formData.businessName.trim(),
+        workshopName: wName,
+        businessName: wName,
         ownerName: (formData.ownerName.trim() || formData.fullName.trim()),
-        address: formData.address.trim(),
+        businessType: formData.businessType,
+        addressLine: formData.addressLine.trim(),
+        city: formData.city.trim(),
+        state: formData.state.trim(),
+        pincode: formData.pincode.trim(),
+        businessAddress: fullAddr,
+        address: fullAddr,
+        latitude: parseFloat(formData.latitude),
+        longitude: parseFloat(formData.longitude),
         gstNumber: formData.gstNumber.trim() ? formData.gstNumber.trim().toUpperCase() : undefined,
         msmeNumber: formData.msmeNumber.trim() ? formData.msmeNumber.trim().toUpperCase() : undefined,
       };
@@ -188,48 +281,59 @@ export default function PartnerRegisterForm({
     }
   };
 
+  const dashboardUrl = getDashboardUrl();
+
   if (step === 3) {
+    const workshopDisplayName = formData.workshopName || formData.businessName || "Your Workshop";
     return (
-      <div className={`bg-white rounded-3xl p-6 sm:p-8 border border-neutral-text-muted/10 text-center space-y-4 shadow-sm ${className}`}>
+      <div className={`bg-white rounded-3xl p-6 sm:p-8 border border-neutral-text-muted/10 text-center space-y-5 shadow-sm ${className}`}>
         <div className="w-16 h-16 bg-success/10 rounded-full flex items-center justify-center text-success mx-auto">
-          <CheckCircle2 className="w-10 h-10" />
+          <CheckCircle2 className="w-10 h-10 text-emerald-600" />
         </div>
-        <h3 className="font-heading font-black text-2xl text-neutral-text-dark">
-          Partner Registration Submitted!
-        </h3>
-        <p className="font-body text-sm text-neutral-text-muted max-w-md mx-auto">
-          Welcome to the CarBlink Partner Network! Your workshop profile for <strong className="text-neutral-text-dark">{formData.businessName}</strong> has been created.
-        </p>
-        <div className="p-4 bg-primary-blue/5 border border-primary-blue/15 rounded-2xl text-xs text-primary-navy text-left space-y-1 max-w-md mx-auto">
-          <p className="font-bold flex items-center gap-1.5 text-primary-blue">
-            <ShieldCheck className="w-4 h-4" /> Next Steps:
-          </p>
-          <p className="text-neutral-text-muted">
-            • Your account is being reviewed by our City Field Operations team.
-          </p>
-          <p className="text-neutral-text-muted">
-            • You can now log into your Workshop Dashboard using your mobile number and password.
+        <div>
+          <h3 className="font-heading font-black text-2xl text-neutral-text-dark">
+            Partner Registration Submitted!
+          </h3>
+          <p className="font-body text-sm text-neutral-text-muted max-w-md mx-auto mt-1">
+            Welcome to the CarBlink Partner Network! Workshop profile for <strong className="text-neutral-text-dark">{workshopDisplayName}</strong> has been created.
           </p>
         </div>
 
-        <div className="pt-2">
+        <div className="p-4 bg-primary-navy/5 border border-primary-navy/15 rounded-2xl text-xs text-primary-navy text-left space-y-2 max-w-md mx-auto">
+          <p className="font-bold flex items-center gap-1.5 text-primary-navy text-sm">
+            <ShieldCheck className="w-4 h-4 text-accent-orange" /> Next Steps:
+          </p>
+          <p className="text-neutral-text-muted flex items-start gap-1.5">
+            <span className="text-accent-orange font-bold">•</span>
+            <span>Complete your <strong>KYC verification</strong> (Aadhaar / Workshop photos) in your dashboard to start receiving jobs.</span>
+          </p>
+          <p className="text-neutral-text-muted flex items-start gap-1.5">
+            <span className="text-accent-orange font-bold">•</span>
+            <span>You can log in anytime using your phone <strong>+91 {formData.phone}</strong> and password.</span>
+          </p>
+        </div>
+
+        <div className="pt-2 space-y-2.5 max-w-md mx-auto">
+          <a
+            href={`${dashboardUrl}/partner/kyc`}
+            className="inline-flex items-center justify-center gap-2 w-full py-3.5 px-6 rounded-xl bg-accent-orange hover:bg-accent-orange/90 text-white font-bold text-sm shadow-md transition-all cursor-pointer"
+          >
+            Proceed to Workshop Dashboard &amp; Complete KYC <ArrowRight className="w-4 h-4" />
+          </a>
           {onSwitchToLogin ? (
-            <Button
+            <button
               type="button"
-              variant="accent"
-              size="lg"
-              fullWidth
               onClick={onSwitchToLogin}
-              className="bg-accent-orange hover:bg-accent-orange/90 text-white font-bold"
+              className="text-xs text-neutral-text-muted hover:text-neutral-text-dark font-medium underline block mx-auto cursor-pointer"
             >
-              Proceed to Partner Sign In <ArrowRight className="w-4 h-4 ml-1.5" />
-            </Button>
+              Or Sign In to Partner Portal
+            </button>
           ) : (
             <Link
               href="/partner-login"
-              className="inline-flex items-center justify-center gap-2 w-full py-3.5 px-6 rounded-xl bg-accent-orange hover:bg-accent-orange/90 text-white font-bold text-sm shadow-md transition-all"
+              className="text-xs text-neutral-text-muted hover:text-neutral-text-dark font-medium underline block mx-auto"
             >
-              Proceed to Partner Sign In <ArrowRight className="w-4 h-4" />
+              Or Sign In to Partner Portal
             </Link>
           )}
         </div>
@@ -239,7 +343,7 @@ export default function PartnerRegisterForm({
 
   return (
     <div className={`w-full text-left ${className}`}>
-      {/* Role Selector Header (Exact match to Dashboard) */}
+      {/* Role Selector Header */}
       {showRoleToggle && step === 1 && (
         <div className="mb-6">
           <label className="block text-xs font-bold text-neutral-text-muted uppercase tracking-wider mb-2.5">
@@ -272,7 +376,7 @@ export default function PartnerRegisterForm({
 
       {error && (
         <div className="mb-5 bg-red-50 text-red-600 text-xs sm:text-sm p-3.5 sm:p-4 rounded-xl border border-red-200 font-medium flex items-start gap-2">
-          <span className="font-bold shrink-0">!</span>
+          <AlertCircle className="w-4 h-4 shrink-0 mt-0.5" />
           <span>{error}</span>
         </div>
       )}
@@ -283,6 +387,8 @@ export default function PartnerRegisterForm({
           {/* Prevent Chrome/Edge aggressive credential autofill */}
           <input type="text" style={{ display: "none" }} tabIndex={-1} autoComplete="off" readOnly />
           <input type="password" style={{ display: "none" }} tabIndex={-1} autoComplete="off" readOnly />
+
+          {/* Contact Person / Owner Name */}
           <div>
             <label className="block text-xs font-bold text-neutral-text-dark mb-1">
               Contact Person / Owner Full Name <span className="text-red-500">*</span>
@@ -298,6 +404,7 @@ export default function PartnerRegisterForm({
             />
           </div>
 
+          {/* Mobile & Email */}
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
             <div>
               <label className="block text-xs font-bold text-neutral-text-dark mb-1">
@@ -317,7 +424,7 @@ export default function PartnerRegisterForm({
             </div>
             <div>
               <label className="block text-xs font-bold text-neutral-text-dark mb-1">
-                Email Address (Optional)
+                Email Address <span className="text-red-500">*</span>
               </label>
               <Input
                 name="email"
@@ -326,17 +433,19 @@ export default function PartnerRegisterForm({
                 placeholder="e.g. ramesh@speedxmotors.com"
                 value={formData.email}
                 onChange={handleChange}
+                required
                 className="h-11 bg-white border-gray-200 text-sm focus:border-primary-navy"
               />
             </div>
           </div>
 
+          {/* Password */}
           <div>
             <div className="flex items-center justify-between mb-1">
               <label className="block text-xs font-bold text-neutral-text-dark">
                 Create Account Password <span className="text-red-500">*</span>
               </label>
-              <span className="text-[10px] text-neutral-text-muted">Min 6 characters</span>
+              <span className="text-[10px] text-neutral-text-muted">Min 8 characters</span>
             </div>
             <div className="relative">
               <Input
@@ -352,48 +461,171 @@ export default function PartnerRegisterForm({
               <button
                 type="button"
                 onClick={() => setShowPassword(!showPassword)}
-                className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 focus:outline-none"
+                className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 focus:outline-none cursor-pointer"
               >
                 {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
               </button>
             </div>
           </div>
 
-          {/* EXACT CARD FROM SCREENSHOT: Partner Business & Legal Details */}
+          {/* PARTNER BUSINESS & PHYSICAL LOCATION DETAILS CARD */}
           <div className="p-4 sm:p-5 bg-[#FAF9F5] border border-amber-200/80 rounded-2xl space-y-3.5 shadow-2xs">
             <div className="flex items-center space-x-2 text-primary-navy font-bold text-xs sm:text-sm border-b border-amber-200/80 pb-2.5">
               <Wrench className="w-4 h-4 text-accent-orange" />
-              <span>Partner Business &amp; Legal Details</span>
+              <span>Partner Business &amp; Location Details</span>
             </div>
 
+            {/* Workshop Name & Business Type */}
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+              <div>
+                <label className="block text-[11px] font-bold text-neutral-text-dark uppercase tracking-wider mb-1">
+                  WORKSHOP / GARAGE NAME <span className="text-red-500">*</span>
+                </label>
+                <Input
+                  name="businessName"
+                  placeholder="e.g. SpeedX Motors & Detailing Studio"
+                  value={formData.businessName}
+                  onChange={(e) => {
+                    const val = e.target.value;
+                    setFormData(prev => ({ ...prev, businessName: val, workshopName: val }));
+                  }}
+                  required
+                  className="h-11 bg-white border-amber-200/90 text-sm placeholder:text-gray-400"
+                />
+              </div>
+
+              <div>
+                <label className="block text-[11px] font-bold text-neutral-text-dark uppercase tracking-wider mb-1">
+                  BUSINESS TYPE <span className="text-red-500">*</span>
+                </label>
+                <select
+                  name="businessType"
+                  value={formData.businessType}
+                  onChange={handleChange}
+                  required
+                  className="w-full h-11 px-3 bg-white border border-amber-200/90 rounded-xl text-xs text-gray-800 focus:outline-none focus:ring-2 focus:ring-primary-navy"
+                >
+                  <option value="Proprietorship">Proprietorship (Sole Owner)</option>
+                  <option value="Partnership">Partnership Firm</option>
+                  <option value="LLP">Limited Liability Partnership (LLP)</option>
+                  <option value="Company">Company (Pvt Ltd / Ltd)</option>
+                  <option value="Other">Other Enterprise</option>
+                </select>
+              </div>
+            </div>
+
+            {/* Street Address */}
             <div>
               <label className="block text-[11px] font-bold text-neutral-text-dark uppercase tracking-wider mb-1">
-                WORKSHOP / GARAGE NAME <span className="text-red-500">*</span>
+                WORKSHOP STREET ADDRESS <span className="text-red-500">*</span>
               </label>
               <Input
-                name="businessName"
-                placeholder="e.g. SpeedX Motors & Detailing Studio"
-                value={formData.businessName}
+                name="addressLine"
+                placeholder="Shop/Plot No, Street, Industrial Area / Landmark"
+                value={formData.addressLine}
                 onChange={handleChange}
                 required
                 className="h-11 bg-white border-amber-200/90 text-sm placeholder:text-gray-400"
               />
             </div>
 
-            <div>
-              <label className="block text-[11px] font-bold text-neutral-text-dark uppercase tracking-wider mb-1">
-                OWNER / CONTACT PERSON NAME
-              </label>
-              <Input
-                name="ownerName"
-                placeholder="e.g. Ramesh Chandra (Owner)"
-                value={formData.ownerName}
-                onChange={handleChange}
-                className="h-11 bg-white border-amber-200/90 text-sm placeholder:text-gray-400"
-              />
+            {/* City, State, PIN */}
+            <div className="grid grid-cols-3 gap-2 sm:gap-3">
+              <div>
+                <label className="block text-[11px] font-bold text-neutral-text-dark uppercase tracking-wider mb-1">
+                  CITY <span className="text-red-500">*</span>
+                </label>
+                <Input
+                  name="city"
+                  placeholder="e.g. South Delhi"
+                  value={formData.city}
+                  onChange={handleChange}
+                  required
+                  className="h-11 bg-white border-amber-200/90 text-xs placeholder:text-gray-400"
+                />
+              </div>
+              <div>
+                <label className="block text-[11px] font-bold text-neutral-text-dark uppercase tracking-wider mb-1">
+                  STATE <span className="text-red-500">*</span>
+                </label>
+                <Input
+                  name="state"
+                  placeholder="e.g. Delhi"
+                  value={formData.state}
+                  onChange={handleChange}
+                  required
+                  className="h-11 bg-white border-amber-200/90 text-xs placeholder:text-gray-400"
+                />
+              </div>
+              <div>
+                <label className="block text-[11px] font-bold text-neutral-text-dark uppercase tracking-wider mb-1">
+                  PIN CODE <span className="text-red-500">*</span>
+                </label>
+                <Input
+                  name="pincode"
+                  placeholder="6 digits"
+                  maxLength={6}
+                  value={formData.pincode}
+                  onChange={handleChange}
+                  required
+                  className="h-11 bg-white border-amber-200/90 text-xs font-mono placeholder:text-gray-400"
+                />
+              </div>
             </div>
 
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+            {/* Google Maps Location Coordinates Pin */}
+            <div className="p-3.5 bg-white border border-amber-200 rounded-xl space-y-2">
+              <div className="flex items-center justify-between flex-wrap gap-2">
+                <span className="text-xs font-bold text-gray-800 flex items-center gap-1.5">
+                  <MapPin className="w-3.5 h-3.5 text-accent-orange" />
+                  Exact Google Maps Coordinates Pin <span className="text-red-500">*</span>
+                </span>
+                <button
+                  type="button"
+                  onClick={handleDetectLocation}
+                  disabled={isLocating}
+                  className="text-xs font-bold text-accent-orange hover:text-primary-navy inline-flex items-center gap-1.5 transition-colors cursor-pointer bg-orange-50 px-2.5 py-1 rounded-lg border border-orange-200"
+                >
+                  <Compass className={`w-3.5 h-3.5 ${isLocating ? "animate-spin" : ""}`} />
+                  {isLocating ? "Detecting GPS..." : "📍 Pin Current GPS Location"}
+                </button>
+              </div>
+
+              <div className="grid grid-cols-2 gap-2.5">
+                <div>
+                  <label className="block text-[10px] font-semibold text-gray-500 mb-0.5">Latitude (-90 to 90)</label>
+                  <Input
+                    name="latitude"
+                    type="number"
+                    step="any"
+                    placeholder="e.g. 28.535517"
+                    value={formData.latitude}
+                    onChange={handleChange}
+                    required
+                    className="h-9 bg-slate-50 border-gray-200 text-xs font-mono"
+                  />
+                </div>
+                <div>
+                  <label className="block text-[10px] font-semibold text-gray-500 mb-0.5">Longitude (-180 to 180)</label>
+                  <Input
+                    name="longitude"
+                    type="number"
+                    step="any"
+                    placeholder="e.g. 77.391026"
+                    value={formData.longitude}
+                    onChange={handleChange}
+                    required
+                    className="h-9 bg-slate-50 border-gray-200 text-xs font-mono"
+                  />
+                </div>
+              </div>
+              <p className="text-[10px] text-gray-400">
+                Exact coordinates ensure precision dispatch in CarBlink's automated assignment engine.
+              </p>
+            </div>
+
+            {/* Optional Legal IDs (GST & MSME) */}
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-1">
               <div>
                 <label className="block text-[11px] font-bold text-neutral-text-dark uppercase tracking-wider mb-1">
                   GST NUMBER (OPTIONAL)
@@ -403,7 +635,7 @@ export default function PartnerRegisterForm({
                   placeholder="E.G. 07AAAAA0000A1Z5"
                   value={formData.gstNumber}
                   onChange={handleChange}
-                  className="h-11 bg-white border-amber-200/90 font-mono text-xs uppercase placeholder:text-gray-400"
+                  className="h-10 bg-white border-amber-200/90 font-mono text-xs uppercase placeholder:text-gray-400"
                 />
               </div>
               <div>
@@ -415,24 +647,9 @@ export default function PartnerRegisterForm({
                   placeholder="E.G. UDYAM-DL-00-0123456"
                   value={formData.msmeNumber}
                   onChange={handleChange}
-                  className="h-11 bg-white border-amber-200/90 font-mono text-xs uppercase placeholder:text-gray-400"
+                  className="h-10 bg-white border-amber-200/90 font-mono text-xs uppercase placeholder:text-gray-400"
                 />
               </div>
-            </div>
-
-            <div>
-              <label className="block text-[11px] font-bold text-neutral-text-dark uppercase tracking-wider mb-1">
-                WORKSHOP / BUSINESS ADDRESS <span className="text-red-500">*</span>
-              </label>
-              <textarea
-                name="address"
-                rows={2}
-                placeholder="Complete Workshop Address, Area, Landmark, City, Pincode"
-                value={formData.address}
-                onChange={handleChange}
-                required
-                className="w-full rounded-xl border border-amber-200/90 bg-white p-3 text-sm focus:outline-none focus:ring-2 focus:ring-primary-navy placeholder:text-gray-400"
-              />
             </div>
           </div>
 
@@ -441,8 +658,7 @@ export default function PartnerRegisterForm({
             variant="accent"
             size="lg"
             fullWidth
-            
-            className="w-full h-12 mt-3 text-sm sm:text-base font-bold bg-accent-orange hover:bg-accent-orange/90 text-white rounded-xl shadow-lg shadow-accent-orange/20 transition-all flex items-center justify-center gap-2"
+            className="w-full h-12 mt-3 text-sm sm:text-base font-bold bg-accent-orange hover:bg-accent-orange/90 text-white rounded-xl shadow-lg shadow-accent-orange/20 transition-all flex items-center justify-center gap-2 cursor-pointer"
           >
             {isLoading ? (
               <span className="flex items-center gap-2">
@@ -503,9 +719,8 @@ export default function PartnerRegisterForm({
             variant="accent"
             size="lg"
             fullWidth
-            
             disabled={otp.length < 6 || isLoading || isRegisterPending}
-            className="w-full h-12 mt-2 text-sm sm:text-base font-bold bg-accent-orange hover:bg-accent-orange/90 text-white rounded-xl shadow-lg shadow-accent-orange/20 transition-all flex items-center justify-center gap-2"
+            className="w-full h-12 mt-2 text-sm sm:text-base font-bold bg-accent-orange hover:bg-accent-orange/90 text-white rounded-xl shadow-lg shadow-accent-orange/20 transition-all flex items-center justify-center gap-2 cursor-pointer"
           >
             {(isLoading || isRegisterPending) ? (
               <span className="flex items-center gap-2">
