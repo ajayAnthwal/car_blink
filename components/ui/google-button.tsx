@@ -1,9 +1,13 @@
 // @ts-nocheck
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { fetchApi } from "@/lib/apiClient";
 import { toast } from "sonner";
+
+const GOOGLE_CLIENT_ID =
+  process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID ||
+  "301860554171-jcpr05vbq00aevnqmnm2fgg7nlu43jqk.apps.googleusercontent.com";
 
 interface GoogleButtonProps {
   role?: string;
@@ -19,39 +23,65 @@ export function GoogleButton({
   className = "",
 }: GoogleButtonProps) {
   const [isLoading, setIsLoading] = useState(false);
+  const tokenClientRef = useRef<any>(null);
 
-  useEffect(() => {
-    const clientId = process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID;
-    if (clientId && typeof window !== "undefined" && !(window as any).google) {
+  // Helper to ensure Google Identity Services script is loaded
+  const loadGoogleScript = (): Promise<any> => {
+    if (typeof window === "undefined") return Promise.resolve(null);
+    if ((window as any).google?.accounts?.oauth2) {
+      return Promise.resolve((window as any).google);
+    }
+    return new Promise((resolve) => {
+      const existing = document.querySelector('script[src="https://accounts.google.com/gsi/client"]');
+      if (existing) {
+        if ((window as any).google?.accounts?.oauth2) {
+          return resolve((window as any).google);
+        }
+        existing.addEventListener("load", () => resolve((window as any).google));
+        existing.addEventListener("error", () => resolve(null));
+        setTimeout(() => resolve((window as any).google || null), 2500);
+        return;
+      }
       const script = document.createElement("script");
       script.src = "https://accounts.google.com/gsi/client";
       script.async = true;
       script.defer = true;
-      document.body.appendChild(script);
-    }
-  }, []);
+      script.onload = () => resolve((window as any).google);
+      script.onerror = () => resolve(null);
+      document.head.appendChild(script);
+    });
+  };
 
-  const handleGoogleAuth = async (credentialResponse?: any) => {
+  useEffect(() => {
+    let isMounted = true;
+    loadGoogleScript().then((google) => {
+      if (!isMounted || !google?.accounts) return;
+
+      // Initialize Google One Tap if available
+      try {
+        if (google.accounts.id) {
+          google.accounts.id.initialize({
+            client_id: GOOGLE_CLIENT_ID,
+            callback: (credentialResponse: any) => {
+              if (credentialResponse?.credential) {
+                handleBackendAuth({ idToken: credentialResponse.credential, role });
+              }
+            },
+          });
+        }
+      } catch (err) {
+        console.warn("Google One Tap initialization notice:", err);
+      }
+    });
+
+    return () => {
+      isMounted = false;
+    };
+  }, [role]);
+
+  const handleBackendAuth = async (payload: { idToken?: string; googleUser?: any; role: string }) => {
     setIsLoading(true);
     try {
-      let payload: any = { role };
-      if (credentialResponse?.credential) {
-        payload.idToken = credentialResponse.credential;
-      } else {
-        const email = prompt("Enter your Google Account email (Login with Google):");
-        if (!email) {
-          setIsLoading(false);
-          return;
-        }
-        const name = email.split("@")[0].replace(/[._]/g, " ");
-        payload.googleUser = {
-          email,
-          name: name.charAt(0).toUpperCase() + name.slice(1),
-          picture: `https://ui-avatars.com/api/?name=${encodeURIComponent(name)}&background=0D8ABC&color=fff`,
-          sub: `g_${Date.now()}`,
-        };
-      }
-
       const res: any = await fetchApi("/auth/google", {
         method: "POST",
         body: JSON.stringify(payload),
@@ -62,19 +92,30 @@ export function GoogleButton({
       const userRole = user?.role || role;
 
       if (tokens?.accessToken && typeof window !== "undefined") {
-        const expires = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toUTCString();
+        const isProd = window.location.hostname.endsWith("carblink.in");
+        const cookieDomain = isProd ? "; domain=.carblink.in" : "";
+        const expires = new Date(Date.now() + 30 * 864e5).toUTCString();
+
         window.localStorage.setItem("car_blink_access_token", tokens.accessToken);
+        window.localStorage.setItem("carBlink_token", tokens.accessToken);
         if (tokens.refreshToken) {
           window.localStorage.setItem("car_blink_refresh_token", tokens.refreshToken);
         }
-        document.cookie = `car_blink_access_token=${encodeURIComponent(tokens.accessToken)}; path=/; expires=${expires}; SameSite=Lax`;
-        document.cookie = `accessToken=${encodeURIComponent(tokens.accessToken)}; path=/; expires=${expires}; SameSite=Lax`;
-        document.cookie = `role=${encodeURIComponent(userRole)}; path=/; expires=${expires}; SameSite=Lax`;
-        document.cookie = `user_role=${encodeURIComponent(userRole)}; path=/; expires=${expires}; SameSite=Lax`;
+
+        document.cookie = `car_blink_access_token=${encodeURIComponent(tokens.accessToken)}; path=/; expires=${expires}; SameSite=Lax${cookieDomain}`;
+        document.cookie = `accessToken=${encodeURIComponent(tokens.accessToken)}; path=/; expires=${expires}; SameSite=Lax${cookieDomain}`;
+        document.cookie = `role=${encodeURIComponent(userRole)}; path=/; expires=${expires}; SameSite=Lax${cookieDomain}`;
+        document.cookie = `user_role=${encodeURIComponent(userRole)}; path=/; expires=${expires}; SameSite=Lax${cookieDomain}`;
       }
 
-      const dashboardBase = process.env.NEXT_PUBLIC_DASHBOARD_URL || "http://localhost:3000";
+      if (onSuccess) {
+        onSuccess(res);
+      }
+
       if (typeof window !== "undefined") {
+        const isProd = window.location.hostname.endsWith("carblink.in");
+        const dashboardBase = isProd ? "https://dashboard.carblink.in" : (process.env.NEXT_PUBLIC_DASHBOARD_URL || "http://localhost:3000");
+
         if (tokens?.accessToken) {
           window.location.href = `${dashboardBase}/login?token=${encodeURIComponent(tokens.accessToken)}`;
         } else {
@@ -83,22 +124,82 @@ export function GoogleButton({
       }
     } catch (err: any) {
       toast.error(err?.message || "Failed to authenticate with Google");
-    } finally {
       setIsLoading(false);
     }
   };
 
-  const handleClick = () => {
-    const clientId = process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID;
-    if (clientId && (window as any).google?.accounts?.id) {
-      (window as any).google.accounts.id.initialize({
-        client_id: clientId,
-        callback: handleGoogleAuth,
-      });
-      (window as any).google.accounts.id.prompt();
-    } else {
-      handleGoogleAuth();
+  const handleClick = async () => {
+    setIsLoading(true);
+    const google = await loadGoogleScript();
+
+    if (!google?.accounts) {
+      setIsLoading(false);
+      toast.error("Google Authentication service could not be loaded. Please check your network or try again.");
+      return;
     }
+
+    // Modern Google Identity Services OAuth 2.0 Token Client (Opens official Google Account Selector popup)
+    if (google.accounts.oauth2) {
+      try {
+        const tokenClient = google.accounts.oauth2.initTokenClient({
+          client_id: GOOGLE_CLIENT_ID,
+          scope: "email profile openid",
+          callback: async (tokenResponse: any) => {
+            if (tokenResponse?.error) {
+              setIsLoading(false);
+              if (tokenResponse.error !== "popup_closed_by_user") {
+                toast.error("Google sign-in was cancelled or encountered an error.");
+              }
+              return;
+            }
+
+            if (tokenResponse?.access_token) {
+              try {
+                // Fetch verified profile directly from Google
+                const profileRes = await fetch("https://www.googleapis.com/oauth2/v3/userinfo", {
+                  headers: { Authorization: `Bearer ${tokenResponse.access_token}` },
+                });
+                if (!profileRes.ok) {
+                  throw new Error("Could not retrieve Google profile details.");
+                }
+                const googleUser = await profileRes.json();
+                await handleBackendAuth({ googleUser, role });
+              } catch (err: any) {
+                setIsLoading(false);
+                toast.error(err.message || "Failed to fetch Google profile info");
+              }
+            } else {
+              setIsLoading(false);
+            }
+          },
+          error_callback: (err: any) => {
+            setIsLoading(false);
+            console.error("Google popup error:", err);
+            toast.error("Google sign-in popup was blocked. Please allow popups for this site.");
+          },
+        });
+
+        tokenClientRef.current = tokenClient;
+        tokenClient.requestAccessToken({ prompt: "select_account" });
+        return;
+      } catch (err) {
+        console.error("Token client error:", err);
+      }
+    }
+
+    // Fallback: If oauth2 is unavailable, trigger Google One Tap
+    if (google.accounts.id) {
+      google.accounts.id.prompt((notification: any) => {
+        if (notification.isNotDisplayed() || notification.isSkippedMoment()) {
+          setIsLoading(false);
+          toast.error("Google sign-in prompt was closed or not displayed. Please try again.");
+        }
+      });
+      return;
+    }
+
+    setIsLoading(false);
+    toast.error("Google sign-in is initializing. Please click again.");
   };
 
   return (
@@ -130,8 +231,9 @@ export function GoogleButton({
           />
         </svg>
       )}
-      <span>{isLoading ? "Signing in..." : text}</span>
+      <span>{isLoading ? "Signing in with Google..." : text}</span>
     </button>
   );
 }
+
 export default GoogleButton;

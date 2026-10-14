@@ -35,6 +35,9 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" className={`${poppins.variable} ${inter.variable}`}>
+      <head>
+        <script src="https://accounts.google.com/gsi/client" async defer></script>
+      </head>
       <body className="font-body bg-neutral-bg text-neutral-text-dark min-h-screen flex flex-col">
         <div className="bg-primary-blue text-white text-center py-2.5 px-4 text-sm font-semibold tracking-wide">
           We Compare, We Negotiate, You Save.
