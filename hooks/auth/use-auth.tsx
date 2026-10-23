@@ -21,7 +21,10 @@ export const getDashboardUrl = (): string => {
   if (typeof window !== 'undefined') {
     const isLocalhost = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
     if (isLocalhost) {
-      return 'http://localhost:3001';
+      return 'http://localhost:3000';
+    }
+    if (window.location.hostname.includes('carblink.in')) {
+      return 'https://dashboard.carblink.in';
     }
   }
   const raw = process.env.NEXT_PUBLIC_DASHBOARD_URL || 'https://dashboard.carblink.in';
@@ -40,9 +43,12 @@ const setCrossPortAuth = (token: string, role?: string) => {
   window.localStorage.setItem('carBlink_token', token);
   window.localStorage.setItem('role', userRole);
   const expires = new Date(Date.now() + 30 * 864e5).toUTCString();
-  document.cookie = `accessToken=${encodeURIComponent(token)}; expires=${expires}; path=/; SameSite=Lax`;
-  document.cookie = `car_blink_access_token=${encodeURIComponent(token)}; expires=${expires}; path=/; SameSite=Lax`;
-  document.cookie = `role=${encodeURIComponent(userRole)}; expires=${expires}; path=/; SameSite=Lax`;
+  const isProd = window.location.hostname.includes('carblink.in');
+  const domainPart = isProd ? '; domain=.carblink.in' : '';
+  document.cookie = `accessToken=${encodeURIComponent(token)}; expires=${expires}; path=/; SameSite=Lax${domainPart}`;
+  document.cookie = `car_blink_access_token=${encodeURIComponent(token)}; expires=${expires}; path=/; SameSite=Lax${domainPart}`;
+  document.cookie = `role=${encodeURIComponent(userRole)}; expires=${expires}; path=/; SameSite=Lax${domainPart}`;
+  document.cookie = `user_role=${encodeURIComponent(userRole)}; expires=${expires}; path=/; SameSite=Lax${domainPart}`;
 };
 
 const extractTokenAndRole = (res: any) => {
@@ -195,8 +201,15 @@ export const useRegister = (): UseMutationResult<
       
       const userRole = variables?.role || role;
       if (userRole === 'PARTNER') {
-        toast.success(res?.message || 'Partner registration submitted successfully!');
-        // Do not auto-redirect; let partner review Step 3 verification notice
+        toast.success(res?.message || 'Partner registered successfully! Opening verification...');
+        setTimeout(() => {
+          const dashboardUrl = getDashboardUrl();
+          if (token) {
+            window.location.href = `${dashboardUrl}/login?token=${encodeURIComponent(token)}&redirect=/partner/kyc`;
+          } else {
+            window.location.href = `${dashboardUrl}/partner/kyc`;
+          }
+        }, 800);
       } else {
         toast.success(res?.message || 'Registration successful! Opening your Dashboard...');
         setTimeout(() => {

@@ -137,7 +137,7 @@ export default function LoginPage() {
             </p>
           </div>
 
-          <div className="mb-6">
+          {/* <div className="mb-6">
             <GoogleButton text="Continue with Google" role="CUSTOMER" />
             <div className="relative my-6 text-center">
               <div className="absolute inset-0 flex items-center">
@@ -147,7 +147,7 @@ export default function LoginPage() {
                 or sign in with
               </span>
             </div>
-          </div>
+          </div> */}
 
           <div className="flex bg-neutral-200/50 rounded-xl p-1 mb-8">
             <button

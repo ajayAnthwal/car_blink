@@ -4,7 +4,7 @@ import { useState, useEffect } from "react";
 import Button from "@/components/ui/Button";
 import LocationModal from "@/components/ui/LocationModal";
 import { LocateFixed, MapPin, Loader2, ArrowLeft, KeyRound, CheckCircle2, Phone, ExternalLink, Car, MessageSquare, RefreshCw } from "lucide-react";
-import { useCreateLead, useSendLeadOtp } from "@/services/queries";
+import { useCreateLead, useSendLeadOtp, useGetServices } from "@/services/queries";
 import { toast } from "sonner";
 import { getDashboardUrl } from "@/hooks/auth/use-auth";
 import { MAKES, CAR_MODELS_MAP } from "@/config/vehicles.config";
@@ -19,6 +19,7 @@ export default function HeroForm() {
     carModel: "",
     otherModel: "",
     address: "",
+    serviceType: "",
     query: "",
   });
   const [otp, setOtp] = useState("");
@@ -28,6 +29,8 @@ export default function HeroForm() {
 
   const { mutateAsync: sendOtp, isPending: isSendingOtp } = useSendLeadOtp();
   const { mutateAsync: createLead, isPending: isSubmitting } = useCreateLead();
+  const { data: servicesData } = useGetServices();
+  const dynamicServices = servicesData?.services || [];
 
   useEffect(() => {
     let timer: any;
@@ -100,6 +103,7 @@ export default function HeroForm() {
       return;
     }
     try {
+      const requestedService = formData.serviceType || (formData.query ? formData.query.split('|')[0].trim() : 'General Service');
       const res: any = await createLead({
         name: formData.name,
         phone: formData.number,
@@ -107,7 +111,10 @@ export default function HeroForm() {
         vehicleBrand: formData.carMake,
         vehicleModel: resolvedModel,
         city: formData.address,
-        message: formData.query ? `${formData.query} | Car: ${displayCar}` : `Quick Callback Request for ${displayCar}`,
+        services: [requestedService],
+        customServiceName: formData.query || (formData.serviceType && formData.serviceType !== 'Other' ? formData.serviceType : requestedService),
+        query: formData.query,
+        message: formData.query ? `${formData.query} | Car: ${displayCar}` : `${requestedService} Request for ${displayCar}`,
         otp: otp.trim(),
       });
 
@@ -256,7 +263,7 @@ export default function HeroForm() {
             <button
               type="button"
               onClick={() => {
-                setFormData({ name: "", number: "", carMake: "", carModel: "", otherModel: "", address: "", query: "" });
+                setFormData({ name: "", number: "", carMake: "", carModel: "", otherModel: "", address: "", serviceType: "", query: "" });
                 setOtp("");
                 setStep('FORM');
               }}
@@ -408,8 +415,46 @@ export default function HeroForm() {
           </div>
 
           <div>
+            <label htmlFor="serviceType" className="block text-sm font-medium text-neutral-text-dark mb-1">
+              Service Required <span className="text-xs text-neutral-text-muted font-normal">(Optional)</span>
+            </label>
+            <select
+              id="serviceType"
+              name="serviceType"
+              value={formData.serviceType}
+              onChange={handleChange}
+              className="w-full px-3.5 py-2.5 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-primary-blue focus:border-transparent transition-all text-sm bg-white text-gray-800 font-medium"
+            >
+              <option value="">Select Service (or specify in notes below)</option>
+              {dynamicServices.length > 0 ? (
+                dynamicServices.map((srv: any) => (
+                  <option key={srv.name} value={srv.name}>
+                    {srv.name}
+                  </option>
+                ))
+              ) : (
+                <>
+                  <option value="Periodic Service">Periodic Service</option>
+                  <option value="Dent & Paint">Dent & Paint</option>
+                  <option value="AC Repair">AC Repair</option>
+                  <option value="Car Wash">Car Wash</option>
+                  <option value="Detailing">Detailing</option>
+                  <option value="Battery">Battery</option>
+                  <option value="Brake Service">Brake Service</option>
+                  <option value="Engine Repair">Engine Repair</option>
+                  <option value="Clutch Repair">Clutch Repair</option>
+                  <option value="Tyres">Tyres</option>
+                  <option value="Suspension">Suspension</option>
+                </>
+              )}
+              <option value="Mirror Change">Mirror / Glass / Windshield</option>
+              <option value="Other">Other / Custom Service</option>
+            </select>
+          </div>
+
+          <div>
             <label htmlFor="query" className="block text-sm font-medium text-neutral-text-dark mb-1">
-              Query / Message <span className="text-xs text-neutral-text-muted font-normal">(Optional)</span>
+              Query / Specific Notes <span className="text-xs text-neutral-text-muted font-normal">(Optional)</span>
             </label>
             <textarea
               id="query"
@@ -418,7 +463,7 @@ export default function HeroForm() {
               onChange={handleChange}
               rows={2}
               className="w-full px-4 py-2.5 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-primary-blue focus:border-transparent transition-all resize-none text-sm font-medium"
-              placeholder="Type your query here..."
+              placeholder="e.g. Mirror change, scratch removal, noise issue..."
             ></textarea>
           </div>
 

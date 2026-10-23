@@ -93,9 +93,17 @@ function QuotesForm() {
   }, [isOtpStep, resendTimer]);
 
   const handleSendQuoteOtp = async () => {
+    if (!formData.name.trim()) {
+      toast.error("Please enter your name");
+      return;
+    }
     const cleanPhone = formData.phone.replace(/[^0-9]/g, '');
     if (cleanPhone.length < 10) {
       toast.error("Please enter a valid 10-digit mobile number");
+      return;
+    }
+    if (!formData.location.trim() && !formData.address.trim()) {
+      toast.error("Location is mandatory. Please detect your location or enter an address/area to proceed.");
       return;
     }
     try {
@@ -538,6 +546,8 @@ function QuotesForm() {
                         fuelType: formData.fuelType,
                         vehicleNumber: formData.vehicleNumber,
                         services: formData.services,
+                        customServiceName: formData.services.includes('Other') ? (formData.otherServiceDetails || 'Custom Service') : formData.services.join(', '),
+                        otherServiceDetails: formData.otherServiceDetails,
                       });
 
                       const tokens = res?.tokens || res?.data?.tokens;
@@ -676,23 +686,43 @@ function QuotesForm() {
                   <div>
                     <div className="flex items-center justify-between mb-2">
                       <label className="block font-heading font-semibold text-xs uppercase tracking-wider text-neutral-text-dark/70">
-                        City / Area
+                        City / Area <span className="text-red-500">*</span>
                       </label>
-                      <button 
-                        type="button"
-                        onClick={() => setShowMapModal(true)}
-                        className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-primary-blue/10 hover:bg-primary-blue/20 text-primary-blue text-xs font-bold transition-all border border-primary-blue/20 active:scale-95"
-                      >
-                        <LocateFixed className="w-3.5 h-3.5" />
-                        Select on Map
-                      </button>
+                      <div className="flex items-center gap-2">
+                        <button 
+                          type="button"
+                          onClick={detectLocation}
+                          disabled={isLocating}
+                          className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-emerald-50 hover:bg-emerald-100 text-emerald-700 text-xs font-bold transition-all border border-emerald-200 active:scale-95 disabled:opacity-50"
+                        >
+                          {isLocating ? (
+                            <>
+                              <Loader2 className="w-3 h-3 animate-spin text-emerald-600" />
+                              <span>Detecting...</span>
+                            </>
+                          ) : (
+                            <>
+                              <LocateFixed className="w-3 h-3 text-emerald-600" />
+                              <span>Auto Detect</span>
+                            </>
+                          )}
+                        </button>
+                        <button 
+                          type="button"
+                          onClick={() => setShowMapModal(true)}
+                          className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-primary-blue/10 hover:bg-primary-blue/20 text-primary-blue text-xs font-bold transition-all border border-primary-blue/20 active:scale-95"
+                        >
+                          <MapPin className="w-3 h-3" />
+                          Map
+                        </button>
+                      </div>
                     </div>
                     <div className="relative">
                       <input 
                         type="text" 
                         value={formData.location}
                         onChange={(e) => updateForm("location", e.target.value)}
-                        placeholder="e.g. Connaught Place, New Delhi"
+                        placeholder="Manual option: Type your area or city (e.g. Indiranagar, Bengaluru)..."
                         className="w-full pl-10 pr-4 py-3 rounded-xl border border-neutral-text-muted/20 bg-neutral-bg/60 focus:bg-white focus:outline-none focus:border-primary-blue focus:ring-4 focus:ring-primary-blue/10 transition-all font-body text-sm font-medium"
                       />
                       <MapPin className="w-4 h-4 text-primary-blue absolute left-3.5 top-1/2 -translate-y-1/2" />

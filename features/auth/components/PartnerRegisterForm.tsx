@@ -27,6 +27,37 @@ import { postSendOtp } from "@/services/auth.service";
 import { useRegister, getDashboardUrl } from "@/hooks/auth/use-auth";
 import { toast } from "sonner";
 
+const STATE_CODES: Record<string, string> = {
+  '01': 'Jammu & Kashmir', '02': 'Himachal Pradesh', '03': 'Punjab', '04': 'Chandigarh',
+  '05': 'Uttarakhand', '06': 'Haryana', '07': 'Delhi', '08': 'Rajasthan', '09': 'Uttar Pradesh',
+  '10': 'Bihar', '11': 'Sikkim', '12': 'Arunachal Pradesh', '13': 'Nagaland', '14': 'Manipur',
+  '15': 'Mizoram', '16': 'Tripura', '17': 'Meghalaya', '18': 'Assam', '19': 'West Bengal',
+  '20': 'Jharkhand', '21': 'Odisha', '22': 'Chhattisgarh', '23': 'Madhya Pradesh', '24': 'Gujarat',
+  '25': 'Daman & Diu', '26': 'Dadra & Nagar Haveli', '27': 'Maharashtra', '28': 'Andhra Pradesh',
+  '29': 'Karnataka', '30': 'Goa', '31': 'Lakshadweep', '32': 'Kerala', '33': 'Tamil Nadu',
+  '34': 'Puducherry', '35': 'Andaman & Nicobar', '36': 'Telangana', '37': 'Andhra Pradesh', '38': 'Ladakh'
+};
+
+export function validateGSTIN(gstin: string): { isValid: boolean; message?: string; stateName?: string } {
+  const clean = (gstin || '').trim().toUpperCase();
+  if (!clean) return { isValid: false, message: 'GST Number is required for workshop registration.' };
+  if (clean.length !== 15) return { isValid: false, message: `GST Number must be exactly 15 characters (entered ${clean.length}/15).` };
+  
+  const gstRegex = /^[0-9]{2}[A-Z]{5}[0-9]{4}[A-Z]{1}[1-9A-Z]{1}Z[0-9A-Z]{1}$/;
+  if (!gstRegex.test(clean)) {
+    return { isValid: false, message: 'Invalid GSTIN format (e.g. 05AAAAA0000A1Z5).' };
+  }
+
+  const stateCode = clean.substring(0, 2);
+  const stateName = STATE_CODES[stateCode];
+  if (!stateName && stateCode !== '97' && stateCode !== '99') {
+    return { isValid: false, message: `Invalid State Code '${stateCode}' in GST Number.` };
+  }
+
+  return { isValid: true, stateName: stateName || 'Active Territory' };
+}
+
+
 interface PartnerRegisterFormProps {
   onSwitchToLogin?: () => void;
   showRoleToggle?: boolean;
@@ -43,6 +74,7 @@ export default function PartnerRegisterForm({
   source = "partner-portal"
 }: PartnerRegisterFormProps) {
   const [step, setStep] = useState<1 | 2 | 3>(1);
+  const [registeredPartnerToken, setRegisteredPartnerToken] = useState<string>("");
   const [showPassword, setShowPassword] = useState(false);
   const [formData, setFormData] = useState({
     fullName: "",
@@ -193,6 +225,12 @@ export default function PartnerRegisterForm({
       return;
     }
 
+    const gstCheck = validateGSTIN(formData.gstNumber);
+    if (!gstCheck.isValid) {
+      setError(`Partner Requirement: ${gstCheck.message}`);
+      return;
+    }
+
     setIsLoading(true);
     try {
       await postSendOtp({ identifier: cleanPhone });
@@ -232,6 +270,11 @@ export default function PartnerRegisterForm({
     e.preventDefault();
     setError("");
     const cleanOtp = otp.trim();
+    const gstCheckVerify = validateGSTIN(formData.gstNumber);
+    if (!gstCheckVerify.isValid) {
+      setError(`Partner Requirement: ${gstCheckVerify.message}`);
+      return;
+    }
 
     if (cleanOtp.length !== 6) {
       setError("Please enter the 6-digit OTP code received on your mobile");
@@ -267,7 +310,9 @@ export default function PartnerRegisterForm({
       };
 
       registerUser(payload, {
-        onSuccess: () => {
+        onSuccess: (res: any) => {
+          const t = res?.data?.tokens?.accessToken || res?.tokens?.accessToken || res?.token || res?.data?.token;
+          if (t) setRegisteredPartnerToken(t);
           setStep(3);
         },
         onError: (err: any) => {
@@ -285,6 +330,8 @@ export default function PartnerRegisterForm({
 
   if (step === 3) {
     const workshopDisplayName = formData.workshopName || formData.businessName || "Your Workshop";
+    const effectiveToken = registeredPartnerToken || (typeof window !== 'undefined' ? (window.localStorage.getItem('car_blink_access_token') || window.localStorage.getItem('carBlink_token') || '') : '');
+    const targetKycUrl = effectiveToken ? `${dashboardUrl}/login?token=${encodeURIComponent(effectiveToken)}&redirect=/partner/kyc` : `${dashboardUrl}/partner/kyc`;
     return (
       <div className={`bg-white rounded-3xl p-6 sm:p-8 border border-neutral-text-muted/10 text-center space-y-5 shadow-sm ${className}`}>
         <div className="w-16 h-16 bg-success/10 rounded-full flex items-center justify-center text-success mx-auto">
@@ -315,7 +362,7 @@ export default function PartnerRegisterForm({
 
         <div className="pt-2 space-y-2.5 max-w-md mx-auto">
           <a
-            href={`${dashboardUrl}/partner/kyc`}
+            href={targetKycUrl}
             className="inline-flex items-center justify-center gap-2 w-full py-3.5 px-6 rounded-xl bg-accent-orange hover:bg-accent-orange/90 text-white font-bold text-sm shadow-md transition-all cursor-pointer"
           >
             Proceed to Workshop Dashboard &amp; Complete KYC <ArrowRight className="w-4 h-4" />
@@ -624,23 +671,69 @@ export default function PartnerRegisterForm({
               </p>
             </div>
 
-            {/* Optional Legal IDs (GST & MSME) */}
+            {/* Mandatory GST & Optional MSME */}
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-1">
               <div>
-                <label className="block text-[11px] font-bold text-neutral-text-dark uppercase tracking-wider mb-1">
-                  GST NUMBER (OPTIONAL)
-                </label>
-                <Input
-                  name="gstNumber"
-                  placeholder="E.G. 07AAAAA0000A1Z5"
-                  value={formData.gstNumber}
-                  onChange={handleChange}
-                  className="h-10 bg-white border-amber-200/90 font-mono text-xs uppercase placeholder:text-gray-400"
-                />
+                <div className="flex items-center justify-between mb-1">
+                  <label className="block text-[11px] font-bold text-neutral-text-dark uppercase tracking-wider">
+                    GST NUMBER <span className="text-red-500">*</span>
+                  </label>
+                  {formData.gstNumber.trim().length > 0 && (
+                    <span className="text-[10px] font-mono font-semibold text-gray-500">
+                      {formData.gstNumber.trim().length}/15
+                    </span>
+                  )}
+                </div>
+                <div className="relative">
+                  <Input
+                    name="gstNumber"
+                    placeholder="E.G. 05AAAAA0000A1Z5"
+                    value={formData.gstNumber}
+                    maxLength={15}
+                    onChange={(e) => {
+                      const val = e.target.value.replace(/[^0-9a-zA-Z]/g, '').toUpperCase();
+                      setFormData((prev) => ({ ...prev, gstNumber: val }));
+                    }}
+                    required
+                    className={`h-10 bg-white font-mono text-xs uppercase pr-8 transition-colors ${
+                      formData.gstNumber.trim().length === 15
+                        ? validateGSTIN(formData.gstNumber).isValid
+                          ? 'border-emerald-500 focus:border-emerald-600 focus:ring-emerald-200'
+                          : 'border-red-500 focus:border-red-600 focus:ring-red-200'
+                        : 'border-amber-200/90'
+                    }`}
+                  />
+                  {formData.gstNumber.trim().length === 15 && (
+                    <div className="absolute right-2.5 top-1/2 -translate-y-1/2">
+                      {validateGSTIN(formData.gstNumber).isValid ? (
+                        <CheckCircle2 className="w-4 h-4 text-emerald-600" />
+                      ) : (
+                        <AlertCircle className="w-4 h-4 text-red-500" />
+                      )}
+                    </div>
+                  )}
+                </div>
+                {formData.gstNumber.trim().length > 0 && (
+                  <div className="mt-1">
+                    {validateGSTIN(formData.gstNumber).isValid ? (
+                      <p className="text-[10px] text-emerald-600 font-semibold flex items-center gap-1">
+                        <CheckCircle2 className="w-3 h-3" /> Valid GSTIN ({validateGSTIN(formData.gstNumber).stateName})
+                      </p>
+                    ) : formData.gstNumber.trim().length === 15 ? (
+                      <p className="text-[10px] text-red-500 font-medium">
+                        {validateGSTIN(formData.gstNumber).message}
+                      </p>
+                    ) : (
+                      <p className="text-[10px] text-gray-400">
+                        Enter 15-character official GST Number
+                      </p>
+                    )}
+                  </div>
+                )}
               </div>
               <div>
                 <label className="block text-[11px] font-bold text-neutral-text-dark uppercase tracking-wider mb-1">
-                  MSME / UDYAM NO. (OPTIONAL)
+                  MSME / UDYAM NO. <span className="text-gray-400 font-normal">(OPTIONAL)</span>
                 </label>
                 <Input
                   name="msmeNumber"
