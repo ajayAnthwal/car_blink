@@ -23,6 +23,7 @@ import {
 } from "lucide-react";
 import Button from "@/components/ui/Button";
 import Input from "@/components/ui/Input";
+import { INDIAN_STATES, getCitiesForState } from "@/config/locations.data";
 import { postSendOtp } from "@/services/auth.service";
 import { useRegister, getDashboardUrl } from "@/hooks/auth/use-auth";
 import { toast } from "sonner";
@@ -576,34 +577,73 @@ export default function PartnerRegisterForm({
               />
             </div>
 
-            {/* City, State, PIN */}
-            <div className="grid grid-cols-3 gap-2 sm:gap-3">
-              <div>
-                <label className="block text-[11px] font-bold text-neutral-text-dark uppercase tracking-wider mb-1">
-                  CITY <span className="text-red-500">*</span>
-                </label>
-                <Input
-                  name="city"
-                  placeholder="e.g. South Delhi"
-                  value={formData.city}
-                  onChange={handleChange}
-                  required
-                  className="h-11 bg-white border-amber-200/90 text-xs placeholder:text-gray-400"
-                />
-              </div>
+            {/* City, State, PIN - Dynamic State & City Dropdowns */}
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-2 sm:gap-3">
               <div>
                 <label className="block text-[11px] font-bold text-neutral-text-dark uppercase tracking-wider mb-1">
                   STATE <span className="text-red-500">*</span>
                 </label>
-                <Input
-                  name="state"
-                  placeholder="e.g. Delhi"
-                  value={formData.state}
-                  onChange={handleChange}
-                  required
-                  className="h-11 bg-white border-amber-200/90 text-xs placeholder:text-gray-400"
-                />
+                <div className="relative">
+                  <select
+                    name="state"
+                    value={formData.state}
+                    onChange={(e) => {
+                      const newState = e.target.value;
+                      setFormData((prev) => ({
+                        ...prev,
+                        state: newState,
+                        city: "",
+                      }));
+                      setError("");
+                    }}
+                    required
+                    className="w-full h-11 px-3 py-2 bg-white border border-amber-200/90 rounded-xl text-xs font-medium text-gray-800 focus:outline-none focus:ring-2 focus:ring-primary-blue/30 focus:border-primary-blue appearance-none transition-all cursor-pointer shadow-xs"
+                  >
+                    <option value="">Select State</option>
+                    {INDIAN_STATES.map((st) => (
+                      <option key={st} value={st}>
+                        {st}
+                      </option>
+                    ))}
+                  </select>
+                  <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2.5 text-gray-400">
+                    <svg className="fill-current h-4 w-4" viewBox="0 0 20 20">
+                      <path d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" />
+                    </svg>
+                  </div>
+                </div>
               </div>
+
+              <div>
+                <label className="block text-[11px] font-bold text-neutral-text-dark uppercase tracking-wider mb-1">
+                  CITY <span className="text-red-500">*</span>
+                </label>
+                <div className="relative">
+                  <select
+                    name="city"
+                    value={formData.city}
+                    onChange={handleChange}
+                    required
+                    disabled={!formData.state}
+                    className={`w-full h-11 px-3 py-2 bg-white border border-amber-200/90 rounded-xl text-xs font-medium text-gray-800 focus:outline-none focus:ring-2 focus:ring-primary-blue/30 focus:border-primary-blue appearance-none transition-all cursor-pointer shadow-xs ${
+                      !formData.state ? "bg-gray-50 text-gray-400 cursor-not-allowed opacity-75" : ""
+                    }`}
+                  >
+                    <option value="">{formData.state ? "Select City" : "Select State First"}</option>
+                    {getCitiesForState(formData.state).map((ct) => (
+                      <option key={ct} value={ct}>
+                        {ct}
+                      </option>
+                    ))}
+                  </select>
+                  <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2.5 text-gray-400">
+                    <svg className="fill-current h-4 w-4" viewBox="0 0 20 20">
+                      <path d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" />
+                    </svg>
+                  </div>
+                </div>
+              </div>
+
               <div>
                 <label className="block text-[11px] font-bold text-neutral-text-dark uppercase tracking-wider mb-1">
                   PIN CODE <span className="text-red-500">*</span>
