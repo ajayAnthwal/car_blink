@@ -21,6 +21,8 @@ export default function HeroForm() {
     address: "",
     serviceType: "",
     query: "",
+    latitude: undefined as number | undefined,
+    longitude: undefined as number | undefined,
   });
   const [otp, setOtp] = useState("");
   const [resendTimer, setResendTimer] = useState(30);
@@ -103,7 +105,21 @@ export default function HeroForm() {
       return;
     }
     try {
-      const requestedService = formData.serviceType || (formData.query ? formData.query.split('|')[0].trim() : 'General Service');
+      const selectedSrv = formData.serviceType?.trim();
+      let requestedService = 'General Service';
+      let customService: string | undefined = undefined;
+
+      if (selectedSrv && selectedSrv !== 'Other') {
+        requestedService = selectedSrv;
+      } else if (selectedSrv === 'Other') {
+        requestedService = 'Other';
+        customService = formData.query ? formData.query.split('|')[0].trim() : 'Custom Service';
+      }
+
+      const matchedSrvObj = dynamicServices.find(
+        (s: any) => s.name?.toLowerCase().trim() === requestedService.toLowerCase().trim()
+      );
+
       const res: any = await createLead({
         name: formData.name,
         phone: formData.number,
@@ -111,10 +127,17 @@ export default function HeroForm() {
         vehicleBrand: formData.carMake,
         vehicleModel: resolvedModel,
         city: formData.address,
+        address: formData.address,
+        latitude: formData.latitude,
+        longitude: formData.longitude,
         services: [requestedService],
-        customServiceName: formData.query || (formData.serviceType && formData.serviceType !== 'Other' ? formData.serviceType : requestedService),
+        serviceType: requestedService,
+        serviceId: matchedSrvObj?._id || matchedSrvObj?.id,
+        customServiceName: customService || (selectedSrv === 'Other' ? (formData.query || 'Custom Service') : undefined),
         query: formData.query,
-        message: formData.query ? `${formData.query} | Car: ${displayCar}` : `${requestedService} Request for ${displayCar}`,
+        message: formData.query 
+          ? `${requestedService}: ${formData.query} | Car: ${displayCar}` 
+          : `${requestedService} Request for ${displayCar}`,
         otp: otp.trim(),
       });
 
@@ -263,7 +286,7 @@ export default function HeroForm() {
             <button
               type="button"
               onClick={() => {
-                setFormData({ name: "", number: "", carMake: "", carModel: "", otherModel: "", address: "", serviceType: "", query: "" });
+                setFormData({ name: "", number: "", carMake: "", carModel: "", otherModel: "", address: "", serviceType: "", query: "", latitude: undefined, longitude: undefined });
                 setOtp("");
                 setStep('FORM');
               }}
@@ -564,8 +587,8 @@ export default function HeroForm() {
       <LocationModal
         isOpen={showMapModal}
         onClose={() => setShowMapModal(false)}
-        onConfirm={(locStr) => {
-          setFormData((prev) => ({ ...prev, address: locStr }));
+        onConfirm={(locStr, lat, lng) => {
+          setFormData((prev) => ({ ...prev, address: locStr, latitude: lat, longitude: lng }));
         }}
       />
     </div>

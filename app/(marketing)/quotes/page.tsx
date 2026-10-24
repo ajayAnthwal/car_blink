@@ -541,12 +541,17 @@ function QuotesForm() {
                         vehicleBrand: formData.make,
                         vehicleModel: formData.model === "Other" ? formData.otherModelDetails : formData.model,
                         city: formData.location || formData.address || 'Not specified',
+                        address: formData.address ? `${formData.address}${formData.location ? ` (${formData.location})` : ''}` : (formData.location || ''),
+                        location: formData.location || formData.address || '',
+                        latitude: formData.latitude,
+                        longitude: formData.longitude,
                         message: fullAddressStr,
                         otp: otp.trim(),
                         fuelType: formData.fuelType,
                         vehicleNumber: formData.vehicleNumber,
                         services: formData.services,
-                        customServiceName: formData.services.includes('Other') ? (formData.otherServiceDetails || 'Custom Service') : formData.services.join(', '),
+                        serviceType: formData.services[0] || undefined,
+                        customServiceName: formData.services.includes('Other') ? (formData.otherServiceDetails || 'Custom Service') : (formData.services.length > 1 ? formData.services.join(', ') : undefined),
                         otherServiceDetails: formData.otherServiceDetails,
                       });
 
