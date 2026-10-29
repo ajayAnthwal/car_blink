@@ -42,8 +42,8 @@ export default function RootLayout({
         <div className="bg-primary-blue text-white text-center py-2.5 px-4 text-sm font-semibold tracking-wide">
           We Compare, We Negotiate, You Save.
         </div>
+        <Providers>
         <Navbar />
-        <Providers >
           <Toaster
             position="top-right"
             richColors
