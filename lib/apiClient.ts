@@ -56,6 +56,13 @@ export async function fetchApi<T>(endpoint: string, options?: RequestInit): Prom
   let token = '';
   if (typeof window !== 'undefined') {
     token = storage.getToken() || '';
+    if (!token && typeof document !== 'undefined' && document.cookie) {
+      const match = document.cookie.match(/(?:^|;\s*)(?:car_blink_access_token|accessToken)=([^;]+)/);
+      if (match && match[1]) {
+        token = decodeURIComponent(match[1]);
+        storage.setToken(token);
+      }
+    }
   }
 
   const defaultHeaders: Record<string, string> = {

@@ -65,24 +65,27 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     if (typeof window === "undefined") return;
 
     const isExplicitlyLoggedOut = document.cookie.includes("carblink_logged_out=1");
-
-    const cookieToken = (document.cookie.match(/(?:^|;\s*)car_blink_access_token=([^;]*)/)?.[1] ? decodeURIComponent(document.cookie.match(/(?:^|;\s*)car_blink_access_token=([^;]*)/)![1]) : null);
-    const cookieRole = (document.cookie.match(/(?:^|;\s*)role=([^;]*)/)?.[1] ? decodeURIComponent(document.cookie.match(/(?:^|;\s*)role=([^;]*)/)![1]) : null) ||
-                       (document.cookie.match(/(?:^|;\s*)user_role=([^;]*)/)?.[1] ? decodeURIComponent(document.cookie.match(/(?:^|;\s*)user_role=([^;]*)/)![1]) : null);
-
-    if (isExplicitlyLoggedOut || (!cookieToken && !cookieRole && !storage.getToken())) {
-      performLogout();
+    if (isExplicitlyLoggedOut) {
+      setUser(null);
       setLoading(false);
       return;
     }
+
+    const cookieToken = (document.cookie.match(/(?:^|;\s*)(?:car_blink_access_token|accessToken)=([^;]*)/)?.[1] 
+      ? decodeURIComponent(document.cookie.match(/(?:^|;\s*)(?:car_blink_access_token|accessToken)=([^;]*)/)![1]) 
+      : null);
+    const cookieRole = (document.cookie.match(/(?:^|;\s*)role=([^;]*)/)?.[1] ? decodeURIComponent(document.cookie.match(/(?:^|;\s*)role=([^;]*)/)![1]) : null) ||
+                       (document.cookie.match(/(?:^|;\s*)user_role=([^;]*)/)?.[1] ? decodeURIComponent(document.cookie.match(/(?:^|;\s*)user_role=([^;]*)/)![1]) : null);
 
     const activeToken = cookieToken || storage.getToken();
 
     if (!activeToken) {
-      performLogout();
+      setUser(null);
       setLoading(false);
       return;
     }
+
+    storage.setToken(activeToken);
 
     try {
       const response = await fetchApi<any>("/auth/me");
@@ -93,7 +96,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         performLogout();
       }
     } catch (error) {
-      console.log("Auth check failed or logged out elsewhere:", error);
+      console.log("Auth check error:", error);
       performLogout();
     } finally {
       setLoading(false);
@@ -111,10 +114,12 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       const cookieRole = (document.cookie.match(/(?:^|;\s*)role=([^;]*)/)?.[1] ? decodeURIComponent(document.cookie.match(/(?:^|;\s*)role=([^;]*)/)![1]) : null) ||
                          (document.cookie.match(/(?:^|;\s*)user_role=([^;]*)/)?.[1] ? decodeURIComponent(document.cookie.match(/(?:^|;\s*)user_role=([^;]*)/)![1]) : null);
 
-      if (isExplicitlyLoggedOut || (!cookieToken && !cookieRole)) {
+      if (isExplicitlyLoggedOut) {
         if (storage.getToken() || document.cookie.includes("car_blink_access_token")) {
           performLogout();
         }
+      } else if (cookieToken && !user) {
+        checkAuth();
       }
     }, 1000);
 
