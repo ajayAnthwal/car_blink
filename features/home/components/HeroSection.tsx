@@ -79,11 +79,12 @@ export default function HeroSection() {
             <Button
               variant="primary"
               size="lg"
-              className="w-full sm:w-auto"
-              rightIcon={<ArrowRight className="w-5 h-5" />}
+              className="w-full sm:w-auto relative group overflow-hidden shadow-lg shadow-primary-blue/30 hover:shadow-xl hover:shadow-primary-blue/40 hover:-translate-y-0.5 active:translate-y-0 active:scale-95 transition-all duration-300 animate-pulse-glow"
+              rightIcon={<ArrowRight className="w-5 h-5 transition-transform duration-300 group-hover:translate-x-1" />}
               href="/quotes"
             >
-              Get Free Quote
+              <span className="absolute inset-0 w-1/2 h-full bg-gradient-to-r from-transparent via-white/25 to-transparent pointer-events-none animate-shimmer" />
+              <span className="relative z-10">Compare Prices Now</span>
             </Button>
             <Button
               variant="white"

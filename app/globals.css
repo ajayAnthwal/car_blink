@@ -20,3 +20,27 @@
   --color-neutral-white: #FEFEFE;
 }
 
+@keyframes shimmer {
+  0% { transform: translateX(-150%) skewX(-15deg); }
+  100% { transform: translateX(250%) skewX(-15deg); }
+}
+
+@keyframes pulseGlow {
+  0%, 100% {
+    box-shadow: 0 0 0 0 rgba(12, 121, 216, 0.45), 0 4px 14px rgba(12, 121, 216, 0.3);
+    transform: translateY(0);
+  }
+  50% {
+    box-shadow: 0 0 0 8px rgba(12, 121, 216, 0), 0 8px 24px rgba(12, 121, 216, 0.45);
+    transform: translateY(-1.5px);
+  }
+}
+
+.animate-pulse-glow {
+  animation: pulseGlow 2.8s ease-in-out infinite;
+}
+
+.animate-shimmer {
+  animation: shimmer 3s ease-in-out infinite;
+}
+

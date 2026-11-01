@@ -97,10 +97,15 @@ export default function Navbar() {
             )}
             <Link
               href="/quotes"
-              className="flex items-center gap-2 px-6 py-2.5 font-heading font-bold text-sm text-white bg-primary-blue rounded-full hover:bg-primary-blue-dark hover:shadow-lg hover:shadow-primary-blue/20 transition-all duration-200 text-center"
+              className="relative group overflow-hidden flex items-center gap-2 px-6 py-2.5 font-heading font-bold text-sm text-white bg-gradient-to-r from-primary-blue via-[#1888E8] to-primary-blue-dark rounded-full shadow-md shadow-primary-blue/30 hover:shadow-xl hover:shadow-primary-blue/40 hover:-translate-y-0.5 active:translate-y-0 active:scale-95 transition-all duration-300 animate-pulse-glow text-center"
             >
-              Get Free Quote
-              <ArrowRight className="w-4 h-4" />
+              {/* Subtle Smooth Shimmer Light Sweep */}
+              <span className="absolute inset-0 w-1/2 h-full bg-gradient-to-r from-transparent via-white/30 to-transparent pointer-events-none animate-shimmer" />
+
+              <span className="relative z-10 flex items-center gap-2">
+                <span>Compare Prices Now</span>
+                <ArrowRight className="w-4 h-4 transition-transform duration-300 group-hover:translate-x-1" />
+              </span>
             </Link>
           </div>
 

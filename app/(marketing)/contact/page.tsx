@@ -29,11 +29,13 @@ const CONTACT_INFO = [
   {
     icon: Phone,
     title: "Call Us",
+    href: "tel:+919068802453",
     lines: ["+91 9068802453", "Mon–Sat, 9am – 8pm"],
   },
   {
     icon: Mail,
     title: "Email Us",
+    href: "mailto:support@carblink.in",
     lines: ["support@carblink.in", "We reply within 24 hours"],
   },
   {
@@ -99,7 +101,7 @@ export default function ContactPage() {
 
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
-    const cleanPhone = form.phone.replace(/[^0-9]/g, '');
+    const cleanPhone = form.phone.replace(/[^0-9]/g, "");
     if (cleanPhone.length < 10) {
       toast.error("Please enter a valid 10-digit mobile number");
       return;
@@ -149,7 +151,7 @@ export default function ContactPage() {
       <section className="-mt-14 pb-4 relative z-20">
         <Container>
           <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-4">
-            {CONTACT_INFO.map(({ icon: Icon, title, lines }) => (
+            {CONTACT_INFO.map(({ icon: Icon, title, lines, href }) => (
               <Card key={title} hoverable className="p-6">
                 <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-primary-blue/10 text-primary-blue">
                   <Icon className="h-5 w-5" />
@@ -158,14 +160,24 @@ export default function ContactPage() {
                   {title}
                 </h3>
                 <div className="mt-1.5 space-y-0.5">
-                  {lines.map((l) => (
-                    <p
-                      key={l}
-                      className="font-body text-sm text-neutral-text-muted"
-                    >
-                      {l}
-                    </p>
-                  ))}
+                  {lines.map((l, i) =>
+                    i === 0 && href ? (
+                      <a
+                        key={l}
+                        href={href}
+                        className="block font-body text-sm text-neutral-text-muted hover:text-primary-blue hover:underline transition-colors"
+                      >
+                        {l}
+                      </a>
+                    ) : (
+                      <p
+                        key={l}
+                        className="font-body text-sm text-neutral-text-muted"
+                      >
+                        {l}
+                      </p>
+                    ),
+                  )}
                 </div>
               </Card>
             ))}
@@ -300,32 +312,30 @@ export default function ContactPage() {
           </div>
 
           {/* map / office */}
-     {/* map / office */}
-<div className="lg:col-span-2 flex">
-  <Card className="overflow-hidden p-0 flex flex-col w-full">
-    <div className="flex-1 min-h-[260px] w-full bg-neutral-hero-bg">
-      <iframe
-        src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d11503.993282895488!2d77.96970279210474!3d30.27088322905431!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x39092b98a9eb6f21%3A0x723b78724473b1e3!2sMohabbewala%2C%20Dehradun%2C%20Uttarakhand%20248002!5e1!3m2!1sen!2sin!4v1786270126657!5m2!1sen!2sin"
-        width="100%"
-        height="100%"
-        style={{ border: 0 }}
-        allowFullScreen
-        loading="lazy"
-        referrerPolicy="strict-origin-when-cross-origin"
-      ></iframe>
-    </div>
-    <div className="p-6 shrink-0">
-      <h3 className="font-heading font-bold text-sm text-neutral-text-dark">
-        Car Blink Head Office
-      </h3>
-      <p className="font-body mt-1 text-sm text-neutral-text-muted">
-        3rd Floor, Mohabbewala, Dehradun, Uttarakhand – 248002.
-      </p>
-    </div>
-  </Card>
-</div>
-
-
+          {/* map / office */}
+          <div className="lg:col-span-2 flex">
+            <Card className="overflow-hidden p-0 flex flex-col w-full">
+              <div className="flex-1 min-h-[260px] w-full bg-neutral-hero-bg">
+                <iframe
+                  src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d11503.993282895488!2d77.96970279210474!3d30.27088322905431!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x39092b98a9eb6f21%3A0x723b78724473b1e3!2sMohabbewala%2C%20Dehradun%2C%20Uttarakhand%20248002!5e1!3m2!1sen!2sin!4v1786270126657!5m2!1sen!2sin"
+                  width="100%"
+                  height="100%"
+                  style={{ border: 0 }}
+                  allowFullScreen
+                  loading="lazy"
+                  referrerPolicy="strict-origin-when-cross-origin"
+                ></iframe>
+              </div>
+              <div className="p-6 shrink-0">
+                <h3 className="font-heading font-bold text-sm text-neutral-text-dark">
+                  Car Blink Head Office
+                </h3>
+                <p className="font-body mt-1 text-sm text-neutral-text-muted">
+                  3rd Floor, Mohabbewala, Dehradun, Uttarakhand – 248002.
+                </p>
+              </div>
+            </Card>
+          </div>
         </Container>
       </section>
 

@@ -16,11 +16,11 @@ export default function MobileMenu({ isOpen, onClose }: MobileMenuProps) {
   return (
     <div className="fixed inset-0 z-50 md:hidden">
       {/* Backdrop */}
-      <div 
-        className="fixed inset-0 bg-neutral-text-dark/40 backdrop-blur-sm transition-opacity" 
+      <div
+        className="fixed inset-0 bg-neutral-text-dark/40 backdrop-blur-sm transition-opacity"
         onClick={onClose}
       />
-      
+
       {/* Drawer */}
       <div className="fixed inset-y-0 right-0 w-full max-w-sm bg-white p-6 shadow-xl flex flex-col justify-between transform transition-transform duration-300 ease-in-out">
         <div>
@@ -29,7 +29,7 @@ export default function MobileMenu({ isOpen, onClose }: MobileMenuProps) {
             <div className="flex items-center gap-2" onClick={onClose}>
               <Logo />
             </div>
-            <button 
+            <button
               onClick={onClose}
               className="p-2 text-neutral-text-muted hover:text-primary-blue hover:bg-neutral-bg rounded-lg transition-colors"
             >
@@ -39,8 +39,8 @@ export default function MobileMenu({ isOpen, onClose }: MobileMenuProps) {
 
           <nav className="mt-8 flex flex-col gap-2">
             {MAIN_NAV_LINKS.map((link) => (
-              <Link 
-                key={link.name} 
+              <Link
+                key={link.name}
                 href={link.href}
                 onClick={onClose}
                 className="font-heading font-medium text-lg text-neutral-text-dark hover:text-primary-blue-dark transition-colors py-3 block w-full border-b border-neutral-text-muted/5 last:border-b-0"
@@ -52,20 +52,23 @@ export default function MobileMenu({ isOpen, onClose }: MobileMenuProps) {
         </div>
 
         <div className="flex flex-col gap-4 mt-auto pt-6 border-t border-neutral-text-muted/15">
-          <Link 
+          <Link
             href="/login"
             onClick={onClose}
             className="flex items-center justify-center px-6 py-3 font-heading font-semibold text-neutral-text-dark border-2 border-neutral-text-muted/30 rounded-full hover:bg-neutral-bg hover:border-primary-blue hover:text-primary-blue transition-all text-center"
           >
             Customer Login
           </Link>
-          <Link 
+          <Link
             href="/quotes"
             onClick={onClose}
-            className="flex items-center justify-center gap-2 px-6 py-3 font-heading font-semibold text-white bg-primary-blue rounded-full hover:bg-primary-blue-dark transition-all text-center shadow-lg shadow-primary-blue/20"
+            className="relative group overflow-hidden flex items-center justify-center gap-2 px-6 py-3 font-heading font-semibold text-white bg-gradient-to-r from-primary-blue via-[#1888E8] to-primary-blue-dark rounded-full shadow-lg shadow-primary-blue/30 hover:shadow-xl hover:shadow-primary-blue/40 transition-all text-center animate-pulse-glow"
           >
-            Get Free Quote
-            <ArrowRight className="w-4 h-4" />
+            <span className="absolute inset-0 w-1/2 h-full bg-gradient-to-r from-transparent via-white/30 to-transparent pointer-events-none animate-shimmer" />
+            <span className="relative z-10 flex items-center justify-center gap-2">
+              <span>Compare Prices Now</span>
+              <ArrowRight className="w-4 h-4 transition-transform duration-300 group-hover:translate-x-1" />
+            </span>
           </Link>
         </div>
       </div>

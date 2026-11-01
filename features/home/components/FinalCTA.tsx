@@ -35,9 +35,11 @@ export default function FinalCTA() {
               variant="primary"
               size="lg"
               href="/quotes"
-              rightIcon={<ArrowRight className="w-5 h-5" />}
+              className="relative group overflow-hidden shadow-lg shadow-primary-blue/30 hover:shadow-xl hover:shadow-primary-blue/40 hover:-translate-y-0.5 active:translate-y-0 active:scale-95 transition-all duration-300 animate-pulse-glow"
+              rightIcon={<ArrowRight className="w-5 h-5 transition-transform duration-300 group-hover:translate-x-1" />}
             >
-              Get Free Quote Now
+              <span className="absolute inset-0 w-1/2 h-full bg-gradient-to-r from-transparent via-white/25 to-transparent pointer-events-none animate-shimmer" />
+              <span className="relative z-10">Compare Prices Now</span>
             </Button>
           </div>
 

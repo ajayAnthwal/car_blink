@@ -41,9 +41,25 @@ const config: Config = {
           "0%": { transform: "translateX(0)" },
           "100%": { transform: "translateX(-50%)" },
         },
+        shimmer: {
+          "0%": { transform: "translateX(-150%) skewX(-15deg)" },
+          "100%": { transform: "translateX(250%) skewX(-15deg)" },
+        },
+        "pulse-glow": {
+          "0%, 100%": {
+            boxShadow: "0 0 0 0 rgba(12, 121, 216, 0.45), 0 4px 14px rgba(12, 121, 216, 0.3)",
+            transform: "translateY(0)",
+          },
+          "50%": {
+            boxShadow: "0 0 0 8px rgba(12, 121, 216, 0), 0 8px 24px rgba(12, 121, 216, 0.45)",
+            transform: "translateY(-1.5px)",
+          },
+        },
       },
       animation: {
         marquee: "marquee 32s linear infinite",
+        shimmer: "shimmer 3s ease-in-out infinite",
+        "pulse-glow": "pulse-glow 2.8s ease-in-out infinite",
       },
     },
   },
