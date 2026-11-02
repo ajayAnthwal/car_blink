@@ -42,13 +42,14 @@ const setCrossPortAuth = (token: string, role?: string) => {
   window.localStorage.setItem('car_blink_access_token', token);
   window.localStorage.setItem('carBlink_token', token);
   window.localStorage.setItem('role', userRole);
-  const expires = new Date(Date.now() + 30 * 864e5).toUTCString();
+  const expires = new Date(Date.now() + 365 * 864e5).toUTCString();
   const isProd = window.location.hostname.includes('carblink.in');
   const domainPart = isProd ? '; domain=.carblink.in' : '';
-  document.cookie = `accessToken=${encodeURIComponent(token)}; expires=${expires}; path=/; SameSite=Lax${domainPart}`;
-  document.cookie = `car_blink_access_token=${encodeURIComponent(token)}; expires=${expires}; path=/; SameSite=Lax${domainPart}`;
-  document.cookie = `role=${encodeURIComponent(userRole)}; expires=${expires}; path=/; SameSite=Lax${domainPart}`;
-  document.cookie = `user_role=${encodeURIComponent(userRole)}; expires=${expires}; path=/; SameSite=Lax${domainPart}`;
+  const securePart = window.location.protocol === 'https:' ? '; Secure' : '';
+  document.cookie = `accessToken=${encodeURIComponent(token)}; expires=${expires}; path=/; SameSite=Lax${domainPart}${securePart}`;
+  document.cookie = `car_blink_access_token=${encodeURIComponent(token)}; expires=${expires}; path=/; SameSite=Lax${domainPart}${securePart}`;
+  document.cookie = `role=${encodeURIComponent(userRole)}; expires=${expires}; path=/; SameSite=Lax${domainPart}${securePart}`;
+  document.cookie = `user_role=${encodeURIComponent(userRole)}; expires=${expires}; path=/; SameSite=Lax${domainPart}${securePart}`;
 };
 
 const extractTokenAndRole = (res: any) => {

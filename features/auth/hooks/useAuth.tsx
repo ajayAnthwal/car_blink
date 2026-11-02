@@ -92,12 +92,25 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       const userData = response.data || response;
       if (userData && (userData._id || userData.id || userData.email)) {
         setUser(userData);
-      } else {
-        performLogout();
       }
-    } catch (error) {
+    } catch (error: any) {
       console.log("Auth check error:", error);
-      performLogout();
+      const errMsg = String(error?.message || "").toLowerCase();
+      const isExplicit401 = errMsg.includes("401") || errMsg.includes("unauthorized") || errMsg.includes("token expired") || errMsg.includes("invalid token");
+      const isNetworkIssue = typeof navigator !== "undefined" && !navigator.onLine ||
+                             errMsg.includes("network") ||
+                             errMsg.includes("fetch") ||
+                             errMsg.includes("abort") ||
+                             errMsg.includes("timeout") ||
+                             errMsg.includes("connection");
+
+      // ONLY logout if server explicitly rejected the token as 401 Unauthorized
+      // NEVER logout on mobile resume/network reconnect glitches
+      if (isExplicit401 && !isNetworkIssue) {
+        performLogout();
+      } else {
+        console.warn("[Auth] Network or transient delay during checkAuth, preserving user session.");
+      }
     } finally {
       setLoading(false);
     }
@@ -118,14 +131,21 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         if (storage.getToken() || document.cookie.includes("car_blink_access_token")) {
           performLogout();
         }
-      } else if (cookieToken && !user) {
+      } else if (cookieToken && !user && navigator.onLine) {
         checkAuth();
       }
     }, 1000);
 
+    let debounceTimer: any = null;
     const handleFocusOrVisibility = () => {
       if (typeof document !== "undefined" && document.visibilityState === "visible") {
-        checkAuth();
+        if (debounceTimer) clearTimeout(debounceTimer);
+        // Debounce 1.5s so mobile radio/sockets wake up before checking
+        debounceTimer = setTimeout(() => {
+          if (navigator.onLine) {
+            checkAuth();
+          }
+        }, 1500);
       }
     };
 
@@ -145,6 +165,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
     return () => {
       clearInterval(interval);
+      if (debounceTimer) clearTimeout(debounceTimer);
       window.removeEventListener("focus", handleFocusOrVisibility);
       document.removeEventListener("visibilitychange", handleFocusOrVisibility);
       window.removeEventListener("storage", handleStorageChange);
@@ -154,10 +175,16 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const login = (token: string, userData: User) => {
     storage.setToken(token);
     setUser(userData);
-    const expires = new Date(Date.now() + 30 * 864e5).toUTCString();
-    document.cookie = `carblink_logged_out=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT;`;
-    document.cookie = `car_blink_access_token=${encodeURIComponent(token)}; path=/; expires=${expires}; SameSite=Lax`;
-    document.cookie = `role=${encodeURIComponent(userData.role || 'CUSTOMER')}; path=/; expires=${expires}; SameSite=Lax`;
+    const expires = new Date(Date.now() + 365 * 864e5).toUTCString();
+    const isProd = typeof window !== "undefined" && window.location.hostname.endsWith("carblink.in");
+    const domainPart = isProd ? "; domain=.carblink.in" : "";
+    const securePart = typeof window !== "undefined" && window.location.protocol === "https:" ? "; Secure" : "";
+
+    document.cookie = `carblink_logged_out=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT${domainPart};`;
+    document.cookie = `car_blink_access_token=${encodeURIComponent(token)}; path=/; expires=${expires}; SameSite=Lax${domainPart}${securePart}`;
+    document.cookie = `accessToken=${encodeURIComponent(token)}; path=/; expires=${expires}; SameSite=Lax${domainPart}${securePart}`;
+    document.cookie = `role=${encodeURIComponent(userData.role || 'CUSTOMER')}; path=/; expires=${expires}; SameSite=Lax${domainPart}${securePart}`;
+    document.cookie = `user_role=${encodeURIComponent(userData.role || 'CUSTOMER')}; path=/; expires=${expires}; SameSite=Lax${domainPart}${securePart}`;
   };
 
   return (
