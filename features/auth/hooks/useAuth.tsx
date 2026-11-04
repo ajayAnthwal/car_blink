@@ -52,8 +52,12 @@ export function AuthProvider({ children }: { children: ReactNode }) {
           "carBlink_user",
         ];
 
+        const isProd = window.location.hostname.endsWith('carblink.in');
         cookiesToClear.forEach((name) => {
           document.cookie = `${name}=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT;`;
+          if (isProd) {
+            document.cookie = `${name}=; path=/; domain=.carblink.in; expires=Thu, 01 Jan 1970 00:00:00 GMT;`;
+          }
         });
       } catch (err) {
         console.error("Storage clear error:", err);
@@ -107,7 +111,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       // ONLY logout if server explicitly rejected the token as 401 Unauthorized
       // NEVER logout on mobile resume/network reconnect glitches
       if (isExplicit401 && !isNetworkIssue) {
-        performLogout();
+        storage.clearToken();
+        setUser(null);
       } else {
         console.warn("[Auth] Network or transient delay during checkAuth, preserving user session.");
       }

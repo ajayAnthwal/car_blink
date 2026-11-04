@@ -77,6 +77,7 @@ export async function fetchApi<T>(endpoint: string, options?: RequestInit): Prom
   try {
     const response = await fetch(url, {
       ...options,
+      credentials: 'include',
       headers: defaultHeaders,
     });
 
@@ -91,10 +92,8 @@ export async function fetchApi<T>(endpoint: string, options?: RequestInit): Prom
 
     if (response.status === 401 && typeof window !== 'undefined') {
       if (!endpoint.includes('/auth/login') && !endpoint.includes('/auth/verify') && !endpoint.includes('/auth/otp')) {
+        // Clear local token only, DO NOT broadcast logout to all other tabs/subdomains!
         storage.clearToken();
-        const isProd = window.location.hostname.endsWith('carblink.in');
-        const dom = isProd ? '; domain=.carblink.in' : '';
-        document.cookie = `carblink_logged_out=1; path=/${dom}; max-age=10;`;
       }
     }
 
