@@ -11,15 +11,26 @@ import Container from "@/components/ui/Container";
 import Input from "@/components/ui/Input";
 import GoogleButton from "@/components/ui/google-button";
 import { Logo } from "@/components/layout/Navbar";
-import { useLogin, useSendOtp, useVerifyOtp } from "@/hooks/auth/use-auth";
+import { useLogin, useSendOtp, useVerifyOtp, getDashboardUrl } from "@/hooks/auth/use-auth";
+import { useAuth } from "@/features/auth/hooks/useAuth";
+import storage from "@/lib/storage";
 
 export default function LoginPage() {
+  const { isAuthenticated } = useAuth();
   const [loginMethod, setLoginMethod] = useState<"phone" | "email">("phone");
   const [form, setForm] = useState({ phone: "", otp: "", email: "", password: "" });
   const [step, setStep] = useState<1 | 2>(1);
   const [showPassword, setShowPassword] = useState(false);
   const [resendTimer, setResendTimer] = useState(30);
   const [canResend, setCanResend] = useState(false);
+
+  useEffect(() => {
+    if (isAuthenticated) {
+      const dashboardUrl = getDashboardUrl();
+      const token = storage.getToken() || (typeof window !== "undefined" ? window.localStorage.getItem("car_blink_access_token") : "");
+      window.location.href = `${dashboardUrl}/login?token=${encodeURIComponent(token || "")}`;
+    }
+  }, [isAuthenticated]);
 
   useEffect(() => {
     let timer: any;

@@ -24,8 +24,45 @@ interface AuthContextType {
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
+const getInitialUser = (): User | null => {
+  if (typeof window === "undefined") return null;
+  try {
+    const isExplicitlyLoggedOut = document.cookie.includes("carblink_logged_out=1");
+    if (isExplicitlyLoggedOut) return null;
+
+    const cookieToken = (document.cookie.match(/(?:^|;\s*)(?:car_blink_access_token|accessToken)=([^;]*)/)?.[1]
+      ? decodeURIComponent(document.cookie.match(/(?:^|;\s*)(?:car_blink_access_token|accessToken)=([^;]*)/)![1])
+      : null);
+    const activeToken = cookieToken || storage.getToken();
+    if (!activeToken) return null;
+
+    const localUser = window.localStorage.getItem("car_blink_user");
+    if (localUser) {
+      return JSON.parse(localUser);
+    }
+    const cookieUserMatch = document.cookie.match(/(?:^|;\s*)car_blink_user=([^;]*)/);
+    if (cookieUserMatch && cookieUserMatch[1]) {
+      return JSON.parse(decodeURIComponent(cookieUserMatch[1]));
+    }
+
+    const cookieRole = (document.cookie.match(/(?:^|;\s*)role=([^;]*)/)?.[1] ? decodeURIComponent(document.cookie.match(/(?:^|;\s*)role=([^;]*)/)![1]) : null) ||
+                       (document.cookie.match(/(?:^|;\s*)user_role=([^;]*)/)?.[1] ? decodeURIComponent(document.cookie.match(/(?:^|;\s*)user_role=([^;]*)/)![1]) : null);
+    if (cookieRole) {
+      return {
+        _id: "",
+        fullName: "Customer",
+        email: "",
+        phone: "",
+        role: cookieRole,
+        isActive: true,
+      };
+    }
+  } catch (e) {}
+  return null;
+};
+
 export function AuthProvider({ children }: { children: ReactNode }) {
-  const [user, setUser] = useState<User | null>(null);
+  const [user, setUser] = useState<User | null>(getInitialUser);
   const [loading, setLoading] = useState(true);
 
   const performLogout = () => {
@@ -33,6 +70,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     setUser(null);
     if (typeof window !== "undefined") {
       try {
+        window.localStorage.removeItem("car_blink_user");
         window.localStorage.clear();
         window.sessionStorage.clear();
         
@@ -96,6 +134,11 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       const userData = response.data || response;
       if (userData && (userData._id || userData.id || userData.email)) {
         setUser(userData);
+        if (typeof window !== "undefined") {
+          try {
+            window.localStorage.setItem("car_blink_user", JSON.stringify(userData));
+          } catch (e) {}
+        }
       }
     } catch (error: any) {
       console.log("Auth check error:", error);
@@ -180,6 +223,11 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const login = (token: string, userData: User) => {
     storage.setToken(token);
     setUser(userData);
+    if (typeof window !== "undefined") {
+      try {
+        window.localStorage.setItem("car_blink_user", JSON.stringify(userData));
+      } catch (e) {}
+    }
     const expires = new Date(Date.now() + 365 * 864e5).toUTCString();
     const isProd = typeof window !== "undefined" && window.location.hostname.endsWith("carblink.in");
     const domainPart = isProd ? "; domain=.carblink.in" : "";
@@ -190,6 +238,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     document.cookie = `accessToken=${encodeURIComponent(token)}; path=/; expires=${expires}; SameSite=Lax${domainPart}${securePart}`;
     document.cookie = `role=${encodeURIComponent(userData.role || 'CUSTOMER')}; path=/; expires=${expires}; SameSite=Lax${domainPart}${securePart}`;
     document.cookie = `user_role=${encodeURIComponent(userData.role || 'CUSTOMER')}; path=/; expires=${expires}; SameSite=Lax${domainPart}${securePart}`;
+    document.cookie = `car_blink_user=${encodeURIComponent(JSON.stringify(userData))}; path=/; expires=${expires}; SameSite=Lax${domainPart}${securePart}`;
   };
 
   return (

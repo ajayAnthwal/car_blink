@@ -35,13 +35,18 @@ export const getDashboardUrl = (): string => {
   return clean.replace(/\/$/, '');
 };
 
-const setCrossPortAuth = (token: string, role?: string) => {
+const setCrossPortAuth = (token: string, role?: string, user?: any) => {
   if (typeof window === 'undefined') return;
   const userRole = role || 'CUSTOMER';
   storage.setToken(token);
   window.localStorage.setItem('car_blink_access_token', token);
   window.localStorage.setItem('carBlink_token', token);
   window.localStorage.setItem('role', userRole);
+  if (user) {
+    try {
+      window.localStorage.setItem('car_blink_user', JSON.stringify(user));
+    } catch (e) {}
+  }
   const expires = new Date(Date.now() + 365 * 864e5).toUTCString();
   const isProd = window.location.hostname.includes('carblink.in');
   const domainPart = isProd ? '; domain=.carblink.in' : '';
@@ -50,13 +55,19 @@ const setCrossPortAuth = (token: string, role?: string) => {
   document.cookie = `car_blink_access_token=${encodeURIComponent(token)}; expires=${expires}; path=/; SameSite=Lax${domainPart}${securePart}`;
   document.cookie = `role=${encodeURIComponent(userRole)}; expires=${expires}; path=/; SameSite=Lax${domainPart}${securePart}`;
   document.cookie = `user_role=${encodeURIComponent(userRole)}; expires=${expires}; path=/; SameSite=Lax${domainPart}${securePart}`;
+  if (user) {
+    try {
+      document.cookie = `car_blink_user=${encodeURIComponent(JSON.stringify(user))}; expires=${expires}; path=/; SameSite=Lax${domainPart}${securePart}`;
+    } catch (e) {}
+  }
 };
 
 const extractTokenAndRole = (res: any) => {
   const payload = res?.data || res;
   const token = payload?.tokens?.accessToken || payload?.token || res?.tokens?.accessToken || res?.token;
   const role = payload?.user?.role || payload?.role || res?.user?.role || res?.role || 'CUSTOMER';
-  return { token, role };
+  const user = payload?.user || res?.user || (payload?._id ? payload : null);
+  return { token, role, user };
 };
 
 export const useLogin = (): UseMutationResult<
@@ -67,8 +78,8 @@ export const useLogin = (): UseMutationResult<
   return useMutation({
     mutationFn: postLogin,
     onSuccess: (res: any) => {
-      const { token, role } = extractTokenAndRole(res);
-      if (token) setCrossPortAuth(token, role);
+      const { token, role, user } = extractTokenAndRole(res);
+      if (token) setCrossPortAuth(token, role, user);
       toast.success(res?.message || 'Login successful! Redirecting to your Dashboard...');
       setTimeout(() => {
         const dashboardUrl = getDashboardUrl();
@@ -94,12 +105,12 @@ export const usePartnerLogin = (): UseMutationResult<
   return useMutation({
     mutationFn: postLogin,
     onSuccess: (res: any) => {
-      const { token, role } = extractTokenAndRole(res);
+      const { token, role, user } = extractTokenAndRole(res);
       if (role !== 'PARTNER') {
         toast.error('This login page is exclusively for Workshop Partners. Please use Customer login.');
         return;
       }
-      if (token) setCrossPortAuth(token, role);
+      if (token) setCrossPortAuth(token, role, user);
       toast.success('Partner login successful! Redirecting to Workshop Dashboard...');
       setTimeout(() => {
         const dashboardUrl = getDashboardUrl();
@@ -140,8 +151,8 @@ export const useVerifyOtp = (): UseMutationResult<
   return useMutation({
     mutationFn: postVerifyOtp,
     onSuccess: (res: any) => {
-      const { token, role } = extractTokenAndRole(res);
-      if (token) setCrossPortAuth(token, role);
+      const { token, role, user } = extractTokenAndRole(res);
+      if (token) setCrossPortAuth(token, role, user);
       toast.success(res?.message || 'Verification successful! Redirecting to Dashboard...');
       setTimeout(() => {
         const dashboardUrl = getDashboardUrl();
@@ -167,12 +178,12 @@ export const usePartnerVerifyOtp = (): UseMutationResult<
   return useMutation({
     mutationFn: postVerifyOtp,
     onSuccess: (res: any) => {
-      const { token, role } = extractTokenAndRole(res);
+      const { token, role, user } = extractTokenAndRole(res);
       if (role !== 'PARTNER') {
         toast.error('This login page is exclusively for Workshop Partners. Please use Customer login.');
         return;
       }
-      if (token) setCrossPortAuth(token, role);
+      if (token) setCrossPortAuth(token, role, user);
       toast.success('Partner login successful! Redirecting to Workshop Dashboard...');
       setTimeout(() => {
         const dashboardUrl = getDashboardUrl();
@@ -197,8 +208,8 @@ export const useRegister = (): UseMutationResult<
   return useMutation({
     mutationFn: postRegister,
     onSuccess: (res: any, variables: any) => {
-      const { token, role } = extractTokenAndRole(res);
-      if (token) setCrossPortAuth(token, role);
+      const { token, role, user } = extractTokenAndRole(res);
+      if (token) setCrossPortAuth(token, role, user);
       
       const userRole = variables?.role || role;
       if (userRole === 'PARTNER') {

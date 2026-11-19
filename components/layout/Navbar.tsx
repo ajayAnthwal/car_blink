@@ -109,14 +109,34 @@ export default function Navbar() {
             </Link>
           </div>
 
-          {/* Mobile Hamburguer Icon */}
-          <button
-            onClick={() => setIsMobileMenuOpen(true)}
-            className="p-2 md:hidden text-neutral-text-muted hover:text-primary-navy hover:bg-neutral-bg rounded-lg transition-colors duration-200"
-            aria-label="Toggle Menu"
-          >
-            <Menu className="w-6 h-6" />
-          </button>
+          {/* Mobile Right Controls */}
+          <div className="flex md:hidden items-center gap-2">
+            {isAuthenticated && (
+              <button
+                onClick={() => {
+                  const dashboardUrl = getDashboardUrl();
+                  const token = storage.getToken() || (typeof window !== 'undefined' ? window.localStorage.getItem('car_blink_access_token') : '');
+                  window.location.href = `${dashboardUrl}/login?token=${encodeURIComponent(token || '')}`;
+                }}
+                className="flex items-center gap-1.5 px-3 py-1.5 font-heading font-semibold text-xs text-neutral-text-dark border border-neutral-text-muted/30 rounded-full hover:bg-neutral-bg hover:border-primary-blue transition-all"
+                title="Go to Dashboard"
+              >
+                <div className="w-5 h-5 rounded-full bg-primary-blue/10 text-primary-blue flex items-center justify-center font-bold text-[10px]">
+                  {user?.fullName?.charAt(0)?.toUpperCase() || 'U'}
+                </div>
+                <span className="truncate max-w-[70px]">{user?.fullName?.split(' ')[0] || 'Profile'}</span>
+              </button>
+            )}
+
+            {/* Mobile Hamburger Icon */}
+            <button
+              onClick={() => setIsMobileMenuOpen(true)}
+              className="p-2 text-neutral-text-muted hover:text-primary-navy hover:bg-neutral-bg rounded-lg transition-colors duration-200"
+              aria-label="Toggle Menu"
+            >
+              <Menu className="w-6 h-6" />
+            </button>
+          </div>
         </div>
         </div>
       </header>

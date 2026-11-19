@@ -1,9 +1,12 @@
 "use client";
 
 import Link from "next/link";
-import { X, ArrowRight } from "lucide-react";
+import { X, ArrowRight, LayoutDashboard, LogOut, User as UserIcon } from "lucide-react";
 import { Logo } from "./Navbar";
 import { MAIN_NAV_LINKS } from "@/lib/constants";
+import { useAuth } from "@/features/auth/hooks/useAuth";
+import storage from "@/lib/storage";
+import { getDashboardUrl } from "@/hooks/auth/use-auth";
 
 interface MobileMenuProps {
   isOpen: boolean;
@@ -11,7 +14,21 @@ interface MobileMenuProps {
 }
 
 export default function MobileMenu({ isOpen, onClose }: MobileMenuProps) {
+  const { user, isAuthenticated, logout } = useAuth();
+
   if (!isOpen) return null;
+
+  const handleDashboardRedirect = () => {
+    onClose();
+    const dashboardUrl = getDashboardUrl();
+    const token = storage.getToken() || (typeof window !== "undefined" ? window.localStorage.getItem("car_blink_access_token") : "");
+    window.location.href = `${dashboardUrl}/login?token=${encodeURIComponent(token || "")}`;
+  };
+
+  const handleLogout = () => {
+    onClose();
+    logout();
+  };
 
   return (
     <div className="fixed inset-0 z-50 md:hidden">
@@ -51,14 +68,52 @@ export default function MobileMenu({ isOpen, onClose }: MobileMenuProps) {
           </nav>
         </div>
 
-        <div className="flex flex-col gap-4 mt-auto pt-6 border-t border-neutral-text-muted/15">
-          <Link
-            href="/login"
-            onClick={onClose}
-            className="flex items-center justify-center px-6 py-3 font-heading font-semibold text-neutral-text-dark border-2 border-neutral-text-muted/30 rounded-full hover:bg-neutral-bg hover:border-primary-blue hover:text-primary-blue transition-all text-center"
-          >
-            Customer Login
-          </Link>
+        <div className="flex flex-col gap-3 mt-auto pt-6 border-t border-neutral-text-muted/15">
+          {isAuthenticated ? (
+            <div className="flex flex-col gap-2.5">
+              {/* User Profile Mini Badge */}
+              <div className="flex items-center gap-3 p-3 bg-neutral-bg rounded-xl border border-neutral-text-muted/15">
+                <div className="w-10 h-10 rounded-full bg-primary-blue text-white flex items-center justify-center font-bold text-sm shrink-0 shadow-sm">
+                  {user?.fullName?.charAt(0)?.toUpperCase() || <UserIcon className="w-5 h-5" />}
+                </div>
+                <div className="min-w-0 flex-1">
+                  <p className="text-sm font-bold text-neutral-text-dark truncate">
+                    {user?.fullName || "Logged-in User"}
+                  </p>
+                  <p className="text-xs text-neutral-text-muted truncate">
+                    {user?.email || user?.phone || "Session Active"}
+                  </p>
+                </div>
+              </div>
+
+              {/* Go to Dashboard CTA */}
+              <button
+                onClick={handleDashboardRedirect}
+                className="flex items-center justify-center gap-2 px-6 py-3 font-heading font-semibold text-white bg-primary-blue rounded-full shadow-md hover:bg-primary-blue-dark active:scale-[0.98] transition-all text-center w-full"
+              >
+                <LayoutDashboard className="w-4 h-4" />
+                <span>Go to Dashboard</span>
+              </button>
+
+              {/* Logout Button */}
+              <button
+                onClick={handleLogout}
+                className="flex items-center justify-center gap-1.5 px-4 py-2 font-heading font-medium text-xs text-danger hover:bg-danger/5 rounded-full transition-all text-center w-full"
+              >
+                <LogOut className="w-3.5 h-3.5" />
+                <span>Logout</span>
+              </button>
+            </div>
+          ) : (
+            <Link
+              href="/login"
+              onClick={onClose}
+              className="flex items-center justify-center px-6 py-3 font-heading font-semibold text-neutral-text-dark border-2 border-neutral-text-muted/30 rounded-full hover:bg-neutral-bg hover:border-primary-blue hover:text-primary-blue transition-all text-center"
+            >
+              Customer Login
+            </Link>
+          )}
+
           <Link
             href="/quotes"
             onClick={onClose}
@@ -75,4 +130,3 @@ export default function MobileMenu({ isOpen, onClose }: MobileMenuProps) {
     </div>
   );
 }
-
