@@ -15,12 +15,12 @@ export function Logo() {
   return (
     <Link href="/" className="flex items-center gap-2 group">
       <Image
-        src="/car_blink.jpg"
-        alt="Car Blink — One Platform For Every Car Service"
-        width={219}
-        height={67}
+        src="/logo_updated.png"
+        alt="CarBlink — One Platform For Every Car Service"
+        width={1000}
+        height={250}
         priority
-        className="h-10 sm:h-12 w-auto transition-transform duration-200 group-hover:scale-105"
+        className="h-9 sm:h-11 w-auto object-contain transition-transform duration-200 group-hover:scale-105"
       />
     </Link>
   );
